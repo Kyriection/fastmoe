@@ -473,6 +473,7 @@ def train():
                 train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
+            print('a')
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
             if args.fp16:
