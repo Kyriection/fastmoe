@@ -568,6 +568,13 @@ log_start_time = time.time()
 eval_start_time = time.time()
 
 
+for name, m in model.named_modules():
+    if hasattr(m, top_k):
+        print(name, m.top_k)
+
+
+
+
 set_gate(model, True)
 test_loss_average = evaluate(te_iter)
 print(test_loss_average)
