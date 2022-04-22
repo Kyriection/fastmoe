@@ -145,6 +145,10 @@ parser.add_argument('--moe', action='store_true',
                     help='replace position-wise ffn with moe position-wise ffn')
 parser.add_argument('--moe-num-expert', type=int, default=64,
                     help='number of experts in MoE')
+parser.add_argument('--gate_name', type=str, default='NaiveGate',
+                    help='Router Type')
+parser.add_argument('--freeze_gate', action='store_true',
+                    help='Freeze the weights in the gates')
 parser.add_argument('--moe-top-k', type=int, default=2,
                     help='top_k experts in hard gate of moe')
 args = parser.parse_args()
@@ -287,11 +291,25 @@ else:
         ext_len=args.ext_len, mem_len=args.mem_len, cutoffs=cutoffs,
         same_length=args.same_length, attn_type=args.attn_type,
         clamp_len=args.clamp_len, sample_softmax=args.sample_softmax,
-        moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k)
+        moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k, gate_name=args.gate_name)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
+
+
+import pdb
+
+for name, p in model.named_parameters():
+    print(name, p.shape)
+
+pdb.set_trace()
+
+
+
+
+
+
 
 if args.fp16:
     model = model.half()
