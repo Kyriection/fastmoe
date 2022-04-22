@@ -307,7 +307,6 @@ if args.freeze_gate:
             p.requires_grad = False
             print('freeze: ', name, p.shape)
 
-
 if args.fp16:
     model = model.half()
 
@@ -444,7 +443,6 @@ def evaluate(eval_iter):
 
     return total_loss / total_len
 
-import pdb
 def train():
     # Turn on training mode which enables dropout.
     global train_step, train_loss, best_val_loss, eval_start_time, log_start_time
@@ -455,7 +453,6 @@ def train():
         mems = tuple()
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
-        print(batch)
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
@@ -478,9 +475,7 @@ def train():
             if args.fp16:
                 optimizer.backward(loss)
             else:
-                print('a')
                 loss.backward()
-            print('b')
             train_loss += loss.float().item()
 
         if args.fp16:
@@ -565,6 +560,16 @@ best_val_loss = None
 log_start_time = time.time()
 eval_start_time = time.time()
 
+
+test_loss = evaluate(te_iter)
+print(test_loss)
+for name, m in model.named_modules():
+    if isinstance(m, BaseGate):
+        m.dense_moe_flag = True 
+        print(name, m.dense_moe_flag)
+test_loss_average = evaluate(te_iter)
+print(test_loss_average)
+
 # At any point you can hit Ctrl + C to break out of training early.
 try:
     for epoch in itertools.count(start=1):
@@ -584,10 +589,18 @@ para_model = model.to(device)
 
 # Run on test data.
 test_loss = evaluate(te_iter)
+for name, m in model.named_modules():
+    if isinstance(m, BaseGate):
+        m.dense_moe_flag = True 
+        print(name, m.dense_moe_flag)
+test_loss_average = evaluate(te_iter)
+
 logging('=' * 100)
 if args.dataset in ['enwik8', 'text8']:
     logging('| End of training | test loss {:5.2f} | test bpc {:9.5f}'.format(
         test_loss, test_loss / math.log(2)))
+    logging('| End of training | test-mean loss {:5.2f} | test-mean bpc {:9.5f}'.format(
+        test_loss_average, test_loss_average / math.log(2)))
 else:
     logging('| End of training | test loss {:5.2f} | test ppl {:9.3f}'.format(
         test_loss, math.exp(test_loss)))

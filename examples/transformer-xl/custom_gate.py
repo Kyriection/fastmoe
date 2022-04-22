@@ -30,6 +30,7 @@ class CustomRandomGate(BaseGate):
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.tot_expert, dim=-1, largest=True, sorted=False
             )
+            print(gate_top_k_val.shape)
             gate_top_k_val = gate_top_k_val.view(-1, self.tot_expert)
         else:
             gate_top_k_val, gate_top_k_idx = torch.topk(
@@ -65,6 +66,7 @@ class CustomNaiveGate(BaseGate):
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.tot_expert, dim=-1, largest=True, sorted=False
             )
+            print(gate_top_k_val.shape)
             gate_top_k_val = gate_top_k_val.view(-1, self.tot_expert)
         else:
             gate_top_k_val, gate_top_k_idx = torch.topk(
@@ -103,6 +105,7 @@ class CustomDropGate(BaseGate):
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.tot_expert, dim=-1, largest=True, sorted=False
             )
+            print(gate_top_k_val.shape)
             gate_top_k_val = gate_top_k_val.view(-1, self.tot_expert)
         else:
             gate_top_k_val, gate_top_k_idx = torch.topk(
