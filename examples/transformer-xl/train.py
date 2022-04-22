@@ -412,6 +412,12 @@ logging('#non emb params = {}'.format(args.n_nonemb_param))
 # Training code
 ###############################################################################
 
+def set_gate(model, flag=True):
+    for name, m in model.named_modules():
+        if isinstance(m, BaseGate):
+            m.dense_moe_flag = flag 
+            print(name, m.dense_moe_flag)
+
 def evaluate(eval_iter):
     # Turn on evaluation mode which disables dropout.
     model.eval()
@@ -562,12 +568,7 @@ log_start_time = time.time()
 eval_start_time = time.time()
 
 
-test_loss = evaluate(te_iter)
-print(test_loss)
-for name, m in model.named_modules():
-    if isinstance(m, BaseGate):
-        m.dense_moe_flag = True 
-        print(name, m.dense_moe_flag)
+set_gate(model, True)
 test_loss_average = evaluate(te_iter)
 print(test_loss_average)
 
@@ -589,12 +590,11 @@ with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
 para_model = model.to(device)
 
 # Run on test data.
+set_gate(model, False)
 test_loss = evaluate(te_iter)
-for name, m in model.named_modules():
-    if isinstance(m, BaseGate):
-        m.dense_moe_flag = True 
-        print(name, m.dense_moe_flag)
+set_gate(model, True)
 test_loss_average = evaluate(te_iter)
+set_gate(model, False)
 
 logging('=' * 100)
 if args.dataset in ['enwik8', 'text8']:
