@@ -420,14 +420,16 @@ def set_gate(model, flag=True):
     if flag:
         for name, m in model.named_modules():
             if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-                all_gate_num = m.gate.tot_expert
-                m.top_k = all_gate_num
-                print(name, m.top_k)
+                if isinstance(m.gate, BaseGate):
+                    all_gate_num = m.gate.tot_expert
+                    m.top_k = all_gate_num
+                    print(name, m.top_k)
     else:
         for name, m in model.named_modules():
             if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-                m.top_k = args.moe_top_k
-                print(name, m.top_k)
+                if isinstance(m.gate, BaseGate):
+                    m.top_k = args.moe_top_k
+                    print(name, m.top_k)
 
 def evaluate(eval_iter):
     # Turn on evaluation mode which disables dropout.
