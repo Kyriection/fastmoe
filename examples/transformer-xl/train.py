@@ -524,7 +524,7 @@ def train():
         elif args.scheduler == 'inv_sqrt':
             scheduler.step(train_step)
 
-        if train_step % args.log_interval == 0:
+        if train_step % args.log_interval == 1:
             cur_loss = train_loss / args.log_interval
             elapsed = time.time() - log_start_time
             log_str = '| epoch {:3d} step {:>8d} | {:>6d} batches | lr {:.3g} ' \
@@ -581,11 +581,6 @@ best_val_loss = None
 
 log_start_time = time.time()
 eval_start_time = time.time()
-
-set_gate(model, True)
-test_loss_average = evaluate(te_iter)
-print(test_loss_average)
-set_gate(model, False)
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:

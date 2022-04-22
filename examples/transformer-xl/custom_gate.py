@@ -26,7 +26,6 @@ class CustomRandomGate(BaseGate):
         gate = torch.rand_like(gate)
 
         if self.dense_moe_flag:
-            print('eval')
             gate = torch.ones_like(gate)
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.tot_expert, dim=-1, largest=True, sorted=False
@@ -62,7 +61,6 @@ class CustomNaiveGate(BaseGate):
         gate = self.gate(inp)
 
         if self.dense_moe_flag:
-            print('eval')
             gate = torch.ones_like(gate)
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.tot_expert, dim=-1, largest=True, sorted=False
@@ -101,7 +99,6 @@ class CustomDropGate(BaseGate):
             gate = self.dropout(gate)
 
         if self.dense_moe_flag:
-            print('eval')
             gate = torch.ones_like(gate)
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.tot_expert, dim=-1, largest=True, sorted=False
