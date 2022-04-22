@@ -15,6 +15,7 @@ from data_utils import get_lm_corpus
 from mem_transformer import MemTransformerLM
 from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
+from fmoe.gates.base_gate import BaseGate
 
 import warnings 
 warnings.filterwarnings(action= 'ignore')
