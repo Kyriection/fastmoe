@@ -100,7 +100,7 @@ parser.add_argument('--varlen', action='store_true',
                     help='use variable length')
 parser.add_argument('--multi_gpu', action='store_true',
                     help='use multiple GPU')
-parser.add_argument('--log-interval', type=int, default=200,
+parser.add_argument('--log-interval', type=int, default=10,
                     help='report interval')
 parser.add_argument('--eval-interval', type=int, default=4000,
                     help='evaluation interval')
@@ -352,8 +352,6 @@ elif args.optim.lower() == 'adam':
         optimizer = optim.Adam(filter(lambda p:p.requires_grad, model.parameters()), lr=args.lr)
 elif args.optim.lower() == 'adagrad':
     optimizer = optim.Adagrad(filter(lambda p:p.requires_grad, model.parameters()), lr=args.lr)
-
-import pdb; pdb.set_trace()
 
 #### scheduler
 if args.scheduler == 'cosine':
