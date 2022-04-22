@@ -25,6 +25,7 @@ if [[ $1 == 'train' ]]; then
         --gpu0_bsz 4 \
         --moe --moe-num-expert 64 --moe-top-k 2 \
         --gate_name CustomNaiveGate --freeze_gate \
+        --fp16 \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
