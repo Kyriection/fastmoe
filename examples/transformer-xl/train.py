@@ -540,7 +540,9 @@ def train():
             log_start_time = time.time()
 
         if train_step % args.eval_interval == 0:
+            set_gate(model, True)
             val_loss = evaluate(va_iter)
+            set_gate(model, False)
             logging('-' * 100)
             log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
                       '| valid loss {:5.2f}'.format(
