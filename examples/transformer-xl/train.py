@@ -455,7 +455,7 @@ def train():
         mems = tuple()
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
-        print(batch, len(train_iter))
+        print(batch)
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
