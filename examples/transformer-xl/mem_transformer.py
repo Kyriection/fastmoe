@@ -143,7 +143,7 @@ class MultiHeadAttn(nn.Module):
 class RelMultiHeadAttn(nn.Module):
     def __init__(self, n_head, d_model, d_head, dropout, dropatt=0,
                  tgt_len=None, ext_len=None, mem_len=None, pre_lnorm=False,
-                 moe=False, moe_num_expert=64, moe_top_k=2):
+                 moe=False, moe_num_expert=64, moe_top_k=2, gate_name=None):
         super(RelMultiHeadAttn, self).__init__()
 
         self.n_head = n_head
