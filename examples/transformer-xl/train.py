@@ -417,6 +417,17 @@ def set_gate(model, flag=True):
         if isinstance(m, BaseGate):
             m.dense_moe_flag = flag 
             print(name, m.dense_moe_flag)
+    if flag:
+        for name, m in model.named_modules():
+            if hasattr(m, 'top_k') and hasattr(m, 'gate'):
+                all_gate_num = m.gate.tot_expert
+                m.top_k = all_gate_num
+                print(name, m.top_k)
+    else:
+        for name, m in model.named_modules():
+            if hasattr(m, 'top_k') and hasattr(m, 'gate'):
+                m.top_k = args.moe_top_k
+                print(name, m.top_k)
 
 def evaluate(eval_iter):
     # Turn on evaluation mode which disables dropout.
@@ -567,17 +578,10 @@ best_val_loss = None
 log_start_time = time.time()
 eval_start_time = time.time()
 
-
-for name, m in model.named_modules():
-    if hasattr(m, 'top_k'):
-        print(name, m.top_k)
-
-
-
-
 set_gate(model, True)
 test_loss_average = evaluate(te_iter)
 print(test_loss_average)
+set_gate(model, False)
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:
