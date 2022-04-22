@@ -467,20 +467,20 @@ def train():
                 ret = para_model(data_i, target_i, *mems[i])
                 loss, mems[i] = ret[0], ret[1:]
                 loss = loss.float().mean().type_as(loss) / args.batch_chunk
-                train_loss += loss.float().item()
                 if args.fp16:
                     optimizer.backward(loss)
                 else:
                     loss.backward()
+                train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
-            train_loss += loss.float().item()
             if args.fp16:
                 optimizer.backward(loss)
             else:
                 loss.backward()
+            train_loss += loss.float().item()
 
         if args.fp16:
             optimizer.clip_master_grads(args.clip)
