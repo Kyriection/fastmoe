@@ -456,7 +456,6 @@ def train():
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
         print(batch)
-        pdb.set_trace()
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
@@ -479,7 +478,9 @@ def train():
             if args.fp16:
                 optimizer.backward(loss)
             else:
+                print('a')
                 loss.backward()
+            print('b')
             train_loss += loss.float().item()
 
         if args.fp16:
