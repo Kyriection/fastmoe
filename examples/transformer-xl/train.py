@@ -444,7 +444,7 @@ def evaluate(eval_iter):
 
     return total_loss / total_len
 
-
+import pdb
 def train():
     # Turn on training mode which enables dropout.
     global train_step, train_loss, best_val_loss, eval_start_time, log_start_time
@@ -456,6 +456,7 @@ def train():
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
         print(batch)
+        pdb.set_trace()
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
@@ -473,7 +474,6 @@ def train():
                 train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
-            print('a')
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
             if args.fp16:
