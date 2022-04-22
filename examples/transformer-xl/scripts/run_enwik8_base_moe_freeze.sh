@@ -6,7 +6,7 @@ if [[ $1 == 'train' ]]; then
         --cuda \
         --data ../data/enwik8/ \
         --dataset enwik8 \
-        --n_layer 12 \
+        --n_layer 4 \
         --d_model 512 \
         --n_head 8 \
         --d_head 64 \
@@ -23,9 +23,8 @@ if [[ $1 == 'train' ]]; then
         --batch_size 22 \
         --multi_gpu \
         --gpu0_bsz 4 \
-        --moe --moe-num-expert 64 --moe-top-k 2 \
+        --moe --moe-num-expert 16 --moe-top-k 2 \
         --gate_name CustomNaiveGate --freeze_gate \
-        --fp16 \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
