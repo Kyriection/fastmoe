@@ -16,6 +16,9 @@ from mem_transformer import MemTransformerLM
 from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
 
+import warnings 
+warnings.filterwarnings(action= 'ignore')
+
 parser = argparse.ArgumentParser(description='PyTorch Transformer Language Model')
 parser.add_argument('--data', type=str, default='../data/wikitext-103',
                     help='location of the data corpus')
@@ -100,7 +103,7 @@ parser.add_argument('--varlen', action='store_true',
                     help='use variable length')
 parser.add_argument('--multi_gpu', action='store_true',
                     help='use multiple GPU')
-parser.add_argument('--log-interval', type=int, default=10,
+parser.add_argument('--log-interval', type=int, default=200,
                     help='report interval')
 parser.add_argument('--eval-interval', type=int, default=4000,
                     help='evaluation interval')
@@ -452,6 +455,7 @@ def train():
         mems = tuple()
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
+        print(batch, len(train_iter))
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
