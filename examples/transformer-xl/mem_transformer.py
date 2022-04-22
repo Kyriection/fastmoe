@@ -424,7 +424,7 @@ class DecoderLayer(nn.Module):
                                         pre_lnorm=kwargs.get('pre_lnorm'), 
                                         moe_num_expert=kwargs.get('moe_num_expert'),
                                         moe_top_k=kwargs.get('moe_top_k'),
-                                        gate_name=kwargs.get('gate_name'))
+                                        gate_name=eval(kwargs.get('gate_name')))
 
     def forward(self, dec_inp, dec_attn_mask=None, mems=None):
 
@@ -450,7 +450,7 @@ class RelLearnableDecoderLayer(nn.Module):
                                         pre_lnorm=kwargs.get('pre_lnorm'),
                                         moe_num_expert=kwargs.get('moe_num_expert'),
                                         moe_top_k=kwargs.get('moe_top_k'),
-                                        gate_name=kwargs.get('gate_name'))
+                                        gate_name=eval(kwargs.get('gate_name')))
 
     def forward(self, dec_inp, r_emb, r_w_bias, r_bias, dec_attn_mask=None, mems=None):
 
@@ -477,7 +477,7 @@ class RelPartialLearnableDecoderLayer(nn.Module):
                                         pre_lnorm=kwargs.get('pre_lnorm'),
                                         moe_num_expert=kwargs.get('moe_num_expert'),
                                         moe_top_k=kwargs.get('moe_top_k'),
-                                        gate_name=kwargs.get('gate_name'))
+                                        gate_name=eval(kwargs.get('gate_name')))
 
     def forward(self, dec_inp, r, r_w_bias, r_r_bias, dec_attn_mask=None, mems=None):
 
