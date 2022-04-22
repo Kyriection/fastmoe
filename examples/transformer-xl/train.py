@@ -298,17 +298,11 @@ args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
 
-import pdb
-
-for name, p in model.named_parameters():
-    print(name, p.shape)
-
-pdb.set_trace()
-
-
-
-
-
+if args.freeze_gate:
+    for name, p in model.named_parameters():
+        if 'gate.gate' in name:
+            p.requires_grad = False
+            print('freeze: ', name, p.shape)
 
 
 if args.fp16:
@@ -329,6 +323,9 @@ if args.optim.lower() == 'sgd':
     if args.sample_softmax > 0:
         dense_params, sparse_params = [], []
         for param in model.parameters():
+            if not param.requires_grad:
+                print(param.shape)
+                continue
             if param.size() == model.word_emb.weight.size():
                 sparse_params.append(param)
             else:
@@ -336,12 +333,15 @@ if args.optim.lower() == 'sgd':
         optimizer_sparse = optim.SGD(sparse_params, lr=args.lr * 2)
         optimizer = optim.SGD(dense_params, lr=args.lr, momentum=args.mom)
     else:
-        optimizer = optim.SGD(model.parameters(), lr=args.lr,
+        optimizer = optim.SGD(filter(lambda p:p.requires_grad, model.parameters()), lr=args.lr,
             momentum=args.mom)
 elif args.optim.lower() == 'adam':
     if args.sample_softmax > 0:
         dense_params, sparse_params = [], []
         for param in model.parameters():
+            if not param.requires_grad:
+                print(param.shape)
+                continue
             if param.size() == model.word_emb.weight.size():
                 sparse_params.append(param)
             else:
@@ -349,9 +349,11 @@ elif args.optim.lower() == 'adam':
         optimizer_sparse = optim.SparseAdam(sparse_params, lr=args.lr)
         optimizer = optim.Adam(dense_params, lr=args.lr)
     else:
-        optimizer = optim.Adam(model.parameters(), lr=args.lr)
+        optimizer = optim.Adam(filter(lambda p:p.requires_grad, model.parameters()), lr=args.lr)
 elif args.optim.lower() == 'adagrad':
-    optimizer = optim.Adagrad(model.parameters(), lr=args.lr)
+    optimizer = optim.Adagrad(filter(lambda p:p.requires_grad, model.parameters()), lr=args.lr)
+
+import pdb; pdb.set_trace()
 
 #### scheduler
 if args.scheduler == 'cosine':
