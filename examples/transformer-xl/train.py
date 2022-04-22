@@ -569,7 +569,7 @@ eval_start_time = time.time()
 
 
 for name, m in model.named_modules():
-    if hasattr(m, top_k):
+    if hasattr(m, 'top_k'):
         print(name, m.top_k)
 
 
