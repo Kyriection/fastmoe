@@ -13,7 +13,7 @@
 
 
 
-CUDA_VISIBLE_DEVICES=$1 bash scripts/run_enwik8_base_randassignmoe_new.sh train --work_dir randassignmoe_new
+CUDA_VISIBLE_DEVICES=$1 nohup bash scripts/run_enwik8_base_randassignmoe_new.sh train --work_dir randassignmoe_new > log_randassignmoe_new.out 2>&1 &
 
 
 
