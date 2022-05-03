@@ -442,7 +442,7 @@ def set_top_gate(model, gate_number = args.moe_top_k):
                 print(name, m.top_k, m.gate.top_k)
 
 def calculate_train_step(overall, current):
-    gate_number_list = [2,4,8,16,32]
+    gate_number_list = [3,4,8,16,32]
     gate_index = int(len(gate_number_list)*current/overall) 
     return gate_number_list[gate_index]
 
