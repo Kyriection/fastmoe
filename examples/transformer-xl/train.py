@@ -432,21 +432,19 @@ def set_gate(model, flag=True):
                     print(name, m.top_k)
 
 
-def set_top_gate(model, gate_number = args.moe_top_k):
-    
+def set_top_gate(model):
     for name, m in model.named_modules():
         if hasattr(m, 'top_k') and hasattr(m, 'gate'):
             if isinstance(m.gate, BaseGate):
-                m.top_k = gate_number
-                m.gate.top_k = gate_number
+                m.top_k = args.moe_top_k
+                m.gate.top_k = args.moe_top_k
                 print(name, m.top_k, m.gate.top_k)
 
 def calculate_train_step(overall, current):
     gate_number_list = [3,4,8,16,32]
     gate_index = int(len(gate_number_list)*current/overall) 
+    args.moe_top_k = gate_number_list[gate_index]
     return gate_number_list[gate_index]
-
-
 
 
 def evaluate(eval_iter):
@@ -488,7 +486,8 @@ def train():
 
     top_gate_num = calculate_train_step(args.max_step, train_step)
     if top_gate_num != current_gate:
-        set_top_gate(model, top_gate_num)
+        print('Using new Gate')
+        set_top_gate(model)
         current_gate = top_gate_num
 
     if args.batch_chunk > 1:
