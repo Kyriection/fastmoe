@@ -431,6 +431,24 @@ def set_gate(model, flag=True):
                     m.top_k = args.moe_top_k
                     print(name, m.top_k)
 
+
+def set_top_gate(model, gate_number = args.moe_top_k):
+    
+    for name, m in model.named_modules():
+        if hasattr(m, 'top_k') and hasattr(m, 'gate'):
+            if isinstance(m.gate, BaseGate):
+                m.top_k = gate_number
+                m.gate.top_k = gate_number
+                print(name, m.top_k, m.gate.top_k)
+
+def calculate_train_step(overall, current):
+    gate_number_list = [2,4,8,16,32]
+    gate_index = int(len(gate_number_list)*current/overall) 
+    return gate_number_list[gate_index]
+
+
+
+
 def evaluate(eval_iter):
     # Turn on evaluation mode which disables dropout.
     model.eval()
@@ -465,8 +483,14 @@ def evaluate(eval_iter):
 
 def train():
     # Turn on training mode which enables dropout.
-    global train_step, train_loss, best_val_loss, eval_start_time, log_start_time
+    global train_step, train_loss, best_val_loss, eval_start_time, log_start_time, current_gate
     model.train()
+
+    top_gate_num = calculate_train_step(args.max_step, train_step)
+    if top_gate_num != current_gate:
+        set_top_gate(model, top_gate_num)
+        current_gate = top_gate_num
+
     if args.batch_chunk > 1:
         mems = [tuple() for _ in range(args.batch_chunk)]
     else:
@@ -578,7 +602,7 @@ def train():
 train_step = 0
 train_loss = 0
 best_val_loss = None
-
+current_gate = args.moe_top_k
 log_start_time = time.time()
 eval_start_time = time.time()
 

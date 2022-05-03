@@ -5,15 +5,15 @@
 
 
 
-CUDA_VISIBLE_DEVICES=2 nohup bash scripts/run_enwik8_baseline.sh train --work_dir baseline > log_baseline.out 2>&1 &
-CUDA_VISIBLE_DEVICES=3 nohup bash scripts/run_enwik8_basic.sh train --work_dir basic > log_basic.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=2 nohup bash scripts/run_enwik8_baseline.sh train --work_dir baseline > log_baseline.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/run_enwik8_basic.sh train --work_dir basic > log_basic.out 2>&1 &
 
 
 
 
 
 
-
+CUDA_VISIBLE_DEVICES=$1 bash scripts/run_enwik8_base_randassignmoe_new.sh train --work_dir randassignmoe_new
 
 
 
