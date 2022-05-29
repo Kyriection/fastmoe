@@ -20,6 +20,7 @@ if [[ $1 == 'train' ]]; then
         --mem_len 512 \
         --eval_tgt_len 128 \
         --batch_size 24 \
+        --multi_gpu \
         --moe --moe-num-expert 64 --moe-top-k 2 \
         --gate_name CustomRandomGate \
         ${@:2}
