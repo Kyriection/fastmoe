@@ -484,11 +484,11 @@ def train():
     global train_step, train_loss, best_val_loss, eval_start_time, log_start_time, current_gate
     model.train()
 
-    top_gate_num = calculate_train_step(args.max_step, train_step)
-    if top_gate_num != current_gate:
-        print('Using new Gate')
-        set_top_gate(model)
-        current_gate = top_gate_num
+    # top_gate_num = calculate_train_step(args.max_step, train_step)
+    # if top_gate_num != current_gate:
+    #     print('Using new Gate')
+    #     set_top_gate(model)
+    #     current_gate = top_gate_num
 
     if args.batch_chunk > 1:
         mems = [tuple() for _ in range(args.batch_chunk)]
