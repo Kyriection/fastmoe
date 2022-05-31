@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $1 == 'train' ]]; then
     echo 'Run training...'
-    python train.py \
+    python -u train.py \
         --cuda \
         --data ../data/enwik8/ \
         --dataset enwik8 \
@@ -27,7 +27,7 @@ if [[ $1 == 'train' ]]; then
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
-    python eval.py \
+    python -u eval.py \
         --cuda \
         --data ../data/enwik8/ \
         --dataset enwik8 \
