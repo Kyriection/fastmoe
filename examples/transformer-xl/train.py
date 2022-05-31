@@ -104,7 +104,7 @@ parser.add_argument('--varlen', action='store_true',
                     help='use variable length')
 parser.add_argument('--multi_gpu', action='store_true',
                     help='use multiple GPU')
-parser.add_argument('--log-interval', type=int, default=200,
+parser.add_argument('--log-interval', type=int, default=2,
                     help='report interval')
 parser.add_argument('--eval-interval', type=int, default=4000,
                     help='evaluation interval')
@@ -317,7 +317,6 @@ if args.multi_gpu:
         para_model = BalancedDataParallel(args.gpu0_bsz // args.batch_chunk,
                                           model, dim=1).to(device)
     else:
-        print('a')
         para_model = nn.DataParallel(model, dim=1).to(device)
 else:
     para_model = model.to(device)
