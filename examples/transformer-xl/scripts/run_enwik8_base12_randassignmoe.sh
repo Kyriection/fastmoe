@@ -22,7 +22,7 @@ if [[ $1 == 'train' ]]; then
         --batch_size 22 \
         --multi_gpu \
         --gpu0_bsz 4 \
-        --moe --moe-num-expert 64 --moe-top-k 2 \
+        --moe --moe-num-expert 16 --moe-top-k 2 \
         --gate_name CustomRandomGate \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
