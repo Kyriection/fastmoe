@@ -5,4 +5,6 @@ python tools/preprocess_data.py \
     --dataset-impl mmap \
     --tokenizer-type GPT2BPETokenizer \
     --merge-file gpt2-merges.txt \
-    --append-eod
+    --append-eod \
+    --workers 8 \
+    --chunk-size 8
