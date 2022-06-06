@@ -42,6 +42,7 @@ def parse_args(extra_args_provider=None, defaults={},
     parser = _add_vision_args(parser)
     parser = _add_logging_args(parser)
     parser = _add_inference_args(parser)
+    parser = _add_fmoe_args(parser)
 
     # Custom arguments.
     if extra_args_provider is not None:
@@ -976,5 +977,18 @@ def _add_vision_args(parser):
                        help='teacher temperature')
     group.add_argument('--dino-warmup-teacher-temp-epochs', type=int, default=30,
                        help='warmup teacher temperaure epochs')
+
+    return parser
+
+
+def _add_fmoe_args(parser):
+    group = parser.add_argument_group(title="fastmoe")
+
+    group.add_argument("--fmoefy", action="store_true")
+    group.add_argument("--num-experts-moe", type=int, default=None)
+    group.add_argument("--top-k", type=int, default=2)
+    group.add_argument("--balance-loss-weight", type=float, default=1)
+    group.add_argument("--balance-strategy", type=str, default=None)
+    group.add_argument("--hidden-hidden-size", type=int, default=None)
 
     return parser

@@ -15,6 +15,7 @@
 
 """Pretrain GPT"""
 
+import os 
 import torch
 from functools import partial
 from megatron import get_args
@@ -27,6 +28,7 @@ from megatron.model import GPTModel, ModelType
 from megatron.training import pretrain
 from megatron.utils import get_ltor_masks_and_position_ids
 from megatron.utils import average_losses_across_data_parallel_group
+
 
 def model_provider(pre_process=True, post_process=True):
     """Build the model."""
@@ -121,6 +123,8 @@ def train_valid_test_datasets_provider(train_val_test_num_samples):
 
 if __name__ == "__main__":
 
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '5678'
     pretrain(train_valid_test_datasets_provider, model_provider,
              ModelType.encoder_or_decoder,
              forward_step, args_defaults={'tokenizer_type': 'GPT2BPETokenizer'})

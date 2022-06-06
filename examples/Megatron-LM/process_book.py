@@ -1,12 +1,35 @@
 import json 
 import sys 
+import jsonlines
 
+json_data = []
 f = open(sys.argv[1], 'r', encoding='utf-8')
+alllines = f.readlines()
 
-data = json.load(f)
+for line in alllines:
+    if len(line) == 1: continue
+    if line[-1] == '\n':
+        json_data.append({'text': line[:-1]})
+
+with jsonlines.open('bookcorpus.json', 'w') as writer:
+    writer.write_all(json_data)
 
 
-print(data)
+
+# print(alllines[0]=='\n')
+# print(len(alllines[6]))
+
+
+
+# print(alllines[0:10])
+
+# data = json.load(f)
+
+
+# with open()
+
+
+# print(data)
 
 
 # import os

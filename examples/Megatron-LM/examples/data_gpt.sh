@@ -1,5 +1,5 @@
 python tools/preprocess_data.py \
-    --input my-corpus.json \
+    --input bookcorpus.json \
     --output-prefix my-gpt2 \
     --vocab gpt2-vocab.json \
     --dataset-impl mmap \

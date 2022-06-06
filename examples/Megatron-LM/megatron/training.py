@@ -36,8 +36,13 @@ from megatron import update_num_microbatches
 from megatron import mpu
 from megatron import print_rank_0
 from megatron import print_rank_last
-from megatron.checkpointing import load_checkpoint
-from megatron.checkpointing import save_checkpoint
+
+# from megatron.checkpointing import load_checkpoint
+from fmoe.megatron.checkpoint import load_checkpoint
+
+# from megatron.checkpointing import save_checkpoint
+from fmoe.megatron.checkpoint import save_checkpoint
+
 from megatron.model import Float16Module
 from megatron.model import ModelType
 from megatron.optimizer import get_megatron_optimizer
@@ -45,7 +50,10 @@ from megatron.initialize import initialize_megatron
 from megatron.initialize import write_args_to_tensorboard
 from megatron.initialize import set_jit_fusion_options
 from megatron.optimizer_param_scheduler import OptimizerParamScheduler
-from megatron.model import DistributedDataParallel as LocalDDP
+
+# from megatron.model import DistributedDataParallel as LocalDDP
+from fmoe.megatron import DistributedDataParallel as LocalDDP
+
 from megatron.utils import check_adlr_autoresume_termination
 from megatron.utils import unwrap_model
 from megatron.data.data_samplers import build_pretraining_data_loader
@@ -53,6 +61,11 @@ from megatron.utils import calc_params_l2_norm
 from megatron.schedules import get_forward_backward_func
 from megatron.utils import report_memory
 from megatron.model.vision.knn_monitor import compute_feature_bank
+
+
+from fmoe.megatron import fmoefy
+from fmoe.megatron import add_balance_log
+
 
 
 def print_datetime(string):
@@ -119,6 +132,12 @@ def pretrain(train_valid_test_dataset_provider,
     args = get_args()
     timers = get_timers()
 
+    # Initialize FastMoE
+    if args.fmoefy:
+        from fmoe.megatron import patch_forward_step, patch_model_provider
+        forward_step_func = patch_forward_step(forward_step_func)
+        model_provider = patch_model_provider(model_provider)
+
     # Model, optimizer, and learning rate.
     timers('model-and-optimizer-setup').start()
     model, optimizer, opt_param_scheduler = setup_model_and_optimizer(model_provider,
@@ -174,6 +193,7 @@ def pretrain(train_valid_test_dataset_provider,
                                    test_data_iterator, model,
                                    0, process_non_loss_data_func,
                                    True)
+
 
 def update_train_iters(args):
 
@@ -258,6 +278,11 @@ def get_model(model_provider_func, model_type=ModelType.encoder_or_decoder, wrap
 
     if not isinstance(model, list):
         model = [model]
+
+    # if args.fmoefy:
+    #     print('Using MoE Model')
+    #     print(model[0])
+    #     model = [fmoefy(model_module, num_experts=args.num_experts_moe) for model_module in model]
 
     # Set tensor model parallel attributes if not set.
     # Only parameters that are already tensor model parallel have these
@@ -408,9 +433,9 @@ def train_step(forward_step_func, data_iterator,
     timers = get_timers()
 
     # Set grad to zero.
-    if args.DDP_impl == 'local' and args.use_contiguous_buffers_in_local_ddp:
-        for partition in model:
-            partition.zero_grad_buffer()
+    # if args.DDP_impl == 'local' and args.use_contiguous_buffers_in_local_ddp:
+    #     for partition in model:
+    #         partition.zero_grad_buffer()
     optimizer.zero_grad()
 
     forward_backward_func = get_forward_backward_func()
@@ -441,12 +466,12 @@ def train_step(forward_step_func, data_iterator,
                 coalesced, grads)):
             buf.copy_(synced)
 
-    # All-reduce if needed.
-    if args.DDP_impl == 'local':
-        timers('backward-params-all-reduce').start()
-        for model_module in model:
-            model_module.allreduce_gradients()
-        timers('backward-params-all-reduce').stop()
+    # # All-reduce if needed.
+    # if args.DDP_impl == 'local':
+    #     timers('backward-params-all-reduce').start()
+    #     for model_module in model:
+    #         model_module.allreduce_gradients()
+    #     timers('backward-params-all-reduce').stop()
 
     # All-reduce word_embeddings' grad across first and last stages to ensure
     # that word_embeddings parameters stay in sync.
@@ -529,7 +554,7 @@ def train_step(forward_step_func, data_iterator,
 
 
 def training_log(loss_dict, total_loss_dict, learning_rate, iteration,
-                 loss_scale, report_memory_flag, skipped_iter,
+                 loss_scale, report_memory_flag, skipped_iter, model,
                  grad_norm, params_norm, num_zeros_in_grad):
     """Log training information such as losses, timing, ...."""
     args = get_args()
@@ -634,6 +659,7 @@ def training_log(loss_dict, total_loss_dict, learning_rate, iteration,
         if args.log_timers_to_tensorboard:
             timers.write(timers_to_log, writer, iteration,
                          normalizer=total_iterations)
+
         if args.log_memory_to_tensorboard:
             mem_stats = torch.cuda.memory_stats()
             writer.add_scalar(
@@ -651,6 +677,9 @@ def training_log(loss_dict, total_loss_dict, learning_rate, iteration,
                 mem_stats["allocation.all.current"],
                 iteration,
             )
+    
+    if args.fmoefy and args.balance_strategy and args.balance_strategy != 'naive':
+        add_balance_log(model, writer, iteration)        
 
     if iteration % args.log_interval == 0:
         elapsed_time = timers('interval-time').elapsed()
@@ -756,7 +785,7 @@ def train(forward_step_func, model, optimizer, opt_param_scheduler,
         report_memory_flag = training_log(loss_dict, total_loss_dict,
                                           optimizer.param_groups[0]['lr'],
                                           iteration, loss_scale,
-                                          report_memory_flag, skipped_iter,
+                                          report_memory_flag, skipped_iter, model,
                                           grad_norm, params_norm, num_zeros_in_grad)
 
         # Autoresume
@@ -877,6 +906,7 @@ def evaluate(forward_step_func,
 
     return total_loss_dict, collected_non_loss_data
 
+
 def evaluate_and_print_results(prefix, forward_step_func,
                                data_iterator, model,
                                iteration, process_non_loss_data_func,
@@ -919,6 +949,7 @@ def cyclic_iter(iter):
     while True:
         for x in iter:
             yield x
+
 
 def build_train_valid_test_data_iterators(
         build_train_valid_test_datasets_provider):
