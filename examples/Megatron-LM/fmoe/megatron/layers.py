@@ -83,23 +83,32 @@ class MegatronMLP(FMoETransformerMLP):
             from megatron.mpu import get_data_parallel_group
             moe_group = get_data_parallel_group()
 
-        if not args.balance_strategy or args.balance_strategy == "naive":
-            from fmoe.gates import NaiveGate
-            gate = NaiveGate
-        elif args.balance_strategy == "noisy":
-            from fmoe.gates import NoisyGate
-            gate = NoisyGate
-        elif args.balance_strategy == "gshard":
-            from fmoe.gates import GShardGate
-            gate = GShardGate
-        elif args.balance_strategy == "switch":
-            from fmoe.gates import SwitchGate
-            gate = SwitchGate
-        elif args.balance_strategy == "swipe":
-            from fmoe.gates import SwipeGate
-            gate = SwipeGate
-        elif gate is None:
-            assert False, "Undefined balance strategy {}" % (args.balance_strategy)
+        if args.gate_type == "custom_naive":
+            print('Using Custom Naive Gate')
+            from fmoe.gates import CustomNaiveGate
+            gate = CustomNaiveGate
+        elif args.gate_type == "custom_random":
+            print('Using random assign Gate')
+            from fmoe.gates import CustomRandomGate
+            gate = CustomRandomGate
+        else:
+            if not args.balance_strategy or args.balance_strategy == "naive":
+                from fmoe.gates import NaiveGate
+                gate = NaiveGate
+            elif args.balance_strategy == "noisy":
+                from fmoe.gates import NoisyGate
+                gate = NoisyGate
+            elif args.balance_strategy == "gshard":
+                from fmoe.gates import GShardGate
+                gate = GShardGate
+            elif args.balance_strategy == "switch":
+                from fmoe.gates import SwitchGate
+                gate = SwitchGate
+            elif args.balance_strategy == "swipe":
+                from fmoe.gates import SwipeGate
+                gate = SwipeGate
+            elif gate is None:
+                assert False, "Undefined balance strategy {}" % (args.balance_strategy)
 
         super().__init__(
             args.num_experts,

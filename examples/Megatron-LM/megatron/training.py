@@ -797,11 +797,16 @@ def train(forward_step_func, model, optimizer, opt_param_scheduler,
         # Evaluation
         if args.eval_interval and iteration % args.eval_interval == 0 and \
            args.do_valid:
-            prefix = 'iteration {}'.format(iteration)
+            prefix = 'iteration {}, True'.format(iteration)
             evaluate_and_print_results(prefix, forward_step_func,
                                        valid_data_iterator, model,
                                        iteration, process_non_loss_data_func,
-                                       False)
+                                       False, flag=True)
+            prefix = 'iteration {}, False'.format(iteration)
+            evaluate_and_print_results(prefix, forward_step_func,
+                                       valid_data_iterator, model,
+                                       iteration, process_non_loss_data_func,
+                                       False, flag=False)
 
         # Checkpointing
         saved_checkpoint = False
@@ -846,12 +851,34 @@ def train(forward_step_func, model, optimizer, opt_param_scheduler,
 
     return iteration
 
+from fmoe.gates.base_gate import BaseGate
+
+def set_gate(model, flag=True):
+    args = get_args()
+    for name, m in model.named_modules():
+        if isinstance(m, BaseGate):
+            m.dense_moe_flag = flag 
+            print(name, m.dense_moe_flag)
+    if flag:
+        for name, m in model.named_modules():
+            if hasattr(m, 'top_k') and hasattr(m, 'gate'):
+                if isinstance(m.gate, BaseGate):
+                    all_gate_num = m.gate.tot_expert
+                    m.top_k = all_gate_num
+                    print(name, m.top_k)
+    else:
+        for name, m in model.named_modules():
+            if hasattr(m, 'top_k') and hasattr(m, 'gate'):
+                if isinstance(m.gate, BaseGate):
+                    m.top_k = args.top_k
+                    print(name, m.top_k)
+
 
 def evaluate(forward_step_func,
              data_iterator,
              model,
              process_non_loss_data_func,
-             verbose=False):
+             verbose=False, flag=True):
     """Evaluation."""
     args = get_args()
 
@@ -861,6 +888,7 @@ def evaluate(forward_step_func,
     # Turn on evaluation mode which disables dropout.
     for model_module in model:
         model_module.eval()
+        set_gate(model_module, flag)
 
     total_loss_dict = {}
 
@@ -910,14 +938,14 @@ def evaluate(forward_step_func,
 def evaluate_and_print_results(prefix, forward_step_func,
                                data_iterator, model,
                                iteration, process_non_loss_data_func,
-                               verbose=False):
+                               verbose=False, flag=True):
     """Helper function to evaluate and dump results on screen."""
     args = get_args()
     writer = get_tensorboard_writer()
 
     total_loss_dict, collected_non_loss_data = evaluate(
         forward_step_func, data_iterator, model,
-        process_non_loss_data_func, verbose)
+        process_non_loss_data_func, verbose, flag)
     string = ' validation loss at {} | '.format(prefix)
     for key in total_loss_dict:
         string += '{} value: {:.6E} | '.format(key, total_loss_dict[key].item())

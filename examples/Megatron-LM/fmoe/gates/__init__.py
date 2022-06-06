@@ -9,3 +9,5 @@ from .gshard_gate import GShardGate
 from .switch_gate import SwitchGate
 
 from .swipe_gate import SwipeGate
+
+from .custum_gate import CustomRandomGate,CustomNaiveGate

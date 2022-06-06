@@ -50,7 +50,7 @@
 RANK=0
 WORLD_SIZE=1
 
-DATA_PATH=bookcorpus_data_cached/my-gpt_text_document
+DATA_PATH=../bookcorpus_data_cached/my-gpt_text_document
 CHECKPOINT_PATH=gpt1_moe_book_pretraining
 
 
@@ -85,4 +85,5 @@ python pretrain_gpt.py \
        --fp16 \
        --fmoefy \
        --num-experts-moe 4 \
-       --top-k 2 
+       --top-k 2 \
+       --gate-type custom_random 
