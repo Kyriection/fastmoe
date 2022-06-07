@@ -7,13 +7,13 @@ NODE_RANK=0
 WORLD_SIZE=$(($GPUS_PER_NODE*$NNODES))
 
 DATA_PATH=../bookcorpus_data_cached/my-gpt_text_document
-CHECKPOINT_PATH=GPT1_MoE_NaiveGate
+CHECKPOINT_PATH=gpt1_book_pretraining
 
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT"
 
 python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        pretrain_gpt.py \
-       --num-layers 4 \
+       --num-layers 2 \
        --hidden-size 96 \
        --num-attention-heads 3 \
        --micro-batch-size 4 \
@@ -40,8 +40,4 @@ python -m torch.distributed.launch $DISTRIBUTED_ARGS \
        --save-interval 10000 \
        --eval-interval 1000 \
        --eval-iters 10 \
-       --fp16 \
-       --fmoefy \
-       --num-experts-moe 4 \
-       --top-k 2 \
-       --gate-type custom_naive
+       --fp16

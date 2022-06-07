@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """Pretrain GPT"""
-
+import os 
 import torch
 from functools import partial
 from megatron import get_args
@@ -121,6 +121,8 @@ def train_valid_test_datasets_provider(train_val_test_num_samples):
 
 if __name__ == "__main__":
 
+    # os.environ['MASTER_ADDR'] = 'localhost'
+    # os.environ['MASTER_PORT'] = '5678'
     pretrain(train_valid_test_datasets_provider, model_provider,
              ModelType.encoder_or_decoder,
              forward_step, args_defaults={'tokenizer_type': 'GPT2BPETokenizer'})
