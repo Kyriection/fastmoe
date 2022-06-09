@@ -13,7 +13,7 @@ if [[ $1 == 'train' ]]; then
         --dropout 0.1 \
         --dropatt 0.0 \
         --optim adam \
-        --lr 0.00025 \
+        --lr 0.00015 \
         --warmup_step 0 \
         --max_step 400000 \
         --tgt_len 512 \
@@ -22,7 +22,7 @@ if [[ $1 == 'train' ]]; then
         --batch_size 22 \
         --multi_gpu \
         --gpu0_bsz 8 \
-        --moe --moe-num-expert 24 --moe-top-k 2 \
+        --moe --moe-num-expert 16 --moe-top-k 2 \
         --gate_name CustomNaiveGate \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
