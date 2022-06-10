@@ -147,6 +147,8 @@ parser.add_argument('--dynamic-loss-scale', action='store_true',
                     ' supersedes --static-loss-scale.')
 parser.add_argument('--moe', action='store_true',
                     help='replace position-wise ffn with moe position-wise ffn')
+parser.add_argument('--gradual_moe', action='store_true',
+                    help='gradually increase moe top-k')
 parser.add_argument('--moe-num-expert', type=int, default=64,
                     help='number of experts in MoE')
 parser.add_argument('--gate_name', type=str, default='NaiveGate',
@@ -440,11 +442,18 @@ def set_top_gate(model):
                 m.gate.top_k = args.moe_top_k
                 print(name, m.top_k, m.gate.top_k)
 
-def calculate_train_step(overall, current):
-    gate_number_list = [2,4,8,16,32]
-    gate_index = int(len(gate_number_list)*current/overall) 
-    args.moe_top_k = gate_number_list[gate_index]
-    return gate_number_list[gate_index]
+# def calculate_train_step(overall, current):
+#     gate_number_list = [2,4,8,16,32]
+#     gate_index = int(len(gate_number_list)*current/overall) 
+#     args.moe_top_k = gate_number_list[gate_index]
+#     return gate_number_list[gate_index]
+
+def calculate_train_step(overall, current, min_experts, max_experts):
+
+    number_experts = max_experts - min_experts
+    gate_num = int(number_experts * current/overall) + min_experts
+    args.moe_top_k = gate_num
+    return gate_num
 
 
 def evaluate(eval_iter):
@@ -479,16 +488,17 @@ def evaluate(eval_iter):
 
     return total_loss / total_len
 
+
 def train():
     # Turn on training mode which enables dropout.
     global train_step, train_loss, best_val_loss, eval_start_time, log_start_time, current_gate
     model.train()
 
-    # top_gate_num = calculate_train_step(args.max_step, train_step)
-    # if top_gate_num != current_gate:
-    #     print('Using new Gate')
-    #     set_top_gate(model)
-    #     current_gate = top_gate_num
+    top_gate_num = calculate_train_step(args.max_step, train_step, min_experts, args.moe_num_expert)
+    if top_gate_num != current_gate and args.gradual_moe:
+        print('Using new Gate')
+        set_top_gate(model)
+        current_gate = top_gate_num
 
     if args.batch_chunk > 1:
         mems = [tuple() for _ in range(args.batch_chunk)]
@@ -602,6 +612,7 @@ train_step = 0
 train_loss = 0
 best_val_loss = None
 current_gate = args.moe_top_k
+min_experts = args.moe_top_k
 log_start_time = time.time()
 eval_start_time = time.time()
 
