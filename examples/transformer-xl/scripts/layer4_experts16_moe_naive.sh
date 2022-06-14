@@ -22,6 +22,8 @@ if [[ $1 == 'train' ]]; then
         --batch_size 22 \
         --moe --moe-num-expert 16 --moe-top-k 2 \
         --gate_name CustomNaiveGate \
+        --log-interval 100 \
+        --eval-interval 100 \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'

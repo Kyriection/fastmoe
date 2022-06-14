@@ -36,5 +36,5 @@
 
 
 
-KEY=layer4_experts16_moe_dropout
+KEY=layer4_experts16_moe_naive
 CUDA_VISIBLE_DEVICES=3 bash scripts/${KEY}.sh train --work_dir ${KEY}
