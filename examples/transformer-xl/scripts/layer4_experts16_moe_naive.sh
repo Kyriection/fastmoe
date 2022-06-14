@@ -24,6 +24,8 @@ if [[ $1 == 'train' ]]; then
         --gate_name CustomNaiveGate \
         --log-interval 100 \
         --eval-interval 100 \
+        --multi_gpu \
+        --gpu0_bsz 2 \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
