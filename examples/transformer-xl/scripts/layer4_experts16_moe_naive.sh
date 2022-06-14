@@ -21,7 +21,7 @@ if [[ $1 == 'train' ]]; then
         --eval_tgt_len 128 \
         --batch_size 22 \
         --multi_gpu \
-        --gpu0_bsz 4 \
+        --gpu0_bsz 8 \
         --moe --moe-num-expert 16 --moe-top-k 2 \
         --gate_name CustomNaiveGate \
         --eval-interval 500 \
