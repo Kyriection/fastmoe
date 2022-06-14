@@ -25,14 +25,14 @@
 
 
 
-KEY=layer4_experts16_moe_gradual_random
-CUDA_VISIBLE_DEVICES=0 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
-KEY=layer4_experts16_moe_naive_freeze
-CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_moe_gradual_random
+# CUDA_VISIBLE_DEVICES=0 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_moe_naive_freeze
+# CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
 KEY=layer4_experts16_moe_naive
 CUDA_VISIBLE_DEVICES=2 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
-KEY=layer4_experts16_moe_random
-CUDA_VISIBLE_DEVICES=3 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_moe_random
+# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
 
 
 
