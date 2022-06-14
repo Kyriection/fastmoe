@@ -191,7 +191,7 @@ void fmoe_cuda_fused_forward_impl(
                     step, offset, micro_batch_size, d_model, smgr);
         }
         cudaEventRecord(output_ready[step], torch_stream);
-    }
+    }z
 
     // Compute over shadowed experts
     for (long i = 0, si = 0; i < world_size * num_expert; ++i) {

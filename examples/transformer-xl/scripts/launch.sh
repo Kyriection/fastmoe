@@ -16,25 +16,23 @@
 # CUDA_VISIBLE_DEVICES=$1 nohup bash scripts/run_enwik8_base_randassignmoe_new.sh train --work_dir randassignmoe_new > log_randassignmoe_new.out 2>&1 &
 
 
-KEY=layer4_experts16_big_dense
-CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
-KEY=layer4_experts16_dense
-CUDA_VISIBLE_DEVICES=2 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
-KEY=layer4_experts16_moe_dropout
-CUDA_VISIBLE_DEVICES=3 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_big_dense
+# CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_dense
+# CUDA_VISIBLE_DEVICES=2 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_moe_dropout
+# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+
+
+
 KEY=layer4_experts16_moe_gradual_random
-CUDA_VISIBLE_DEVICES=4 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+CUDA_VISIBLE_DEVICES=0 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
 KEY=layer4_experts16_moe_naive_freeze
-CUDA_VISIBLE_DEVICES=5 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
 KEY=layer4_experts16_moe_naive
-CUDA_VISIBLE_DEVICES=6 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
+CUDA_VISIBLE_DEVICES=2 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
 KEY=layer4_experts16_moe_random
-CUDA_VISIBLE_DEVICES=7 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
-
-
-
-
-
+CUDA_VISIBLE_DEVICES=3 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
 
 
 
