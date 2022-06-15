@@ -24,6 +24,8 @@ if [[ $1 == 'train' ]]; then
         --gpu0_bsz 4 \
         --moe --moe-num-expert 16 --moe-top-k 2 \
         --gate_name CustomDropGate \
+        --log-interval 10 \
+        --eval-interval 10 \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
