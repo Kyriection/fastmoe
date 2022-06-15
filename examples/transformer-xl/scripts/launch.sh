@@ -36,5 +36,9 @@
 
 
 
-KEY=layer4_experts16_moe_naive
-CUDA_VISIBLE_DEVICES=3 bash scripts/${KEY}.sh train --work_dir ${KEY}
+# KEY=layer4_experts16_moe_naive
+# CUDA_VISIBLE_DEVICES=3 bash scripts/${KEY}.sh train --work_dir ${KEY}
+
+
+KEY=layer4_experts16_moe_dropout
+nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0611_${KEY}.out 2>&1 &
