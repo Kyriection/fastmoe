@@ -22,8 +22,6 @@ if [[ $1 == 'train' ]]; then
         --batch_size 22 \
         --multi_gpu \
         --gpu0_bsz 8 \
-        --restart \
-        --restart_dir ${@:3} \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
