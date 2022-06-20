@@ -47,9 +47,31 @@
 
 
 
-moe_index=1,3
-name=every2
+# moe_index=1,3
+# name=every2
+# KEY=layer4_experts16_moe_random
+# CUDA_VISIBLE_DEVICES=0 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+# KEY=layer4_experts16_moe_naive
+# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+
+moe_index=0
+name=early
 KEY=layer4_experts16_moe_random
 CUDA_VISIBLE_DEVICES=0 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 KEY=layer4_experts16_moe_naive
+CUDA_VISIBLE_DEVICES=1 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+moe_index=3
+name=late
+KEY=layer4_experts16_moe_random
+CUDA_VISIBLE_DEVICES=2 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+KEY=layer4_experts16_moe_naive
 CUDA_VISIBLE_DEVICES=3 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+
+
+
+
+
+
+
