@@ -153,6 +153,8 @@ parser.add_argument('--moe-num-expert', type=int, default=64,
                     help='number of experts in MoE')
 parser.add_argument('--gate_name', type=str, default='NaiveGate',
                     help='Router Type')
+parser.add_argument('--moe_index', type=str, default=None,
+                    help='MoE Index')
 parser.add_argument('--freeze_gate', action='store_true',
                     help='Freeze the weights in the gates')
 parser.add_argument('--moe-top-k', type=int, default=2,
@@ -282,6 +284,8 @@ def update_dropatt(m):
     if hasattr(m, 'dropatt'):
         m.dropatt.p = args.dropatt
 
+moe_index = list(map(int, args.moe_index.split(',')))
+
 if args.restart:
     with open(os.path.join(args.restart_dir, 'model.pt'), 'rb') as f:
         model = torch.load(f)
@@ -297,7 +301,7 @@ else:
         ext_len=args.ext_len, mem_len=args.mem_len, cutoffs=cutoffs,
         same_length=args.same_length, attn_type=args.attn_type,
         clamp_len=args.clamp_len, sample_softmax=args.sample_softmax,
-        moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k, gate_name=args.gate_name)
+        moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k, gate_name=args.gate_name, moe_index=moe_index)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])

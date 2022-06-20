@@ -559,7 +559,7 @@ class MemTransformerLM(nn.Module):
                  tgt_len=None, ext_len=None, mem_len=None,
                  cutoffs=[], adapt_inp=False,
                  same_length=False, attn_type=0, clamp_len=-1,
-                 sample_softmax=-1, moe=False, moe_num_expert=64, moe_top_k=2, gate_name=NaiveGate):
+                 sample_softmax=-1, moe=False, moe_num_expert=64, moe_top_k=2, gate_name=NaiveGate, moe_index=None):
         super(MemTransformerLM, self).__init__()
         self.n_token = n_token
 
@@ -568,6 +568,9 @@ class MemTransformerLM(nn.Module):
         self.d_model = d_model
         self.n_head = n_head
         self.d_head = d_head
+
+        if moe_index is None:
+            moe_index = np.arange(n_layer)
 
         self.word_emb = AdaptiveEmbedding(n_token, d_embed, d_model, cutoffs,
                                           div_val=div_val)
@@ -586,12 +589,19 @@ class MemTransformerLM(nn.Module):
         self.layers = nn.ModuleList()
         if attn_type == 0: # the default attention
             for i in range(n_layer):
+
+                if i in moe_index:
+                    layer_moe = moe 
+                else:
+                    layer_moe = False
+                print('{}-MoE={}'.format(i, moe))
+
                 self.layers.append(
                     RelPartialLearnableDecoderLayer(
                         n_head, d_model, d_head, d_inner, dropout,
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm, 
-                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
+                        moe=layer_moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
                 )
         elif attn_type == 1: # learnable embeddings
             for i in range(n_layer):
