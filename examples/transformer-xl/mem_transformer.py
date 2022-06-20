@@ -594,7 +594,7 @@ class MemTransformerLM(nn.Module):
                     layer_moe = moe 
                 else:
                     layer_moe = False
-                print('{}-MoE={}'.format(i, moe))
+                print('{}-MoE={}'.format(i, layer_moe))
 
                 self.layers.append(
                     RelPartialLearnableDecoderLayer(
