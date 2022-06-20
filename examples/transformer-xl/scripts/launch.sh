@@ -47,7 +47,7 @@
 
 
 
-moe_index=1,3,5,7,9,11
+moe_index=1,3
 name=every2
 KEY=layer4_experts16_moe_random
 CUDA_VISIBLE_DEVICES=0 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
