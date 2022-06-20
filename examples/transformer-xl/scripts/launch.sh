@@ -118,6 +118,20 @@ elif [[ $1 == 'exp5' ]]; then
     KEY=layer4_experts16_moe_naive_freeze
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
+elif [[ $1 == 'exp6' ]]; then
+    echo 'Run Experiment6...'
+    moe_index=1
+    name=middle1
+    KEY=layer4_experts16_moe_naive_freeze
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+elif [[ $1 == 'exp7' ]]; then
+    echo 'Run Experiment7...'
+    moe_index=2
+    name=middle2
+    KEY=layer4_experts16_moe_naive_freeze
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
 else
     echo 'unknown argment 1'
 fi
