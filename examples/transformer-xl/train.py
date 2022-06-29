@@ -286,7 +286,8 @@ def update_dropatt(m):
     if hasattr(m, 'dropatt'):
         m.dropatt.p = args.dropatt
 
-moe_index = list(map(int, args.moe_index.split(',')))
+if args.moe_index is not None:
+    moe_index = list(map(int, args.moe_index.split(',')))
 
 if args.restart:
     with open(os.path.join(args.restart_dir, 'model.pt'), 'rb') as f:
