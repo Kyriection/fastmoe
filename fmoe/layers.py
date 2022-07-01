@@ -185,7 +185,7 @@ class FMoE(nn.Module):
         mark_module_parallel_comm(self.gate, "gate")
 
     def forward(self, moe_inp):
-        print(moe_inp.shape)
+
         r"""
         The FMoE module first computes gate output, and then conduct MoE forward
         according to the gate.  The score of the selected gate given by the
@@ -214,7 +214,6 @@ class FMoE(nn.Module):
 
             moe_inp = tree.map_structure(slice_func, moe_inp)
 
-        print(1)
         gate_top_k_idx, gate_score = self.gate(moe_inp)
 
         print(self.gate)

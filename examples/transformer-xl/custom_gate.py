@@ -40,7 +40,7 @@ class CustomDTSGate(BaseGate):
         # calculate top-k number 
         enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
         dynamic_top_k = enable_gate_number.float().mean().int().item()
-        self.dynamic_top_k = max(self.top_k, dynamic_top_k)
+        self.dynamic_top_k = min(self.top_k, dynamic_top_k)
 
         self.forward_n += 0
         self.mean_top_k += self.dynamic_top_k
