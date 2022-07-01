@@ -377,7 +377,7 @@ class RelLearnableMultiHeadAttn(RelMultiHeadAttn):
         return output
 
 from fmoe import FMoETransformerMLP
-from custom_gate import CustomDropGate, CustomNaiveGate, CustomRandomGate
+from custom_gate import CustomDropGate, CustomNaiveGate, CustomRandomGate, CustomDenseGate
 from fmoe.gates import NaiveGate
 
 class CustomizedMoEPositionwiseFF(FMoETransformerMLP):

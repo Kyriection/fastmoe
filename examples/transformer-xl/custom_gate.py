@@ -8,6 +8,29 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+class CustomDenseGate(BaseGate):
+    r"""
+    Dense Gate
+    """
+
+    def __init__(self, d_model, num_expert, world_size, top_k=2):
+        super().__init__(num_expert, world_size)
+        self.gate = nn.Linear(d_model, self.tot_expert)
+        self.top_k = top_k
+        self.dense_moe_flag = True
+
+    def forward(self, inp, return_all_scores=False):
+
+        gate = self.gate(inp)
+        gate_top_k_idx = torch.arange(self.tot_expert).to(gate.device)
+        gate_top_k_val = gate.view(-1, self.tot_expert)
+        gate_score = F.softmax(gate_top_k_val, dim=-1)
+
+        if return_all_scores:
+            return gate_top_k_idx, gate_score, gate
+        return gate_top_k_idx, gate_score
+
+
 class CustomRandomGate(BaseGate):
     r"""
     Random Gate
