@@ -12,7 +12,12 @@
 
 
 
-KEY=layer4_experts16_moe_dense_fix_weight
-CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0701_${KEY}.out 2>&1 &
+# KEY=layer4_experts16_moe_dense_fix_weight
+# CUDA_VISIBLE_DEVICES=1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0701_${KEY}.out 2>&1 &
 
+
+KEY=layer4_experts16_moe_dts_top1
+CUDA_VISIBLE_DEVICES=$1 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0701_${KEY}.out 2>&1 &
+KEY=layer4_experts16_moe_dts_top2
+CUDA_VISIBLE_DEVICES=$2 nohup bash scripts/${KEY}.sh train --work_dir ${KEY} > log_0701_${KEY}.out 2>&1 &
 

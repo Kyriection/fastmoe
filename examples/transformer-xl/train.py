@@ -161,6 +161,11 @@ parser.add_argument('--freeze_main_network', action='store_true',
                     help='Freeze the weights in the gates')
 parser.add_argument('--moe-top-k', type=int, default=2,
                     help='top_k experts in hard gate of moe')
+
+parser.add_argument('--min_temp', type=int, default=0.3)
+parser.add_argument('--max_temp', type=int, default=2)
+parser.add_argument('--threshold', type=int, default=0.001)
+
 args = parser.parse_args()
 args.tied = not args.not_tied
 assert args.moe_num_expert >= args.moe_top_k, "must have moe-num-expert >= moe-top_k"
@@ -448,6 +453,30 @@ def set_gate(model, flag=True):
                     m.top_k = args.moe_top_k
                     print(name, m.top_k)
 
+def show_dts_gate(model):
+    layer_wise_mean_gate = []
+    for name, m in model.named_modules():
+        if isinstance(m, BaseGate):
+            mean_experts = m.mean_top_k / m.forward_n
+            layer_temp = m.temperature
+            layer_threshold = m.threshold
+            print('Mean-Experts = {:.0f}, Temperature = {:.4f}, Threshold = {:.4f}'.format(mean_experts, layer_temp, layer_threshold))
+
+def set_temperature(model, iterations, all_iteration, max_temp, min_temp):
+    temp = max_temp + iterations * (min_temp - max_temp) / all_iteration
+    for name, m in model.named_modules():
+        if isinstance(m, BaseGate):
+            m.temperature = temp
+
+def set_threshold(model, threshold):
+    for name, m in model.named_modules():
+        if isinstance(m, BaseGate):
+            m.threshold = threshold
+
+if args.gate_name == 'CustomDTSGate':
+    print('Set threshold for DTS Gate')
+    set_threshold(model, args.threshold)
+
 
 def set_top_gate(model):
     for name, m in model.named_modules():
@@ -508,6 +537,9 @@ def train():
     # Turn on training mode which enables dropout.
     global train_step, train_loss, best_val_loss, eval_start_time, log_start_time, current_gate, min_experts
     model.train()
+
+    if args.gate_name == 'CustomDTSGate':
+        set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
 
     if args.gradual_moe:
         top_gate_num = calculate_train_step(args.max_step, train_step, min_experts, args.moe_num_expert)
@@ -576,6 +608,7 @@ def train():
         if train_step % args.log_interval == 1:
             cur_loss = train_loss / args.log_interval
             elapsed = time.time() - log_start_time
+            show_dts_gate(model)
             log_str = '| epoch {:3d} step {:>8d} | {:>6d} batches | lr {:.3g} ' \
                       '| ms/batch {:5.2f} | loss {:5.2f}'.format(
                 epoch, train_step, batch+1, optimizer.param_groups[0]['lr'],
