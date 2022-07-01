@@ -46,7 +46,7 @@ class CustomDTSGate(BaseGate):
         self.mean_top_k += self.dynamic_top_k
 
         gate_top_k_val, gate_top_k_idx = torch.topk(
-            gate_noise, k=dynamic_top_k, dim=-1, largest=True, sorted=False
+            gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
         )  # [.. x top_k]
         gate_score = gate_top_k_val.view(-1, dynamic_top_k)
         
