@@ -42,7 +42,7 @@ class CustomDTSGate(BaseGate):
         dynamic_top_k = enable_gate_number.float().mean().int().item()
         self.dynamic_top_k = min(self.top_k, dynamic_top_k)
 
-        self.forward_n += 0
+        self.forward_n += 1
         self.mean_top_k += self.dynamic_top_k
 
         gate_top_k_val, gate_top_k_idx = torch.topk(
