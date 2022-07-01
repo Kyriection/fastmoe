@@ -24,7 +24,7 @@ class CustomDTSGate(BaseGate):
         self.forward_n = 0
         self.dynamic_top_k = top_k
 
-    def _sample_gumbel(tensor, eps=1e-10):
+    def _sample_gumbel(self, tensor, eps=1e-10):
         U = torch.rand_like(tensor).uniform_()
         return - torch.log(eps - torch.log(U + eps))
 
