@@ -215,6 +215,7 @@ class FMoE(nn.Module):
 
         gate_top_k_idx, gate_score = self.gate(moe_inp)
 
+        print(self.gate)
         if hasattr(self.gate, dynamic_top_k):
             self.top_k = self.gate.dynamic_top_k
             print(self.top_k)
