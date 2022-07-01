@@ -321,7 +321,7 @@ if args.freeze_gate:
 
 if args.freeze_main_network:
     for name, p in model.named_parameters():
-        if not 'gate.gate' in name:
+        if '.experts.' in name:
             p.requires_grad = False
             print('freeze: ', name, p.shape)
 
