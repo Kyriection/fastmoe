@@ -49,6 +49,8 @@ class CustomDTSGate(BaseGate):
             gate_noise, k=dynamic_top_k, dim=-1, largest=True, sorted=False
         )  # [.. x top_k]
         gate_score = gate_top_k_val.view(-1, dynamic_top_k)
+        
+        print(gate_score.shape)
 
         if return_all_scores:
             return gate_top_k_idx, gate_score, gate
