@@ -50,7 +50,7 @@ class CustomDTSGate(BaseGate):
         )  # [.. x top_k]
         gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
 
-        return gate_top_k_idx, gate_score
+        return gate_top_k_idx, gate_score, self.dynamic_top_k
 
 
 class CustomDenseGate(BaseGate):
