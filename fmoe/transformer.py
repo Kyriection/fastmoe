@@ -3,7 +3,8 @@ Adaption to act as the MLP layer using an MoE MLP layer in transformer.
 """
 import torch
 import torch.nn as nn
-from .layers import FMoE
+# from .layers import FMoE
+from custom_layers import FMOE
 from .linear import FMoELinear
 
 
