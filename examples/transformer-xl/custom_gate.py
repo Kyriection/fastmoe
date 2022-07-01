@@ -22,10 +22,10 @@ class CustomDenseGate(BaseGate):
     def forward(self, inp, return_all_scores=False):
 
         gate = self.gate(inp)
-        print(gate.shape)
-        gate_top_k_idx = torch.arange(self.tot_expert).to(gate.device)
+        repeat_shape = list(gate.shape[:-1])
+        repeat_shape.append(1)
 
-
+        gate_top_k_idx = torch.arange(self.tot_expert).repeat(repeat_shape).to(gate.device)
 
         gate_top_k_val = gate.view(-1, self.tot_expert)
         gate_score = F.softmax(gate_top_k_val, dim=-1)
