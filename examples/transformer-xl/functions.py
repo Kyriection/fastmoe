@@ -7,7 +7,7 @@ computation.
 import torch
 from torch.autograd import Function
 import fmoe_cuda
-from .utils import get_torch_default_comm
+from .custom_utils import get_torch_default_comm
 
 
 _moe_group = None
