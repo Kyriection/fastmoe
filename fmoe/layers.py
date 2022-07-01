@@ -216,10 +216,10 @@ class FMoE(nn.Module):
 
         gate_top_k_idx, gate_score = self.gate(moe_inp)
 
-        print(self.gate)
         if hasattr(self.gate, dynamic_top_k):
-            self.top_k = self.gate.dynamic_top_k
-            print(self.top_k)
+            dynamic_top_k = self.gate.dynamic_top_k
+        else:
+            dynamic_top_k = self.top_k
 
         if self.gate_hook is not None:
             self.gate_hook(gate_top_k_idx, gate_score, None)
@@ -248,11 +248,11 @@ class FMoE(nn.Module):
             def recover_func(tensor):
                 # to: (BxL') x top_k x dim
                 dim = tensor.shape[-1]
-                tensor = tensor.view(-1, self.top_k, dim)
+                tensor = tensor.view(-1, dynamic_top_k, dim)
                 # to: (BxL) x top_k x d_model
                 x = torch.zeros(
                     mask.shape[0],
-                    self.top_k,
+                    dynamic_top_k,
                     dim,
                     device=tensor.device,
                     dtype=tensor.dtype,
@@ -268,12 +268,12 @@ class FMoE(nn.Module):
 
             def view_func(tensor):
                 dim = tensor.shape[-1]
-                tensor = tensor.view(-1, self.top_k, dim)
+                tensor = tensor.view(-1, dynamic_top_k, dim)
                 return tensor
 
             moe_outp = tree.map_structure(view_func, fwd)
 
-        gate_score = gate_score.view(-1, 1, self.top_k)
+        gate_score = gate_score.view(-1, 1, dynamic_top_k)
 
         def bmm_func(tensor):
             dim = tensor.shape[-1]

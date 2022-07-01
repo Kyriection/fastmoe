@@ -28,7 +28,7 @@ class CustomDTSGate(BaseGate):
         U = torch.rand_like(tensor).uniform_()
         return - torch.log(eps - torch.log(U + eps))
 
-    def forward(self, inp, return_all_scores=False):
+    def forward(self, inp):
 
         gate = self.gate(inp)
 
@@ -40,7 +40,7 @@ class CustomDTSGate(BaseGate):
         # calculate top-k number 
         enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
         dynamic_top_k = enable_gate_number.float().mean().int().item()
-        self.dynamic_top_k = min(self.top_k, dynamic_top_k)
+        self.dynamic_top_k = max(self.top_k, dynamic_top_k)
 
         self.forward_n += 1
         self.mean_top_k += self.dynamic_top_k
@@ -49,11 +49,7 @@ class CustomDTSGate(BaseGate):
             gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
         )  # [.. x top_k]
         gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
-        
-        print(gate_score.shape)
 
-        if return_all_scores:
-            return gate_top_k_idx, gate_score, gate
         return gate_top_k_idx, gate_score
 
 
