@@ -525,6 +525,11 @@ def evaluate(eval_iter):
             if args.max_eval_steps > 0 and i >= args.max_eval_steps:
                 break
             ret = model(data, target, *mems)
+
+            macs, params = profile(model, inputs=(data, target, *mems))
+            print('Eval {} {:E}, {:E}'.format(data.shape, 2 * macs, params))
+            break 
+
             loss, mems = ret[0], ret[1:]
             loss = loss.mean()
             total_loss += seq_len * loss.float().item()
@@ -577,11 +582,7 @@ def train():
         else:
             ret = para_model(data, target, *mems)
             macs, params = profile(para_model, inputs=(data, target, *mems))
-
-            print(macs, params)
-            i += 1
-            if i > 5:
-                break 
+            print('Train {} {:E}, {:E}'.format(data.shape, 2 * macs, params))
 
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
