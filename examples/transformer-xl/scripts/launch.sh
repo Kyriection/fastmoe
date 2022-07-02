@@ -83,53 +83,108 @@
 # CUDA_VISIBLE_DEVICES=3 nohup bash scripts/part_moe/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 
+# if [[ $1 == 'exp1' ]]; then
+#     echo 'Run Experiment1...'
+#     moe_index=2
+#     name=middle2
+#     KEY=layer4_experts16_moe_random
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# elif [[ $1 == 'exp2' ]]; then
+#     echo 'Run Experiment2...'
+#     moe_index=2
+#     name=middle2
+#     KEY=layer4_experts16_moe_naive
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# elif [[ $1 == 'exp3' ]]; then
+#     echo 'Run Experiment3...'
+#     moe_index=1,3
+#     name=every2
+#     KEY=layer4_experts16_moe_naive_freeze
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# elif [[ $1 == 'exp4' ]]; then
+#     echo 'Run Experiment4...'
+#     moe_index=0
+#     name=early
+#     KEY=layer4_experts16_moe_naive_freeze
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# elif [[ $1 == 'exp5' ]]; then
+#     echo 'Run Experiment5...'
+#     moe_index=3
+#     name=late
+#     KEY=layer4_experts16_moe_naive_freeze
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# elif [[ $1 == 'exp6' ]]; then
+#     echo 'Run Experiment6...'
+#     moe_index=1
+#     name=middle1
+#     KEY=layer4_experts16_moe_naive_freeze
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# elif [[ $1 == 'exp7' ]]; then
+#     echo 'Run Experiment7...'
+#     moe_index=2
+#     name=middle2
+#     KEY=layer4_experts16_moe_naive_freeze
+#     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
+
+# else
+#     echo 'unknown argment 1'
+# fi
+
+
+
 if [[ $1 == 'exp1' ]]; then
     echo 'Run Experiment1...'
-    moe_index=2
-    name=middle2
-    KEY=layer4_experts16_moe_random
+    moe_index=1,3,5,6,7,11
+    name=every2
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 elif [[ $1 == 'exp2' ]]; then
     echo 'Run Experiment2...'
-    moe_index=2
-    name=middle2
-    KEY=layer4_experts16_moe_naive
+    moe_index=0
+    name=early
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 elif [[ $1 == 'exp3' ]]; then
     echo 'Run Experiment3...'
-    moe_index=1,3
-    name=every2
-    KEY=layer4_experts16_moe_naive_freeze
+    moe_index=6
+    name=middle
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 elif [[ $1 == 'exp4' ]]; then
     echo 'Run Experiment4...'
-    moe_index=0
-    name=early
-    KEY=layer4_experts16_moe_naive_freeze
+    moe_index=11
+    name=late
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 elif [[ $1 == 'exp5' ]]; then
     echo 'Run Experiment5...'
-    moe_index=3
-    name=late
-    KEY=layer4_experts16_moe_naive_freeze
+    moe_index=0,1,3,4,6,7,9,10
+    name=s2f1_x4
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 elif [[ $1 == 'exp6' ]]; then
     echo 'Run Experiment6...'
-    moe_index=1
-    name=middle1
-    KEY=layer4_experts16_moe_naive_freeze
+    moe_index=2,5,8,11
+    name=f2s1_x4
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 elif [[ $1 == 'exp7' ]]; then
     echo 'Run Experiment7...'
-    moe_index=2
-    name=middle2
-    KEY=layer4_experts16_moe_naive_freeze
+    moe_index=5,11
+    name=f5s1_x2
+    KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0621_${KEY}_${name}.out 2>&1 &
 
 else
