@@ -575,6 +575,7 @@ def train():
                 train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
+            print(data.shape)
 
             macs, params = profile(para_model, inputs=(data, target, *mems))
 
