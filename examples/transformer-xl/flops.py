@@ -319,6 +319,9 @@ else:
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
+print(args.n_all_param)
+print(args.n_nonemb_param)
+
 if args.freeze_gate:
     for name, p in model.named_parameters():
         if 'gate.gate' in name:
@@ -571,7 +574,15 @@ def train():
                     loss.backward()
                 train_loss += loss.float().item()
         else:
-            ret = para_model(data, target, *mems)
+            # ret = para_model(data, target, *mems)
+
+            macs, params = profile(para_model, inputs=(data, target, *mems))
+
+            print(macs, params)
+            import pdb; pdb.set_trace()
+
+
+
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
             if args.fp16:
