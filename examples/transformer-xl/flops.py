@@ -578,6 +578,8 @@ def train():
 
             macs, params = profile(para_model, inputs=(data, target, *mems))
 
+            print(para_model)
+
             print(macs, params)
             import pdb; pdb.set_trace()
 
