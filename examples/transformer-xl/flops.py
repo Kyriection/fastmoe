@@ -583,6 +583,7 @@ def train():
         else:
             ret = para_model(data, target, *mems)
             macs, params = profile(para_model, inputs=(data, target, *mems))
+            macs *= 11
             print('Train {}, {:E}, {:E}, {:E}'.format(data.shape, 2*macs, 2 * macs * 400000, params))
             idx += 1
 
