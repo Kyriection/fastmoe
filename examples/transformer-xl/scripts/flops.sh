@@ -6,11 +6,11 @@ if [[ $1 == 'train' ]]; then
         --cuda \
         --data ../data/enwik8/ \
         --dataset enwik8 \
-        --n_layer 12 \
-        --d_model 512 \
+        --n_layer 4 \
+        --d_model 256 \
         --n_head 8 \
         --d_head 64 \
-        --d_inner 32768 \
+        --d_inner 512 \
         --dropout 0.1 \
         --dropatt 0.0 \
         --optim adam \
@@ -20,7 +20,9 @@ if [[ $1 == 'train' ]]; then
         --tgt_len 512 \
         --mem_len 512 \
         --eval_tgt_len 128 \
-        --batch_size 2 \
+        --batch_size 22 \
+        --moe --moe-num-expert 16 --moe-top-k 2 \
+        --gate_name CustomNaiveGate \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
