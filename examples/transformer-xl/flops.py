@@ -680,6 +680,14 @@ log_start_time = time.time()
 eval_start_time = time.time()
 
 # At any point you can hit Ctrl + C to break out of training early.
+
+# Run on test data.
+set_gate(model, False)
+test_loss = evaluate(te_iter)
+set_gate(model, True)
+test_loss_average = evaluate(te_iter)
+set_gate(model, False)
+
 try:
     for epoch in itertools.count(start=1):
         train()
@@ -691,25 +699,25 @@ except KeyboardInterrupt:
     logging('-' * 100)
     logging('Exiting from training early')
 
-# Load the best saved model.
-with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
-    model = torch.load(f)
-para_model = model.to(device)
+# # Load the best saved model.
+# with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
+#     model = torch.load(f)
+# para_model = model.to(device)
 
-# Run on test data.
-set_gate(model, False)
-test_loss = evaluate(te_iter)
-set_gate(model, True)
-test_loss_average = evaluate(te_iter)
-set_gate(model, False)
+# # Run on test data.
+# set_gate(model, False)
+# test_loss = evaluate(te_iter)
+# set_gate(model, True)
+# test_loss_average = evaluate(te_iter)
+# set_gate(model, False)
 
-logging('=' * 100)
-if args.dataset in ['enwik8', 'text8']:
-    logging('| End of training | test loss {:5.2f} | test bpc {:9.5f}'.format(
-        test_loss, test_loss / math.log(2)))
-    logging('| End of training | test-mean loss {:5.2f} | test-mean bpc {:9.5f}'.format(
-        test_loss_average, test_loss_average / math.log(2)))
-else:
-    logging('| End of training | test loss {:5.2f} | test ppl {:9.3f}'.format(
-        test_loss, math.exp(test_loss)))
-logging('=' * 100)
+# logging('=' * 100)
+# if args.dataset in ['enwik8', 'text8']:
+#     logging('| End of training | test loss {:5.2f} | test bpc {:9.5f}'.format(
+#         test_loss, test_loss / math.log(2)))
+#     logging('| End of training | test-mean loss {:5.2f} | test-mean bpc {:9.5f}'.format(
+#         test_loss_average, test_loss_average / math.log(2)))
+# else:
+#     logging('| End of training | test loss {:5.2f} | test ppl {:9.3f}'.format(
+#         test_loss, math.exp(test_loss)))
+# logging('=' * 100)
