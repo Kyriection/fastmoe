@@ -2,7 +2,7 @@
 
 if [[ $1 == 'train' ]]; then
     echo 'Run training...'
-    python -u train.py \
+    python -u flops.py \
         --cuda \
         --data ../data/enwik8/ \
         --dataset enwik8 \
