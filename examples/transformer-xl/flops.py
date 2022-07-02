@@ -541,6 +541,7 @@ def train():
     # Turn on training mode which enables dropout.
     global train_step, train_loss, best_val_loss, eval_start_time, log_start_time, current_gate, min_experts
     model.train()
+    i = 0 
 
     if args.gate_name == 'CustomDTSGate':
         set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
@@ -575,14 +576,12 @@ def train():
                 train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
-            print(data.shape)
-
             macs, params = profile(para_model, inputs=(data, target, *mems))
 
             print(macs, params)
-            import pdb; pdb.set_trace()
-
-
+            i += 1
+            if i > 5:
+                break 
 
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
