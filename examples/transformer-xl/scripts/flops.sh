@@ -10,7 +10,7 @@ if [[ $1 == 'train' ]]; then
         --d_model 256 \
         --n_head 8 \
         --d_head 64 \
-        --d_inner 32768 \
+        --d_inner 8192 \
         --dropout 0.1 \
         --dropatt 0.0 \
         --optim adam \
