@@ -6,11 +6,11 @@ if [[ $1 == 'train' ]]; then
         --cuda \
         --data ../data/enwik8/ \
         --dataset enwik8 \
-        --n_layer 4 \
-        --d_model 256 \
+        --n_layer 12 \
+        --d_model 512 \
         --n_head 8 \
         --d_head 64 \
-        --d_inner 8192 \
+        --d_inner 2048 \
         --dropout 0.1 \
         --dropatt 0.0 \
         --optim adam \
