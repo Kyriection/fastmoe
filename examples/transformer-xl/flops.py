@@ -681,12 +681,7 @@ eval_start_time = time.time()
 
 # At any point you can hit Ctrl + C to break out of training early.
 
-# Run on test data.
-set_gate(model, False)
-test_loss = evaluate(te_iter)
-set_gate(model, True)
-test_loss_average = evaluate(te_iter)
-set_gate(model, False)
+
 
 try:
     for epoch in itertools.count(start=1):
@@ -698,6 +693,13 @@ try:
 except KeyboardInterrupt:
     logging('-' * 100)
     logging('Exiting from training early')
+
+# Run on test data.
+set_gate(model, False)
+test_loss = evaluate(te_iter)
+set_gate(model, True)
+test_loss_average = evaluate(te_iter)
+set_gate(model, False)
 
 # # Load the best saved model.
 # with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
