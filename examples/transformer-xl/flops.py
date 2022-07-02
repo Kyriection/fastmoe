@@ -583,7 +583,7 @@ def train():
         else:
             ret = para_model(data, target, *mems)
             macs, params = profile(para_model, inputs=(data, target, *mems))
-            print('Train {}, {:E}, {:E}, {:E}'.format(data.shape, 2*macs, 2 * macs * args.max_step, params))
+            print('Train {}, {:E}, {:E}, {:E}'.format(data.shape, 2*macs, 2 * macs * 400000, params))
             idx += 1
 
             loss, mems = ret[0], ret[1:]
@@ -593,9 +593,6 @@ def train():
             else:
                 loss.backward()
             train_loss += loss.float().item()
-        
-        if idx > 10:
-            break 
 
         if args.fp16:
             optimizer.clip_master_grads(args.clip)
