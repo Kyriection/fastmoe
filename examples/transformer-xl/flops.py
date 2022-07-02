@@ -528,12 +528,13 @@ def evaluate(eval_iter):
 
             macs, params = profile(model, inputs=(data, target, *mems))
             print('Eval {} {:E}, {:E}'.format(data.shape, 2 * macs, params))
-            break 
 
             loss, mems = ret[0], ret[1:]
             loss = loss.mean()
             total_loss += seq_len * loss.float().item()
             total_len += seq_len
+            if i > 5:
+                break 
 
     # Switch back to the training mode
     model.reset_length(args.tgt_len, args.ext_len, args.mem_len)
