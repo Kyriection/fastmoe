@@ -574,11 +574,9 @@ def train():
                     loss.backward()
                 train_loss += loss.float().item()
         else:
-            # ret = para_model(data, target, *mems)
+            ret = para_model(data, target, *mems)
 
             macs, params = profile(para_model, inputs=(data, target, *mems))
-
-            print(para_model)
 
             print(macs, params)
             import pdb; pdb.set_trace()
