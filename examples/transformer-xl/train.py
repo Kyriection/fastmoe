@@ -608,7 +608,8 @@ def train():
         if train_step % args.log_interval == 1:
             cur_loss = train_loss / args.log_interval
             elapsed = time.time() - log_start_time
-            show_dts_gate(model)
+            if args.gate_name == 'CustomDTSGate':
+                show_dts_gate(model)
             log_str = '| epoch {:3d} step {:>8d} | {:>6d} batches | lr {:.3g} ' \
                       '| ms/batch {:5.2f} | loss {:5.2f}'.format(
                 epoch, train_step, batch+1, optimizer.param_groups[0]['lr'],
