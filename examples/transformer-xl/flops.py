@@ -533,7 +533,7 @@ def evaluate(eval_iter):
             loss = loss.mean()
             total_loss += seq_len * loss.float().item()
             total_len += seq_len
-            if i > 5:
+            if i > 10:
                 break 
 
     # Switch back to the training mode
