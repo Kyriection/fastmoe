@@ -340,7 +340,9 @@ if args.freeze_main_network:
 
 if args.freeze_main_network_all:
     for name, p in model.named_parameters():
-        if 'layers' in name:
+        if 'word_emb.emb_layers' in name: continue
+        if 'crit.out_layers' in name: continue 
+        if 'layers.' in name:
             if not 'gate.gate' in name:
                 p.requires_grad = False
                 print('freeze: ', name, p.shape)
