@@ -675,7 +675,7 @@ class MemTransformerLM(nn.Module):
                     layer_moe = False
                     layer_dense_drop = False
                 print('{}-MoE={}'.format(i, layer_moe))
-                print('{}-Dense={}'.format(i, layer_dense_drop))
+                print('{}-Dense-Drop={}'.format(i, layer_dense_drop))
                 self.layers.append(
                     RelPartialLearnableDecoderLayer(
                         n_head, d_model, d_head, d_inner, dropout,

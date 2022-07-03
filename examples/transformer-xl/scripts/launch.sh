@@ -187,6 +187,16 @@ elif [[ $1 == 'exp7' ]]; then
     KEY=layer12_experts16_moe_naive
     nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY}_${name} > log_0702_${KEY}_${name}.out 2>&1 &
 
+elif [[ $1 == 'exp8' ]]; then
+    echo 'Run Experiment8...'
+    KEY=layer12_experts16_big_dense_dropout
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train --work_dir ${KEY} > log_0703_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp9' ]]; then
+    echo 'Run Experiment9...'
+    KEY=layer4_experts16_big_dense_dropout
+    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0703_${KEY}.out 2>&1 &
+
 else
     echo 'unknown argment 1'
 fi
