@@ -92,29 +92,33 @@ class PositionwiseFF_Dropout(nn.Module):
         fc1_shape = self.CoreNet[0].weight.shape
         fc2_shape = self.CoreNet[3].weight.shape 
         
-        # generate mask 
-        enable_expert_index = np.random.permutation(self.num_expert)[:int(self.num_expert*self.dropout_expert)]
-        enable_dimention_index = np.array(np.arange(i*self.sub_d_inner, (i+1)*self.sub_d_inner) for i in enable_expert_index)
-        print(enable_dimention_index)
+        # # generate mask 
+        # enable_expert_index = np.random.permutation(self.num_expert)[:int(self.num_expert*self.dropout_expert)]
+        # enable_dimention_index = np.array(np.arange(i*self.sub_d_inner, (i+1)*self.sub_d_inner) for i in enable_expert_index)
 
-        fc1_weight_mask = torch.ones_like(self.CoreNet[0].weight)
-        fc1_weight_mask[enable_dimention_index,:] = 0
+        enable_dimention_index = torch.rand(self.num_expert).gt(self.dropout_expert).repeat(self.sub_d_inner).to(inp.device)
+
+        fc1_weight_mask = enable_dimention_index.reshape(-1, 1)
+        # fc1_weight_mask = torch.ones_like(self.CoreNet[0].weight)
+        # fc1_weight_mask[enable_dimention_index,:] = 0
         fc1_weight = self.CoreNet[0].weight * fc1_weight_mask
 
         # check mask
         print('fc1-weight', fc1_weight.shape, fc1_weight.eq(0).float().sum(1))
 
         if self.CoreNet[0].bias is not None:
-            fc1_bias_mask = torch.ones_like(self.CoreNet[0].bias)
-            fc1_bias_mask[enable_dimention_index] = 0
+            # fc1_bias_mask = torch.ones_like(self.CoreNet[0].bias)
+            # fc1_bias_mask[enable_dimention_index] = 0
+            fc1_bias_mask = enable_dimention_index.reshape(-1)
             fc1_bias = self.CoreNet[0].bias * fc1_bias_mask
             # check mask
             print('fc1-bias', fc1_bias.shape, fc1_bias.eq(0).float())
         else:
             fc1_bias = None
 
-        fc2_weight_mask = torch.ones_like(self.CoreNet[3].weight)
-        fc2_weight_mask[:,enable_dimention_index] = 0
+        fc2_weight_mask = enable_dimention_index.reshape(1, -1)
+        # fc2_weight_mask = torch.ones_like(self.CoreNet[3].weight)
+        # fc2_weight_mask[:,enable_dimention_index] = 0
         fc2_weight = self.CoreNet[3].weight * fc2_weight_mask
 
         # check mask
@@ -560,7 +564,6 @@ class RelPartialLearnableDecoderLayer(nn.Module):
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         elif kwargs.get('dense_drop') is True:
-            print('dense')
             self.pos_ff = PositionwiseFF_Dropout(d_model, d_inner, dropout, 
                                         kwargs.get('expert_drop'), 
                                         kwargs.get('num_expert'),
