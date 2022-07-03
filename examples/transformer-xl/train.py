@@ -323,10 +323,6 @@ else:
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
-print(model)
-
-import pdb;pdb.set_trace()
-
 
 if args.freeze_gate:
     for name, p in model.named_parameters():

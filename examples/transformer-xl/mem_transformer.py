@@ -95,6 +95,7 @@ class PositionwiseFF_Dropout(nn.Module):
         # generate mask 
         enable_expert_index = np.random.permutation(self.num_expert)[:int(self.num_expert*self.dropout_expert)]
         enable_dimention_index = np.array(np.arange(i*self.sub_d_inner, (i+1)*self.sub_d_inner) for i in enable_expert_index)
+        print(enable_dimention_index)
 
         fc1_weight_mask = torch.ones_like(self.CoreNet[0].weight)
         fc1_weight_mask[enable_dimention_index,:] = 0
