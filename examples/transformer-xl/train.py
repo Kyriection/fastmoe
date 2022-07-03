@@ -166,6 +166,11 @@ parser.add_argument('--min_temp', type=int, default=0.3)
 parser.add_argument('--max_temp', type=int, default=2)
 parser.add_argument('--threshold', type=int, default=0.001)
 
+parser.add_argument('--dense_drop', action='store_true')
+parser.add_argument('--expert_drop', type=float, default=0.5)
+parser.add_argument('--num_expert', type=int, default=64)
+
+
 args = parser.parse_args()
 args.tied = not args.not_tied
 assert args.moe_num_expert >= args.moe_top_k, "must have moe-num-expert >= moe-top_k"
@@ -311,7 +316,8 @@ else:
         ext_len=args.ext_len, mem_len=args.mem_len, cutoffs=cutoffs,
         same_length=args.same_length, attn_type=args.attn_type,
         clamp_len=args.clamp_len, sample_softmax=args.sample_softmax,
-        moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k, gate_name=args.gate_name, moe_index=moe_index)
+        moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k, gate_name=args.gate_name, moe_index=moe_index,
+        dense_drop=args.dense_drop, expert_drop=args.expert_drop, num_expert=args.num_expert)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])

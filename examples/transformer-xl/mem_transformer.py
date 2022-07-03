@@ -30,7 +30,6 @@ class PositionalEmbedding(nn.Module):
         else:
             return pos_emb[:,None,:]
 
-
 class PositionwiseFF(nn.Module):
     def __init__(self, d_model, d_inner, dropout, pre_lnorm=False):
         super(PositionwiseFF, self).__init__()
@@ -60,6 +59,83 @@ class PositionwiseFF(nn.Module):
         else:
             ##### positionwise feed-forward
             core_out = self.CoreNet(inp)
+
+            ##### residual connection + layer normalization
+            output = self.layer_norm(inp + core_out)
+
+        return output
+
+class PositionwiseFF_Dropout(nn.Module):
+    def __init__(self, d_model, d_inner, dropout, expert_drop, num_expert, pre_lnorm=False):
+        super(PositionwiseFF_Dropout, self).__init__()
+
+        self.d_model = d_model
+        self.d_inner = d_inner
+        self.dropout = dropout
+
+        self.dropout_expert = expert_drop
+        self.num_expert = num_expert
+        self.sub_d_inner = d_inner // num_expert
+
+        self.CoreNet = nn.Sequential(
+            nn.Linear(d_model, d_inner), nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
+            nn.Linear(d_inner, d_model),
+            nn.Dropout(dropout),
+        )
+
+        self.layer_norm = nn.LayerNorm(d_model)
+
+        self.pre_lnorm = pre_lnorm
+
+    def _dropout_forward_corenet(self, inp):
+        fc1_shape = self.CoreNet[0].weight.shape
+        fc2_shape = self.CoreNet[3].weight.shape 
+        
+        # generate mask 
+        enable_expert_index = np.random.permutation(self.num_expert)[:int(self.num_expert*self.dropout_expert)]
+        enable_dimention_index = np.array(np.arange(i*self.sub_d_inner, (i+1)*self.sub_d_inner) for i in enable_expert_index)
+
+        fc1_weight_mask = torch.ones_like(self.CoreNet[0].weight)
+        fc1_weight_mask[enable_dimention_index,:] = 0
+        fc1_weight = self.CoreNet[0].weight * fc1_weight_mask
+
+        # check mask
+        print('fc1-weight', fc1_weight.shape, fc1_weight.eq(0).float().sum(1))
+
+        if self.CoreNet[0].bias is not None:
+            fc1_bias_mask = torch.ones_like(self.CoreNet[0].bias)
+            fc1_bias_mask[enable_dimention_index] = 0
+            fc1_bias = self.CoreNet[0].bias * fc1_bias_mask
+            # check mask
+            print('fc1-bias', fc1_bias.shape, fc1_bias.eq(0).float())
+        else:
+            fc1_bias = None
+
+        fc2_weight_mask = torch.ones_like(self.CoreNet[3].weight)
+        fc2_weight_mask[:,enable_dimention_index] = 0
+        fc2_weight = self.CoreNet[3].weight * fc2_weight_mask
+
+        # check mask
+        print('fc2-weight', fc2_weight.shape, fc2_weight.eq(0).float().sum(0))
+
+        oup = F.linear(inp, fc1_weight, fc1_bias)
+        oup = self.CoreNet[1:3](oup)
+        oup = F.linear(oup, fc2_weight, self.CoreNet[3].bias)
+        oup = self.CoreNet[4](oup)
+
+        return oup 
+
+    def forward(self, inp):
+        if self.pre_lnorm:
+            ##### layer normalization + positionwise feed-forward
+            core_out = self._dropout_forward_corenet(self.layer_norm(inp))
+
+            ##### residual connection
+            output = core_out + inp
+        else:
+            ##### positionwise feed-forward
+            core_out = self._dropout_forward_corenet(inp)
 
             ##### residual connection + layer normalization
             output = self.layer_norm(inp + core_out)
@@ -419,6 +495,11 @@ class DecoderLayer(nn.Module):
         if kwargs.get('moe') is False:
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
                                         pre_lnorm=kwargs.get('pre_lnorm'))
+        elif kwargs.get('dense_drop') is True:
+            self.pos_ff = PositionwiseFF_Dropout(d_model, d_inner, dropout, 
+                                        kwargs.get('expert_drop'), 
+                                        kwargs.get('num_expert'),
+                                        pre_lnorm=kwargs.get('pre_lnorm'))
         else:
             self.pos_ff = CustomizedMoEPositionwiseFF(d_model, d_inner, dropout,
                                         pre_lnorm=kwargs.get('pre_lnorm'), 
@@ -444,6 +525,11 @@ class RelLearnableDecoderLayer(nn.Module):
 
         if kwargs.get('moe') is False:
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
+                                        pre_lnorm=kwargs.get('pre_lnorm'))
+        elif kwargs.get('dense_drop') is True:
+            self.pos_ff = PositionwiseFF_Dropout(d_model, d_inner, dropout, 
+                                        kwargs.get('expert_drop'), 
+                                        kwargs.get('num_expert'),
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         else:
             self.pos_ff = CustomizedMoEPositionwiseFF(d_model, d_inner, dropout,
@@ -471,6 +557,11 @@ class RelPartialLearnableDecoderLayer(nn.Module):
 
         if kwargs.get('moe') is False:
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
+                                        pre_lnorm=kwargs.get('pre_lnorm'))
+        elif kwargs.get('dense_drop') is True:
+            self.pos_ff = PositionwiseFF_Dropout(d_model, d_inner, dropout, 
+                                        kwargs.get('expert_drop'), 
+                                        kwargs.get('num_expert'),
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         else:
             self.pos_ff = CustomizedMoEPositionwiseFF(d_model, d_inner, dropout,
@@ -559,7 +650,8 @@ class MemTransformerLM(nn.Module):
                  tgt_len=None, ext_len=None, mem_len=None,
                  cutoffs=[], adapt_inp=False,
                  same_length=False, attn_type=0, clamp_len=-1,
-                 sample_softmax=-1, moe=False, moe_num_expert=64, moe_top_k=2, gate_name=NaiveGate, moe_index=None):
+                 sample_softmax=-1, moe=False, moe_num_expert=64, moe_top_k=2, gate_name=NaiveGate, moe_index=None, 
+                 dense_drop=False, expert_drop=0.5, num_expert=64):
         super(MemTransformerLM, self).__init__()
         self.n_token = n_token
 
@@ -589,19 +681,20 @@ class MemTransformerLM(nn.Module):
         self.layers = nn.ModuleList()
         if attn_type == 0: # the default attention
             for i in range(n_layer):
-
                 if i in moe_index:
                     layer_moe = moe 
+                    layer_dense_drop = dense_drop
                 else:
                     layer_moe = False
+                    layer_dense_drop = False
                 print('{}-MoE={}'.format(i, layer_moe))
-
                 self.layers.append(
                     RelPartialLearnableDecoderLayer(
                         n_head, d_model, d_head, d_inner, dropout,
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm, 
-                        moe=layer_moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
+                        moe=layer_moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name, 
+                        dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
         elif attn_type == 1: # learnable embeddings
             for i in range(n_layer):
@@ -610,7 +703,8 @@ class MemTransformerLM(nn.Module):
                         n_head, d_model, d_head, d_inner, dropout,
                         tgt_len=tgt_len, ext_len=ext_len, mem_len=mem_len,
                         dropatt=dropatt, pre_lnorm=pre_lnorm,
-                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
+                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name,  
+                        dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
         elif attn_type in [2, 3]: # absolute embeddings
             for i in range(n_layer):
@@ -618,7 +712,8 @@ class MemTransformerLM(nn.Module):
                     DecoderLayer(
                         n_head, d_model, d_head, d_inner, dropout,
                         dropatt=dropatt, pre_lnorm=pre_lnorm,
-                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
+                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name,  
+                        dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
 
         self.sample_softmax = sample_softmax
