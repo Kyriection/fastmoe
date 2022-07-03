@@ -95,29 +95,16 @@ class PositionwiseFF_Dropout(nn.Module):
         enable_dimention_index = torch.rand(self.num_expert).gt(self.dropout_expert).repeat(self.sub_d_inner).to(inp.device)
 
         fc1_weight_mask = enable_dimention_index.reshape(-1, 1)
-        print(fc1_weight_mask.eq(0).sum())
         fc1_weight = self.CoreNet[0].weight * fc1_weight_mask
-
-        # check mask
-        tt = fc1_weight.eq(0).float().sum(1)
-        print('fc1-weight', fc1_weight.shape, tt.eq(0).sum(), tt.nelement(), tt)
 
         if self.CoreNet[0].bias is not None:
             fc1_bias_mask = enable_dimention_index.reshape(-1)
-            print(fc1_bias_mask.eq(0).sum())
             fc1_bias = self.CoreNet[0].bias * fc1_bias_mask
-            # check mask
-            print('fc1-bias', fc1_bias.shape, fc1_bias.eq(0).sum(), fc1_bias.nelement())
         else:
             fc1_bias = None
 
         fc2_weight_mask = enable_dimention_index.reshape(1, -1)
-        print(fc2_weight_mask.eq(0).sum())
         fc2_weight = self.CoreNet[3].weight * fc2_weight_mask
-
-        # check mask
-        tt = fc2_weight.eq(0).float().sum(0)
-        print('fc2-weight', fc1_weight.shape, tt.eq(0).sum(), tt.nelement(), tt)
 
         oup = F.linear(inp, fc1_weight, fc1_bias)
         oup = self.CoreNet[1:3](oup)
