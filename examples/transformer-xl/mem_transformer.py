@@ -103,6 +103,7 @@ class PositionwiseFF_Dropout(nn.Module):
 
         if self.CoreNet[0].bias is not None:
             fc1_bias_mask = enable_dimention_index.reshape(-1)
+            print(fc1_bias_mask.eq(0).sum())
             fc1_bias = self.CoreNet[0].bias * fc1_bias_mask
             # check mask
             print('fc1-bias', fc1_bias.shape, fc1_bias.eq(0).sum(), fc1_bias.nelement())
