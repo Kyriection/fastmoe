@@ -492,7 +492,7 @@ class DecoderLayer(nn.Module):
         super(DecoderLayer, self).__init__()
 
         self.dec_attn = MultiHeadAttn(n_head, d_model, d_head, dropout, **kwargs)
-        if kwargs.get('moe') is False:
+        if kwargs.get('moe') is False and kwargs.get('dense_drop') is False:
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         elif kwargs.get('dense_drop') is True:
@@ -523,7 +523,7 @@ class RelLearnableDecoderLayer(nn.Module):
         self.dec_attn = RelLearnableMultiHeadAttn(n_head, d_model, d_head, dropout,
                                          **kwargs)
 
-        if kwargs.get('moe') is False:
+        if kwargs.get('moe') is False and kwargs.get('dense_drop') is False:
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         elif kwargs.get('dense_drop') is True:
@@ -555,7 +555,7 @@ class RelPartialLearnableDecoderLayer(nn.Module):
         self.dec_attn = RelPartialLearnableMultiHeadAttn(n_head, d_model,
                             d_head, dropout, **kwargs)
 
-        if kwargs.get('moe') is False:
+        if kwargs.get('moe') is False and kwargs.get('dense_drop') is False:
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         elif kwargs.get('dense_drop') is True:
