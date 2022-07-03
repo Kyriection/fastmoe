@@ -159,6 +159,8 @@ parser.add_argument('--freeze_gate', action='store_true',
                     help='Freeze the weights in the gates')
 parser.add_argument('--freeze_main_network', action='store_true',
                     help='Freeze the weights in the gates')
+parser.add_argument('--freeze_main_network_all', action='store_true',
+                    help='Freeze the weights in the gates')
 parser.add_argument('--moe-top-k', type=int, default=2,
                     help='top_k experts in hard gate of moe')
 
@@ -333,6 +335,12 @@ if args.freeze_gate:
 if args.freeze_main_network:
     for name, p in model.named_parameters():
         if '.experts.' in name:
+            p.requires_grad = False
+            print('freeze: ', name, p.shape)
+
+if args.freeze_main_network_all:
+    for name, p in model.named_parameters():
+        if not 'gate.gate' in name:
             p.requires_grad = False
             print('freeze: ', name, p.shape)
 
