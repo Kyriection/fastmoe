@@ -559,6 +559,7 @@ class RelPartialLearnableDecoderLayer(nn.Module):
             self.pos_ff = PositionwiseFF(d_model, d_inner, dropout, 
                                         pre_lnorm=kwargs.get('pre_lnorm'))
         elif kwargs.get('dense_drop') is True:
+            print('dense')
             self.pos_ff = PositionwiseFF_Dropout(d_model, d_inner, dropout, 
                                         kwargs.get('expert_drop'), 
                                         kwargs.get('num_expert'),
