@@ -340,9 +340,10 @@ if args.freeze_main_network:
 
 if args.freeze_main_network_all:
     for name, p in model.named_parameters():
-        if not 'gate.gate' in name:
-            p.requires_grad = False
-            print('freeze: ', name, p.shape)
+        if 'layers' in name:
+            if not 'gate.gate' in name:
+                p.requires_grad = False
+                print('freeze: ', name, p.shape)
 
 if args.fp16:
     model = model.half()
