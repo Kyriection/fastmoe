@@ -197,6 +197,11 @@ elif [[ $1 == 'exp9' ]]; then
     KEY=layer4_experts16_big_dense_dropout
     nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0703_${KEY}.out 2>&1 &
 
+elif [[ $1 == 'exp10' ]]; then
+    echo 'Run Experiment10...'
+    KEY=layer4_experts16_moe_dense_fix_allweight
+    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0703_${KEY}.out 2>&1 &
+
 else
     echo 'unknown argment 1'
 fi
