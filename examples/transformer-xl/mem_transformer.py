@@ -95,6 +95,7 @@ class PositionwiseFF_Dropout(nn.Module):
         enable_dimention_index = torch.rand(self.num_expert).gt(self.dropout_expert).repeat(self.sub_d_inner).to(inp.device)
 
         fc1_weight_mask = enable_dimention_index.reshape(-1, 1)
+        print(fc1_weight_mask.eq(0).sum())
         fc1_weight = self.CoreNet[0].weight * fc1_weight_mask
 
         # check mask
@@ -111,6 +112,7 @@ class PositionwiseFF_Dropout(nn.Module):
             fc1_bias = None
 
         fc2_weight_mask = enable_dimention_index.reshape(1, -1)
+        print(fc2_weight_mask.eq(0).sum())
         fc2_weight = self.CoreNet[3].weight * fc2_weight_mask
 
         # check mask
