@@ -21,10 +21,9 @@ if [[ $1 == 'train' ]]; then
         --mem_len 512 \
         --eval_tgt_len 128 \
         --batch_size 22 \
-        --moe --moe-num-expert 16 --moe-top-k 16 \
-        --gate_name CustomDropGate \
-        --moe_index $2 \
-        ${@:3}
+        --moe --moe-num-expert 16 --moe-top-k 1 \
+        --gate_name CustomDTSGate \
+        ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
     python eval.py \
