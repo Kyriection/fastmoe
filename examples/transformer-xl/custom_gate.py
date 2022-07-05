@@ -55,6 +55,56 @@ class CustomDTSGate(BaseGate):
         return gate_top_k_idx, gate_score
 
 
+
+class CustomDTSRandomGate(BaseGate):
+    r"""
+    DTS Random Gate
+    """
+
+    def __init__(self, d_model, num_expert, world_size, top_k=2):
+        super().__init__(num_expert, world_size)
+        self.gate = nn.Linear(d_model, self.tot_expert)
+        self.top_k = top_k
+        self.dense_moe_flag = False
+        self.temperature = 1
+        self.threshold = 0.001
+        self.mean_top_k = 0
+        self.forward_n = 0
+        self.dynamic_top_k = top_k
+
+    def _sample_gumbel(self, tensor, eps=1e-10):
+        U = torch.rand_like(tensor).uniform_()
+        return - torch.log(eps - torch.log(U + eps))
+
+    def forward(self, inp, return_all_scores=False):
+
+        gate = self.gate(inp)
+        # random gate uniform distribution
+        gate = torch.rand_like(gate)
+
+        # dts
+        gumber_noise = self._sample_gumbel(gate)
+        gate_noise = (gate + gumber_noise) / self.temperature
+        gate_noise = F.softmax(gate_noise, dim=-1)
+
+        # calculate top-k number 
+        enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
+        dynamic_top_k = enable_gate_number.float().mean().int().item()
+        self.dynamic_top_k = max(self.top_k, dynamic_top_k)
+
+        self.forward_n += 1
+        self.mean_top_k += self.dynamic_top_k
+
+        gate_top_k_val, gate_top_k_idx = torch.topk(
+            gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
+        )  # [.. x top_k]
+        gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
+        
+        if return_all_scores:
+            return gate_top_k_idx, gate_score, gate
+        return gate_top_k_idx, gate_score
+
+
 class CustomDenseGate(BaseGate):
     r"""
     Dense Gate
