@@ -322,6 +322,9 @@ args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 print(args.n_all_param)
 print(args.n_nonemb_param)
 
+for name, p in model.named_parameters():
+    print(name, p.nelement())
+
 if args.freeze_gate:
     for name, p in model.named_parameters():
         if 'gate.gate' in name:
