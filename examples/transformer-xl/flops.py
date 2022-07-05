@@ -319,6 +319,10 @@ else:
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
+for name, m in model.named_modules():
+    print(name, type(m))
+
+
 print(args.n_all_param)
 print(args.n_nonemb_param)
 
