@@ -24,10 +24,12 @@ class _Expert(nn.Module):
         First expand input to 4h (the hidden size is variable, but is called h4
         for convenience). Then perform activation. Finally shirink back to h.
         """
-
+        print(inp.shape, fwd_expert_count.sum())
         x = self.htoh4(inp, fwd_expert_count)
+        print(x.shape, fwd_expert_count.sum())
         x = self.activation(x)
         x = self.h4toh(x, fwd_expert_count)
+        print(x.shape, fwd_expert_count.sum())
         return x
 
 
