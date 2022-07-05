@@ -47,9 +47,9 @@ class TestUtils:
 
 from linear import FMoELinear
 
-net = FMoELinear(16,256,512)
-x = torch.rand(2560,256)
-fwd_expert_count = torch.tensor([112,65,22,440,146,229,222,220,56,281,115,400,31,25,63,133])
+net = FMoELinear(16,256,512).cuda()
+x = torch.rand(2560,256).cuda()
+fwd_expert_count = torch.tensor([112,65,22,440,146,229,222,220,56,281,115,400,31,25,63,133]).cuda()
 
 
 def calculate_linear(in_feature, num_elements):
