@@ -535,7 +535,7 @@ def evaluate(eval_iter):
                 break
             ret = model(data, target, *mems)
 
-            macs, params = profile(model, inputs=(data, target, *mems))
+            macs, params = profile(model, inputs=(data, target, *mems), custom_ops={FMoELinear: count_flinear})
             print('Eval {} {:E}, {:E}'.format(data.shape, 2 * macs, params))
 
             loss, mems = ret[0], ret[1:]
