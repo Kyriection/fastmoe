@@ -45,17 +45,24 @@ class TestUtils:
 
 # x = torch.rand()
 
+from linear import FMoELinear
+
+net = FMoELinear(16,256,512)
+x = torch.rand(2560,256)
+fwd_expert_count = torch.tensor([112,65,22,440,146,229,222,220,56,281,115,400,31,25,63,133])
 
 
-# def calculate_linear(in_feature, num_elements):
-#     return torch.DoubleTensor([int(in_feature * num_elements)])
+def calculate_linear(in_feature, num_elements):
+    return torch.DoubleTensor([int(in_feature * num_elements)])
 
-# def count_flinear(m, x, y):
+def count_flinear(m, x, y):
+    # per output element
+    total_mul = m.in_feat
+    # total_add = m.in_features - 1
+    # total_add += 1 if m.bias is not None else 0
+    num_elements = y.numel()
 
-#     inp, fwd_expert_count = x
+    m.total_ops += calculate_linear(total_mul, num_elements)
 
-#     total_mul = m.in_features
-
-#     num_elements = y.numel()
-
-#     m.total_ops += calculate_linear(total_mul, num_elements)
+flops, params = profile(net, inputs=(x, fwd_expert_count, ), custom_ops={FMoELinear: count_flinear})
+print(flops, params)
