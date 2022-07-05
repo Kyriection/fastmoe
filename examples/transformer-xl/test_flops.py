@@ -45,11 +45,11 @@ class TestUtils:
 
 # x = torch.rand()
 
-from linear import FMoELinear
+# from linear import FMoELinear
 
-net = FMoELinear(16,256,512).cuda()
-x = torch.rand(2560,256).cuda()
-fwd_expert_count = torch.tensor([112,65,22,440,146,229,222,220,56,281,115,400,31,25,63,133]).cuda()
+# net = FMoELinear(16,256,512).cuda()
+# x = torch.rand(2560,256).cuda()
+# fwd_expert_count = torch.tensor([112,65,22,440,146,229,222,220,56,281,115,400,31,25,63,133]).cuda()
 
 
 def calculate_linear(in_feature, num_elements):
@@ -64,5 +64,5 @@ def count_flinear(m, x, y):
 
     m.total_ops += calculate_linear(total_mul, num_elements)
 
-flops, params = profile(net, inputs=(x, fwd_expert_count, ), custom_ops={FMoELinear: count_flinear})
-print(flops, params)
+# flops, params = profile(net, inputs=(x, fwd_expert_count, ), custom_ops={FMoELinear: count_flinear})
+# print(flops, params)

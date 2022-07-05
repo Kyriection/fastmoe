@@ -16,7 +16,8 @@ from mem_transformer import MemTransformerLM
 from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
 from fmoe.gates.base_gate import BaseGate
-
+from linear import FMoELinear
+from test_flops import count_flinear
 from thop import profile
 
 import warnings 
@@ -590,7 +591,7 @@ def train():
                 train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
-            macs, params = profile(para_model, inputs=(data, target, *mems))
+            macs, params = profile(para_model, inputs=(data, target, *mems), custom_ops={FMoELinear: count_flinear})
             print('Train {}, {:E}, {:E}, {:E}'.format(data.shape, 2*macs, 2 * macs * 400000, params))
             idx += 1
 
