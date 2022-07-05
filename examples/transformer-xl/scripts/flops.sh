@@ -21,6 +21,8 @@ if [[ $1 == 'train' ]]; then
         --mem_len 512 \
         --eval_tgt_len 128 \
         --batch_size 22 \
+        --moe --moe-num-expert 64 --moe-top-k 2 \
+        --gate_name CustomDropGate \
         ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
