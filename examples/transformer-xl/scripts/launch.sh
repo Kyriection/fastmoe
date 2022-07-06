@@ -195,7 +195,7 @@ elif [[ $1 == 'exp8' ]]; then
 elif [[ $1 == 'exp9' ]]; then
     echo 'Run Experiment9...'
     KEY=layer4_experts16_big_dense_dropout
-    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0703_${KEY}.out 2>&1 &
+    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0706_${KEY}.out 2>&1 &
 
 elif [[ $1 == 'exp10' ]]; then
     echo 'Run Experiment10...'
