@@ -202,6 +202,21 @@ elif [[ $1 == 'exp10' ]]; then
     KEY=layer4_experts16_moe_dense_fix_allweight
     nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0703_${KEY}.out 2>&1 &
 
+elif [[ $1 == 'exp11' ]]; then
+    echo 'Run Experiment11...'
+    KEY=layer4_experts16_moe_gradual_naive_reverse
+    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0706_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp12' ]]; then
+    echo 'Run Experiment12...'
+    KEY=layer4_experts16_moe_gradual_naive
+    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0706_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp13' ]]; then
+    echo 'Run Experiment13...'
+    KEY=layer4_experts16_moe_gradual_random_reverse
+    nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0706_${KEY}.out 2>&1 &
+
 else
     echo 'unknown argment 1'
 fi

@@ -172,6 +172,7 @@ parser.add_argument('--dense_drop', action='store_true')
 parser.add_argument('--expert_drop', type=float, default=0.5)
 parser.add_argument('--num_expert', type=int, default=64)
 
+parser.add_argument('--gradual_reverse', action='store_true')
 
 args = parser.parse_args()
 args.tied = not args.not_tied
@@ -509,10 +510,16 @@ def set_top_gate(model):
 #     args.moe_top_k = gate_number_list[gate_index]
 #     return gate_number_list[gate_index]
 
-def calculate_train_step(overall, current, min_experts, max_experts):
+def calculate_train_step(overall, current, min_experts, max_experts, reverse=False):
 
-    number_experts = max_experts - min_experts
-    gate_num = int(number_experts * current/overall) + min_experts
+    if reverse:
+        number_experts = min_experts - max_experts
+        gate_num = int(number_experts * current/overall) + max_experts
+    
+    else:
+        number_experts = max_experts - min_experts
+        gate_num = int(number_experts * current/overall) + min_experts
+
     args.moe_top_k = gate_num
     return gate_num
 
@@ -559,7 +566,7 @@ def train():
         set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
 
     if args.gradual_moe:
-        top_gate_num = calculate_train_step(args.max_step, train_step, min_experts, args.moe_num_expert)
+        top_gate_num = calculate_train_step(args.max_step, train_step, min_experts, args.moe_num_expert, reverse=args.gradual_reverse)
         if top_gate_num != current_gate:
             print('Using new Gate')
             set_top_gate(model)
