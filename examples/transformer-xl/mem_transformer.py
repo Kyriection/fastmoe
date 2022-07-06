@@ -89,27 +89,31 @@ class PositionwiseFF_Dropout(nn.Module):
         self.pre_lnorm = pre_lnorm
 
     def _dropout_forward_corenet(self, inp):
-        fc1_shape = self.CoreNet[0].weight.shape
-        fc2_shape = self.CoreNet[3].weight.shape 
-        
-        enable_dimention_index = torch.rand(self.num_expert).gt(self.dropout_expert).repeat(self.sub_d_inner).to(inp.device)
 
-        fc1_weight_mask = enable_dimention_index.reshape(-1, 1)
-        fc1_weight = self.CoreNet[0].weight * fc1_weight_mask
+        if self.training:
+            fc1_shape = self.CoreNet[0].weight.shape
+            fc2_shape = self.CoreNet[3].weight.shape 
+            
+            enable_dimention_index = torch.rand(self.num_expert).gt(self.dropout_expert).repeat(self.sub_d_inner).to(inp.device)
 
-        if self.CoreNet[0].bias is not None:
-            fc1_bias_mask = enable_dimention_index.reshape(-1)
-            fc1_bias = self.CoreNet[0].bias * fc1_bias_mask
+            fc1_weight_mask = enable_dimention_index.reshape(-1, 1)
+            fc1_weight = self.CoreNet[0].weight * fc1_weight_mask
+
+            if self.CoreNet[0].bias is not None:
+                fc1_bias_mask = enable_dimention_index.reshape(-1)
+                fc1_bias = self.CoreNet[0].bias * fc1_bias_mask
+            else:
+                fc1_bias = None
+
+            fc2_weight_mask = enable_dimention_index.reshape(1, -1)
+            fc2_weight = self.CoreNet[3].weight * fc2_weight_mask
+
+            oup = F.linear(inp, fc1_weight, fc1_bias)
+            oup = self.CoreNet[1:3](oup)
+            oup = F.linear(oup, fc2_weight, self.CoreNet[3].bias)
+            oup = self.CoreNet[4](oup)
         else:
-            fc1_bias = None
-
-        fc2_weight_mask = enable_dimention_index.reshape(1, -1)
-        fc2_weight = self.CoreNet[3].weight * fc2_weight_mask
-
-        oup = F.linear(inp, fc1_weight, fc1_bias)
-        oup = self.CoreNet[1:3](oup)
-        oup = F.linear(oup, fc2_weight, self.CoreNet[3].bias)
-        oup = self.CoreNet[4](oup)
+            oup = self.CoreNet(inp)
 
         return oup 
 
