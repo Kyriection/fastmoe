@@ -217,6 +217,54 @@ elif [[ $1 == 'exp13' ]]; then
     KEY=layer4_experts16_moe_gradual_random_reverse
     nohup bash scripts/part_moe/${KEY}.sh train --work_dir ${KEY} > log_0706_${KEY}.out 2>&1 &
 
+elif [[ $1 == 'exp14' ]]; then
+    echo 'Run Experiment14...'
+    moe_index=2,5,8,11
+    KEY=layer12_experts16_gradually_r_random_sf4moe
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp15' ]]; then
+    echo 'Run Experiment15...'
+    moe_index=0,1,3,4,6,7,9,10
+    KEY=layer12_experts16_gradually_r_random_sf6moe
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp16' ]]; then
+    echo 'Run Experiment16...'
+    moe_index=2,5,8,11
+    KEY=layer12_experts16_gradually_random_sf4moe_dts
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp17' ]]; then
+    echo 'Run Experiment17...'
+    moe_index=0,1,3,4,6,7,9,10
+    KEY=layer12_experts16_gradually_random_sf6moe_dts
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp18' ]]; then
+    echo 'Run Experiment18...'
+    moe_index=2,5,8,11
+    KEY=layer12_experts16_gradually_random_sf4moe
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp19' ]]; then
+    echo 'Run Experiment19...'
+    moe_index=0,1,3,4,6,7,9,10
+    KEY=layer12_experts16_gradually_random_sf6moe
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp20' ]]; then
+    echo 'Run Experiment20...'
+    moe_index=2,5,8,11
+    KEY=layer12_experts16_gradually_slow_random_sf4moe_dts
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
+elif [[ $1 == 'exp21' ]]; then
+    echo 'Run Experiment21...'
+    moe_index=0,1,3,4,6,7,9,10
+    KEY=layer12_experts16_gradually_slow_random_sf6moe_dts
+    nohup bash scripts/part_moe_gpus/${KEY}.sh train ${moe_index} --work_dir ${KEY} > log_0714_${KEY}.out 2>&1 &
+
 else
     echo 'unknown argment 1'
 fi
