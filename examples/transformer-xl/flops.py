@@ -594,7 +594,8 @@ def train():
             ret = para_model(data, target, *mems)
             macs, params = profile(para_model, inputs=(data, target, *mems), custom_ops={FMoELinear: count_flinear})
             for name, m in para_model.named_modules():
-                print(name, m.total_ops, m.total_params)
+                if hasattr(m, 'total_ops'):
+                    print(name, m.total_ops, m.total_params)
 
             print('Train {}, {:E}, {:E}, {:E}'.format(data.shape, 2*macs, 2 * macs * 400000, params))
             idx += 1
