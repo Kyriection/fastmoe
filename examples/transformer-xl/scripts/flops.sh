@@ -22,7 +22,8 @@ if [[ $1 == 'train' ]]; then
         --eval_tgt_len 128 \
         --batch_size 22 \
         --moe --moe-num-expert 16 --moe-top-k 2 \
-        ${@:2}
+        --moe_index $2 \
+        ${@:3}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
     python eval.py \
