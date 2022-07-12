@@ -592,7 +592,7 @@ def train():
                 train_loss += loss.float().item()
         else:
             ret = para_model(data, target, *mems)
-            macs, params = profile(para_model, inputs=(data, target, *mems), custom_ops={FMoELinear: count_flinear}, ret_layer_info=True)
+            macs, params = profile(para_model, inputs=(data, target, *mems), custom_ops={FMoELinear: count_flinear})
             # for name, m in para_model.named_modules():
             #     if hasattr(m, 'total_ops'):
             #         print(name, m.total_ops, m.total_params)
