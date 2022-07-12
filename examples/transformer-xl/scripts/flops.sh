@@ -10,7 +10,7 @@ if [[ $1 == 'train' ]]; then
         --d_model 512 \
         --n_head 8 \
         --d_head 64 \
-        --d_inner 2048 \
+        --d_inner 16384 \
         --dropout 0.1 \
         --dropatt 0.0 \
         --optim adam \
@@ -21,9 +21,7 @@ if [[ $1 == 'train' ]]; then
         --mem_len 512 \
         --eval_tgt_len 128 \
         --batch_size 22 \
-        --moe --moe-num-expert 16 --moe-top-k 2 \
-        --moe_index $2 \
-        ${@:3}
+        ${@:2}
 elif [[ $1 == 'eval' ]]; then
     echo 'Run evaluation...'
     python eval.py \
