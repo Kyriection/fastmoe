@@ -19,6 +19,7 @@ from fmoe.gates.base_gate import BaseGate
 from linear import FMoELinear
 from test_flops import count_flinear
 from thop import profile
+from thop import clever_format
 
 import warnings 
 warnings.filterwarnings(action= 'ignore')
@@ -592,6 +593,9 @@ def train():
         else:
             ret = para_model(data, target, *mems)
             macs, params = profile(para_model, inputs=(data, target, *mems), custom_ops={FMoELinear: count_flinear})
+            for name, m in para_model.named_modules():
+                print(name, m.total_ops, m.total_params)
+
             print('Train {}, {:E}, {:E}, {:E}'.format(data.shape, 2*macs, 2 * macs * 400000, params))
             idx += 1
 
