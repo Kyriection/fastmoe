@@ -184,6 +184,11 @@ if args.d_embed < 0:
 assert args.ext_len >= 0, 'extended context length must be non-negative'
 assert args.batch_size % args.batch_chunk == 0
 
+
+folder_list = os.listdir(args.work_dir)
+print(folder_list)
+args.work_dir = os.path.join(args.work_dir, folder_list[0])
+
 # args.work_dir = '{}-{}'.format(args.work_dir, args.dataset)
 # args.work_dir = os.path.join(args.work_dir, time.strftime('%Y%m%d-%H%M%S'))
 logging = create_exp_dir(args.work_dir,
@@ -711,10 +716,6 @@ eval_start_time = time.time()
 # except KeyboardInterrupt:
 #     logging('-' * 100)
 #     logging('Exiting from training early')
-
-folder_list = os.listdir(args.work_dir)
-print(folder_list)
-args.work_dir = os.path.join(args.work_dir, folder_list[0])
 
 
 # Load the best saved model.
