@@ -188,7 +188,9 @@ assert args.batch_size % args.batch_chunk == 0
 folder_list = os.listdir(args.work_dir)
 print(folder_list)
 for folder_name in folder_list:
+    print(folder_name)
     if os.path.isdir(folder_name):
+        print('dir')
         sub_list = os.listdir(os.path.join(args.work_dir, folder_name))
         print(sub_list)
         if 'model.pt' in sub_list:
