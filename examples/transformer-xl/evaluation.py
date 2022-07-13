@@ -190,6 +190,7 @@ print(folder_list)
 for folder_name in folder_list:
     if os.path.isdir(folder_name):
         sub_list = os.listdir(os.path.join(args.work_dir, folder_name))
+        print(sub_list)
         if 'model.pt' in sub_list:
             print('Eval on {}'.format(folder_name))
             args.work_dir = os.path.join(args.work_dir, folder_name)
