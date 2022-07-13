@@ -1,6 +1,6 @@
 #!/bin/bash
 echo 'Run Evaluation...'
-python -u train.py \
+python -u evaluation.py \
     --cuda \
     --data ../data/enwik8/ \
     --dataset enwik8 \
