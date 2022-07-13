@@ -712,6 +712,11 @@ eval_start_time = time.time()
 #     logging('-' * 100)
 #     logging('Exiting from training early')
 
+folder_list = os.listdir(args.work_dir)
+print(folder_list)
+args.work_dir = os.path.join(args.work_dir, folder_list[0])
+
+
 # Load the best saved model.
 with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
     model = torch.load(f)

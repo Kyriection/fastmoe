@@ -32,28 +32,35 @@ class CustomDTSGate(BaseGate):
 
         gate = self.gate(inp)
 
-        # dts
-        gumber_noise = self._sample_gumbel(gate)
-        gate_noise = (gate + gumber_noise) / self.temperature
-        gate_noise = F.softmax(gate_noise, dim=-1)
+        if self.training:
+            # dts
+            gumber_noise = self._sample_gumbel(gate)
+            gate_noise = (gate + gumber_noise) / self.temperature
+            gate_noise = F.softmax(gate_noise, dim=-1)
 
-        # calculate top-k number 
-        enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
-        dynamic_top_k = enable_gate_number.float().mean().int().item()
-        self.dynamic_top_k = max(self.top_k, dynamic_top_k)
+            # calculate top-k number 
+            enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
+            dynamic_top_k = enable_gate_number.float().mean().int().item()
+            self.dynamic_top_k = max(self.top_k, dynamic_top_k)
 
-        self.forward_n += 1
-        self.mean_top_k += self.dynamic_top_k
+            self.forward_n += 1
+            self.mean_top_k += self.dynamic_top_k
 
-        gate_top_k_val, gate_top_k_idx = torch.topk(
-            gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
-        )  # [.. x top_k]
-        gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
-        
+            gate_top_k_val, gate_top_k_idx = torch.topk(
+                gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
+            )  # [.. x top_k]
+            gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
+
+        else:
+            gate_top_k_val, gate_top_k_idx = torch.topk(
+                gate, k=self.top_k, dim=-1, largest=True, sorted=False
+            )  # [.. x top_k]
+            gate_top_k_val = gate_top_k_val.view(-1, self.top_k)
+            gate_score = F.softmax(gate_top_k_val, dim=-1)
+
         if return_all_scores:
             return gate_top_k_idx, gate_score, gate
         return gate_top_k_idx, gate_score
-
 
 
 class CustomDTSRandomGate(BaseGate):
@@ -77,29 +84,38 @@ class CustomDTSRandomGate(BaseGate):
         return - torch.log(eps - torch.log(U + eps))
 
     def forward(self, inp, return_all_scores=False):
-
+        
         gate = self.gate(inp)
         # random gate uniform distribution
         gate = torch.rand_like(gate)
 
-        # dts
-        gumber_noise = self._sample_gumbel(gate)
-        gate_noise = (gate + gumber_noise) / self.temperature
-        gate_noise = F.softmax(gate_noise, dim=-1)
+        if self.training:
+            # dts
+            gumber_noise = self._sample_gumbel(gate)
+            gate_noise = (gate + gumber_noise) / self.temperature
+            gate_noise = F.softmax(gate_noise, dim=-1)
 
-        # calculate top-k number 
-        enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
-        dynamic_top_k = enable_gate_number.float().mean().int().item()
-        self.dynamic_top_k = max(self.top_k, dynamic_top_k)
+            # calculate top-k number 
+            enable_gate_number = gate_noise.gt(self.threshold).sum(dim=-1)
+            dynamic_top_k = enable_gate_number.float().mean().int().item()
+            self.dynamic_top_k = max(self.top_k, dynamic_top_k)
 
-        self.forward_n += 1
-        self.mean_top_k += self.dynamic_top_k
+            self.forward_n += 1
+            self.mean_top_k += self.dynamic_top_k
 
-        gate_top_k_val, gate_top_k_idx = torch.topk(
-            gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
-        )  # [.. x top_k]
-        gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
-        
+            gate_top_k_val, gate_top_k_idx = torch.topk(
+                gate_noise, k=self.dynamic_top_k, dim=-1, largest=True, sorted=False
+            )  # [.. x top_k]
+            gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
+
+        else:
+            gate_top_k_val, gate_top_k_idx = torch.topk(
+                gate, k=self.top_k, dim=-1, largest=True, sorted=False
+            )  # [.. x top_k]
+            gate_top_k_val = gate_top_k_val.view(-1, self.top_k)
+            gate_score = F.softmax(gate_top_k_val, dim=-1)
+
+
         if return_all_scores:
             return gate_top_k_idx, gate_score, gate
         return gate_top_k_idx, gate_score
@@ -204,7 +220,6 @@ class CustomRandomGate(BaseGate):
         if return_all_scores:
             return gate_top_k_idx, gate_score, gate
         return gate_top_k_idx, gate_score
-
 
 
 class CustomNaiveGate(BaseGate):
