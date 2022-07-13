@@ -21,4 +21,5 @@ python -u train.py \
     --batch_size 22 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name $1 \
-    --work_dir $2
+    --work_dir $2 \
+    --moe_index $3
