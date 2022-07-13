@@ -52,6 +52,7 @@ class CustomDTSGate(BaseGate):
             gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
 
         else:
+            self.dynamic_top_k = self.top_k
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.top_k, dim=-1, largest=True, sorted=False
             )  # [.. x top_k]
@@ -109,6 +110,7 @@ class CustomDTSRandomGate(BaseGate):
             gate_score = gate_top_k_val.view(-1, self.dynamic_top_k)
 
         else:
+            self.dynamic_top_k = self.top_k
             gate_top_k_val, gate_top_k_idx = torch.topk(
                 gate, k=self.top_k, dim=-1, largest=True, sorted=False
             )  # [.. x top_k]
