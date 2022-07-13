@@ -187,7 +187,13 @@ assert args.batch_size % args.batch_chunk == 0
 
 folder_list = os.listdir(args.work_dir)
 print(folder_list)
-args.work_dir = os.path.join(args.work_dir, folder_list[0])
+for folder_name in folder_list:
+    if os.path.isdir(folder_name):
+        sub_list = os.listdir(os.path.join(args.work_dir, folder_name))
+        if 'model.pt' in sub_list:
+            print('Eval on {}'.format(folder_name))
+            args.work_dir = os.path.join(args.work_dir, folder_name)
+            break
 
 # args.work_dir = '{}-{}'.format(args.work_dir, args.dataset)
 # args.work_dir = os.path.join(args.work_dir, time.strftime('%Y%m%d-%H%M%S'))
