@@ -131,24 +131,24 @@
 DATE=0714
 DIM=6400
 SAVE_DIR=Layer4_Experts16_Big_Dense_${DIM}
-CUDA_VISIBLE_DEVICES=0,1,2,3 nohup bash scripts/new/layer4_exprts16_dense_multigpu.sh ${DIM} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+CUDA_VISIBLE_DEVICES=0,1,2,3 nohup bash scripts/new/layer4_exprts16_dense_multigpu.sh ${DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 DATE=0714
 DIM=5594
 SAVE_DIR=Layer4_Experts16_Big_Dense_${DIM}
-CUDA_VISIBLE_DEVICES=4,5,6,7 nohup bash scripts/new/layer4_exprts16_dense_multigpu.sh ${DIM} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+CUDA_VISIBLE_DEVICES=4,5,6,7 nohup bash scripts/new/layer4_exprts16_dense_multigpu.sh ${DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 
 
 # DATE=0714
 # DIM=4608
 # SAVE_DIR=Layer4_Experts16_Big_Dense_${DIM}
-# CUDA_VISIBLE_DEVICES=2 nohup bash scripts/new/layer4_experts16_dense.sh ${DIM} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=2 nohup bash scripts/new/layer4_experts16_dense.sh ${DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 # DATE=0714
 # DIM=2816
 # SAVE_DIR=Layer4_Experts16_Big_Dense_${DIM}
-# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/new/layer4_experts16_dense.sh ${DIM} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/new/layer4_experts16_dense.sh ${DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 
 
