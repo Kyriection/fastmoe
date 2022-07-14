@@ -24,8 +24,10 @@ def set_router_mode(model, args, flag=True):
             if isinstance(m.gate, BaseGate):
                 if flag:
                     m.top_k = args.moe_num_expert
+                    m.gate.top_k = args.moe_num_expert
                 else:
                     m.top_k = args.moe_top_k
+                    m.gate.top_k = args.moe_top_k
                 print('Set {}, Top-K = {}'.format(name, m.top_k))
 
 def freeze_part_weight(model, args):
