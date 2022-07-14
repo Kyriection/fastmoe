@@ -26,7 +26,7 @@ def set_router_mode(model, args, flag=True):
                     m.top_k = args.moe_num_expert
                 else:
                     m.top_k = args.moe_top_k
-                print('Set {}, Top-K = {}, {}'.format(name, m.top_k))
+                print('Set {}, Top-K = {}'.format(name, m.top_k))
 
 def freeze_part_weight(model, args):
     if args.freeze_gate:
