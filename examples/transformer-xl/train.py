@@ -168,7 +168,7 @@ parser.add_argument('--freeze_main_network_all', action='store_true')
 parser.add_argument('--dynamic_moe', action='store_true',
                     help='dynamic change moe top-k')
 parser.add_argument('--dynamic_moe_mode', type=str, default='linear_increase')
-parser.add_argument('--dynamic_overall_steps', type=str, default='linear_increase')
+parser.add_argument('--dynamic_overall_steps', type=int, default=-1)
 ## Dense to Sparse
 parser.add_argument('--min_temp', type=int, default=0.3)
 parser.add_argument('--max_temp', type=int, default=2)
