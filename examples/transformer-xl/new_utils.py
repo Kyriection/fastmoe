@@ -19,6 +19,7 @@ def set_router_mode(model, args, flag=True):
             m.dense_moe_flag = flag 
             print('Layer name: {}, Average MoE = {}'.format(name, m.dense_moe_flag))
 
+    current_gate = 0
     for name, m in model.named_modules():
         if hasattr(m, 'top_k') and hasattr(m, 'gate'):
             if isinstance(m.gate, BaseGate):
@@ -28,7 +29,11 @@ def set_router_mode(model, args, flag=True):
                 else:
                     m.top_k = args.moe_top_k
                     m.gate.top_k = args.moe_top_k
-                print('Set {}, Top-K = {}'.format(name, m.top_k))
+                current_gate = m.top_k
+                print('Set {}, Top-K = {} {}'.format(name, m.top_k, m.gate.top_k))
+    return current_gate
+
+
 
 def freeze_part_weight(model, args):
     if args.freeze_gate:

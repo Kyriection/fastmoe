@@ -562,9 +562,9 @@ def train():
 
         if train_step % args.eval_interval == 0:
 
-            set_router_mode(model, args, flag=True)
+            current_gate = set_router_mode(model, args, flag=True)
             val_loss_dense = evaluate(va_iter)
-            set_router_mode(model, args, flag=False)
+            current_gate = set_router_mode(model, args, flag=False)
             val_loss = evaluate(va_iter)
 
             logging('-' * 100)
