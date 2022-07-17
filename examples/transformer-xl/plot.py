@@ -28,6 +28,10 @@ rand_dts_2 = [1.39490,1.32858,1.30603,1.29732,1.29353]
 moe_dts_1 = [1.17791,1.17653,1.17647,1.17647,1.17647] 
 moe_dts_2 = [1.17626,1.17487,1.17481,1.17481,1.17481] 
 
+
+moe_swad = [1.45315,1.43207,1.44568,1.45313,1.45095]
+hash_rand = [1.32652,1.31732,1.30552,1.30344,1.30012]
+
 x = [1,2,4,8,16]
 
 dense_eval_top2 = 1.28901
@@ -112,14 +116,33 @@ dense_eval_all = 1.16041
 
 
 
+# plt.grid(linestyle='dashed', zorder=0)
+# plt.rcParams['font.sans-serif'] = 'Times New Roman'
+# plt.plot(x, freeze, label='Learnable_MoE-Freeze')
+# plt.plot(x, rand, label='Random_MoE')
+# plt.plot(x, rand_dts_1, label='Random_MoE-DTS-Top1')
+# plt.plot(x, rand_dts_2, label='Random_MoE-DTS-Top2')
+# plt.plot(x, moe_dts_1, label='Learnable_MoE-DTS-Top1')
+# plt.plot(x, moe_dts_2, label='Learnable_MoE-DTS-Top2')
+# plt.hlines(dense_eval_top2, 1, 16, label='Dense', color='black')
+# plt.hlines(dense_eval_all, 1, 16, label='Big-Dense', color='black', linestyle='dashdot')
+# plt.xticks(x,x)
+# plt.xlabel('Number of Experts')
+# plt.ylabel('bpc')
+# plt.title('4 Layers, 16 Experts')
+# plt.legend(loc='upper right')
+# plt.savefig('layer4_expert16_dts.png', bbox_inches='tight')
+# plt.close()
+# # plt.show()
+
+
+
 plt.grid(linestyle='dashed', zorder=0)
 plt.rcParams['font.sans-serif'] = 'Times New Roman'
-plt.plot(x, freeze, label='Learnable_MoE-Freeze')
+plt.plot(x, moe, label='Learnable_MoE')
+plt.plot(x, moe_swad, label='Learnable_MoE-SWAD')
+plt.plot(x, hash_rand, label='Hash_Random_MoE')
 plt.plot(x, rand, label='Random_MoE')
-plt.plot(x, rand_dts_1, label='Random_MoE-DTS-Top1')
-plt.plot(x, rand_dts_2, label='Random_MoE-DTS-Top2')
-plt.plot(x, moe_dts_1, label='Learnable_MoE-DTS-Top1')
-plt.plot(x, moe_dts_2, label='Learnable_MoE-DTS-Top2')
 plt.hlines(dense_eval_top2, 1, 16, label='Dense', color='black')
 plt.hlines(dense_eval_all, 1, 16, label='Big-Dense', color='black', linestyle='dashdot')
 plt.xticks(x,x)
@@ -127,6 +150,6 @@ plt.xlabel('Number of Experts')
 plt.ylabel('bpc')
 plt.title('4 Layers, 16 Experts')
 plt.legend(loc='upper right')
-plt.savefig('layer4_expert16_dts.png', bbox_inches='tight')
+plt.savefig('layer4_expert16_tricks.png', bbox_inches='tight')
 plt.close()
 # plt.show()

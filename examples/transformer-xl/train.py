@@ -659,7 +659,7 @@ for gate_number in [1,2,4,8,16,32,64]:
         logging('=' * 100)
 
 
-with open(os.path.join(args.work_dir, 'model_.pt'), 'rb') as f:
+with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
     model = torch.load(f)
 para_model = model.to(device)
 
