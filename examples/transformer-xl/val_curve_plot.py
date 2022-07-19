@@ -14,7 +14,7 @@ for line in data:
         eval_losses.append(float(line[-8:-1]))
 
 print(eval_losses)
-x = list(np.array(1, len(eval_losses)+1)* 4000)
+x = list(np.arange(1, len(eval_losses)+1)* 4000)
 
 
 plt.plot(x, eval_losses)
