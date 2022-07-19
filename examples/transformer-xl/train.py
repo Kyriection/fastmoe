@@ -353,7 +353,7 @@ else:
     para_model = model.to(device)
 
 if args.swad:
-    assert args.restart
+    assert not args.restart
     print('Initial SWAD Model')
     swa_model = SWA_Average(model, t_start=args.swad_start, t_end=args.swad_end, device=device)
 
