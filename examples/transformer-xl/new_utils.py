@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import torch.nn as nn 
 from fmoe.gates.base_gate import BaseGate
 
 __all__ = ['set_top_k', 'set_router_mode', 'freeze_part_weight', 'adjust_moe_gate_number',
