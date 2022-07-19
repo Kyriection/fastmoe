@@ -31,4 +31,5 @@ python -u train.py \
     --swad_start 0 \
     --swad_end 100 \
     --log-interval 10 \
-    --eval-interval 10
+    --eval-interval 10 \
+    --max_eval_steps 10 
