@@ -177,6 +177,10 @@ parser.add_argument('--threshold', type=int, default=0.001)
 parser.add_argument('--dense_drop', action='store_true')
 parser.add_argument('--expert_drop', type=float, default=0.5)
 parser.add_argument('--num_expert', type=int, default=64)
+## SWAD/SWA
+parser.add_argument('--swad', action='store_true')
+parser.add_argument('--swad_start', type=int, default=0)
+parser.add_argument('--swad_end', type=int, default=400000)
 
 
 args = parser.parse_args()
@@ -348,6 +352,11 @@ if args.multi_gpu:
 else:
     para_model = model.to(device)
 
+if args.swad:
+    assert args.restart
+    print('Initial SWAD Model')
+    swa_model = SWA_Average(model, t_start=args.swad_start, t_end=args.swad_end, device=device)
+
 #### optimizer
 if args.optim.lower() == 'sgd':
     if args.sample_softmax > 0:
@@ -440,7 +449,7 @@ logging('#non emb params = {}'.format(args.n_nonemb_param))
 ###############################################################################
 
 
-def evaluate(eval_iter):
+def evaluate(model, eval_iter):
     # Turn on evaluation mode which disables dropout.
     model.eval()
 
@@ -471,7 +480,6 @@ def evaluate(eval_iter):
     model.train()
 
     return total_loss / total_len
-
 
 def train():
     # Turn on training mode which enables dropout.
@@ -563,9 +571,39 @@ def train():
         if train_step % args.eval_interval == 0:
 
             current_gate = set_router_mode(model, args, flag=True)
-            val_loss_dense = evaluate(va_iter)
+            val_loss_dense = evaluate(model, va_iter)
             current_gate = set_router_mode(model, args, flag=False)
-            val_loss = evaluate(va_iter)
+            val_loss = evaluate(model, va_iter)
+
+            if args.swad:
+                swa_model.update_parameters(model, train_step)
+                current_gate = set_router_mode(swa_model.average_model, args, flag=True)
+                val_loss_dense_swa = evaluate(swa_model.average_model, va_iter)
+                current_gate = set_router_mode(swa_model.average_model, args, flag=False)
+                val_loss_swa = evaluate(swa_model.average_model, va_iter)
+                logging('-' * 100)
+                log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                        '| SWA valid loss {:5.2f}'.format(
+                    train_step // args.eval_interval, train_step,
+                    (time.time() - eval_start_time), val_loss_swa)
+                if args.dataset in ['enwik8', 'text8']:
+                    log_str += ' | bpc {:9.5f}'.format(val_loss_swa / math.log(2))
+                else:
+                    log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_swa))
+                logging(log_str)
+                logging('-' * 100)
+                log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                        '| SWA Dense valid loss {:5.2f}'.format(
+                    train_step // args.eval_interval, train_step,
+                    (time.time() - eval_start_time), val_loss_dense_swa)
+                if args.dataset in ['enwik8', 'text8']:
+                    log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense_swa / math.log(2))
+                else:
+                    log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense_swa))
+                logging(log_str_dense)
+                logging('-' * 100)
+                with open(os.path.join(args.work_dir, 'model_swa.pt'), 'wb') as f:
+                    torch.save(swa_model.average_model, f)
 
             logging('-' * 100)
             log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
@@ -648,7 +686,7 @@ para_model = model.to(device)
 for gate_number in [1,2,4,8,16,32,64]:
     if gate_number <= args.moe_num_expert:
         set_top_k(model, gate_number)
-        test_loss = evaluate(te_iter)
+        test_loss = evaluate(model, te_iter)
         logging('=' * 100)
         if args.dataset in ['enwik8', 'text8']:
             logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
@@ -667,7 +705,7 @@ para_model = model.to(device)
 for gate_number in [1,2,4,8,16,32,64]:
     if gate_number <= args.moe_num_expert:
         set_top_k(model, gate_number)
-        test_loss = evaluate(te_iter)
+        test_loss = evaluate(model, te_iter)
         logging('=' * 100)
         if args.dataset in ['enwik8', 'text8']:
             logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
@@ -676,3 +714,24 @@ for gate_number in [1,2,4,8,16,32,64]:
             logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
                 gate_number, test_loss, math.exp(test_loss)))
         logging('=' * 100)
+
+
+
+if args.swad:
+    with open(os.path.join(args.work_dir, 'model_swa.pt'), 'rb') as f:
+        model = torch.load(f)
+    para_model = model.to(device)
+
+    # Run on test data.
+    for gate_number in [1,2,4,8,16,32,64]:
+        if gate_number <= args.moe_num_expert:
+            set_top_k(model, gate_number)
+            test_loss = evaluate(model, te_iter)
+            logging('=' * 100)
+            if args.dataset in ['enwik8', 'text8']:
+                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
+                    gate_number, test_loss, test_loss / math.log(2)))
+            else:
+                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
+                    gate_number, test_loss, math.exp(test_loss)))
+            logging('=' * 100)

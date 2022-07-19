@@ -1,8 +1,10 @@
+import copy
 import numpy as np
 from fmoe.gates.base_gate import BaseGate
 
 __all__ = ['set_top_k', 'set_router_mode', 'freeze_part_weight', 'adjust_moe_gate_number',
-            'show_dts_gate_number', 'set_temperature', 'set_threshold']
+            'show_dts_gate_number', 'set_temperature', 'set_threshold', 
+            'SWA_Average']
 
 
 def set_top_k(model, num=2):
@@ -111,6 +113,29 @@ def set_threshold(model, args):
 
 
 
+## Weight Average
+class SWA_Average(nn.Module):
+    def __init__(self, model, t_start, t_end, device):
+        super(SWA_Average, self).__init__()
+        self.device = device
+        self.average_model = copy.deepcopy(model) 
+        self.register_buffer('n_average', torch.tensor(0, dtype=torch.long, device=self.device))
+        self.t_start = t_start
+        self.t_end = t_end 
+    
+    def forward(self, data, target, *mems):
+        return self.average_model(data, target, *mems)
+    
+    def avg_fn(self, averaged_model_parameter, model_parameter, num_averaged):
+        return averaged_model_parameter + (model_parameter - averaged_model_parameter) / (
+            num_averaged + 1
+        )
 
+    def update_parameters(self, current_model, step):
+        if step >= self.t_start and step <= self.t_end:
+            print('Update parameters with step {}, current_n_average = {}'.format(step, self.n_average))
+            for p_swa, p_model in zip(self.average_model.parameters(), current_model.parameters()):
+                p_swa.detach().copy_(self.avg_fn(p_swa.detach(), p_model.detach(), self.n_average))
+            self.n_average +=1 
 
 
