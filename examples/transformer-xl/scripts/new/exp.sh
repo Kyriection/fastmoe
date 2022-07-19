@@ -73,18 +73,47 @@
 
 
 
-## VITA1 UT ##
+# ## VITA1 UT ##
+# DATE=0720
+# GATE_NAME=CustomNaiveGate
+# MoE_INDEX=0,1,2,3
+# SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_SWA
+# CUDA_VISIBLE_DEVICES=3 nohup bash scripts/new/layer4_experts16_moe_basic_stable.sh \
+#     ${GATE_NAME} ${MoE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+# DATE=0720
+# GATE_NAME=CustomNaiveGate
+# MoE_INDEX=0,1,2,3
+# SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_STABLE
+# CUDA_VISIBLE_DEVICES=2 nohup bash scripts/new/layer4_experts16_moe_basic_swa.sh \
+#     ${GATE_NAME} ${MoE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+
+## VITA2 UT ##
 DATE=0720
 GATE_NAME=CustomNaiveGate
 MoE_INDEX=0,1,2,3
-SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_SWA
-CUDA_VISIBLE_DEVICES=3 nohup bash scripts/new/layer4_experts16_moe_basic_stable.sh \
+SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_FREEZE
+CUDA_VISIBLE_DEVICES=0 nohup bash scripts/new/layer4_experts16_moe_freeze_basic.sh \
     ${GATE_NAME} ${MoE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 DATE=0720
 GATE_NAME=CustomNaiveGate
 MoE_INDEX=0,1,2,3
-SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_STABLE
-CUDA_VISIBLE_DEVICES=2 nohup bash scripts/new/layer4_experts16_moe_basic_swa.sh \
+SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_Basic
+CUDA_VISIBLE_DEVICES=1 nohup bash scripts/new/layer4_experts16_moe_basic.sh \
     ${GATE_NAME} ${MoE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
+DATE=0720
+GATE_NAME=CustomDropGate
+MoE_INDEX=0,1,2,3
+SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_FREEZE
+CUDA_VISIBLE_DEVICES=3 nohup bash scripts/new/layer4_experts16_moe_freeze_basic.sh \
+    ${GATE_NAME} ${MoE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+DATE=0720
+GATE_NAME=CustomDropGate
+MoE_INDEX=0,1,2,3
+SAVE_DIR=Layer4_Experts16_${GATE_NAME}_ALL_Basic
+CUDA_VISIBLE_DEVICES=2 nohup bash scripts/new/layer4_experts16_moe_basic.sh \
+    ${GATE_NAME} ${MoE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
