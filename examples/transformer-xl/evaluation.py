@@ -17,6 +17,8 @@ from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
 from fmoe.gates.base_gate import BaseGate
 
+from new_utils import *
+
 import warnings 
 warnings.filterwarnings(action= 'ignore')
 
@@ -147,32 +149,35 @@ parser.add_argument('--dynamic-loss-scale', action='store_true',
                     ' supersedes --static-loss-scale.')
 parser.add_argument('--moe', action='store_true',
                     help='replace position-wise ffn with moe position-wise ffn')
-parser.add_argument('--gradual_moe', action='store_true',
-                    help='gradually increase moe top-k')
 parser.add_argument('--moe-num-expert', type=int, default=64,
                     help='number of experts in MoE')
-parser.add_argument('--gate_name', type=str, default='NaiveGate',
-                    help='Router Type')
-parser.add_argument('--moe_index', type=str, default=None,
-                    help='MoE Index')
-parser.add_argument('--freeze_gate', action='store_true',
-                    help='Freeze the weights in the gates')
-parser.add_argument('--freeze_main_network', action='store_true',
-                    help='Freeze the weights in the gates')
-parser.add_argument('--freeze_main_network_all', action='store_true',
-                    help='Freeze the weights in the gates')
+
 parser.add_argument('--moe-top-k', type=int, default=2,
                     help='top_k experts in hard gate of moe')
 
+
+## other settings
+parser.add_argument('--gate_name', type=str, default='NaiveGate',
+                    help='Router Type')
+parser.add_argument('--moe_index', type=str, default=None, help='MoE Index')                    
+## Random Weight 
+parser.add_argument('--freeze_gate', action='store_true')
+parser.add_argument('--freeze_main_network', action='store_true')
+parser.add_argument('--freeze_main_network_all', action='store_true')
+## Gradually adjust Top-K number during training
+parser.add_argument('--dynamic_moe', action='store_true',
+                    help='dynamic change moe top-k')
+parser.add_argument('--dynamic_moe_mode', type=str, default='linear_increase')
+parser.add_argument('--dynamic_overall_steps', type=int, default=-1)
+## Dense to Sparse
 parser.add_argument('--min_temp', type=int, default=0.3)
 parser.add_argument('--max_temp', type=int, default=2)
 parser.add_argument('--threshold', type=int, default=0.001)
-
+## Dense Dropout
 parser.add_argument('--dense_drop', action='store_true')
 parser.add_argument('--expert_drop', type=float, default=0.5)
 parser.add_argument('--num_expert', type=int, default=64)
 
-parser.add_argument('--gradual_reverse', action='store_true')
 
 args = parser.parse_args()
 args.tied = not args.not_tied
@@ -184,19 +189,8 @@ if args.d_embed < 0:
 assert args.ext_len >= 0, 'extended context length must be non-negative'
 assert args.batch_size % args.batch_chunk == 0
 
-
-folder_list = os.listdir(args.work_dir)
-print(folder_list)
-for folder_name in folder_list:
-    if os.path.isdir(os.path.join(args.work_dir, folder_name)):
-        sub_list = os.listdir(os.path.join(args.work_dir, folder_name))
-        if 'model.pt' in sub_list:
-            print('Eval on {}'.format(folder_name))
-            args.work_dir = os.path.join(args.work_dir, folder_name)
-            break
-
-# args.work_dir = '{}-{}'.format(args.work_dir, args.dataset)
-# args.work_dir = os.path.join(args.work_dir, time.strftime('%Y%m%d-%H%M%S'))
+args.work_dir = '{}-{}'.format(args.work_dir, args.dataset)
+args.work_dir = os.path.join(args.work_dir, time.strftime('%Y%m%d-%H%M%S'))
 logging = create_exp_dir(args.work_dir,
     scripts_to_save=['train.py', 'mem_transformer.py'], debug=args.debug)
 
@@ -337,27 +331,9 @@ else:
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
+# for Dense to Sparse Method
+set_threshold(model, args)
 
-if args.freeze_gate:
-    for name, p in model.named_parameters():
-        if 'gate.gate' in name:
-            p.requires_grad = False
-            print('freeze: ', name, p.shape)
-
-if args.freeze_main_network:
-    for name, p in model.named_parameters():
-        if '.experts.' in name:
-            p.requires_grad = False
-            print('freeze: ', name, p.shape)
-
-if args.freeze_main_network_all:
-    for name, p in model.named_parameters():
-        if 'word_emb.emb_layers' in name: continue
-        if 'crit.out_layers' in name: continue 
-        if 'layers.' in name:
-            if not 'gate.gate' in name:
-                p.requires_grad = False
-                print('freeze: ', name, p.shape)
 
 if args.fp16:
     model = model.half()
@@ -463,87 +439,6 @@ logging('#non emb params = {}'.format(args.n_nonemb_param))
 # Training code
 ###############################################################################
 
-def set_gate(model, flag=True):
-    for name, m in model.named_modules():
-        if isinstance(m, BaseGate):
-            m.dense_moe_flag = flag 
-            print(name, m.dense_moe_flag)
-    if flag:
-        for name, m in model.named_modules():
-            if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-                if isinstance(m.gate, BaseGate):
-                    all_gate_num = m.gate.tot_expert
-                    m.top_k = all_gate_num
-                    print(name, m.top_k)
-    else:
-        for name, m in model.named_modules():
-            if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-                if isinstance(m.gate, BaseGate):
-                    m.top_k = args.moe_top_k
-                    print(name, m.top_k)
-
-
-def show_dts_gate(model):
-    layer_wise_mean_gate = []
-    for name, m in model.named_modules():
-        if isinstance(m, BaseGate):
-            mean_experts = m.mean_top_k / m.forward_n
-            layer_temp = m.temperature
-            layer_threshold = m.threshold
-            print('Mean-Experts = {:.0f}, Temperature = {:.4f}, Threshold = {:.4f}'.format(mean_experts, layer_temp, layer_threshold))
-
-def set_temperature(model, iterations, all_iteration, max_temp, min_temp):
-    temp = max_temp + iterations * (min_temp - max_temp) / all_iteration
-    for name, m in model.named_modules():
-        if isinstance(m, BaseGate):
-            m.temperature = temp
-
-def set_threshold(model, threshold):
-    for name, m in model.named_modules():
-        if isinstance(m, BaseGate):
-            m.threshold = threshold
-
-if args.gate_name == 'CustomDTSGate':
-    print('Set threshold for DTS Gate')
-    set_threshold(model, args.threshold)
-
-
-def set_top_gate(model):
-    for name, m in model.named_modules():
-        if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-            if isinstance(m.gate, BaseGate):
-                m.top_k = args.moe_top_k
-                m.gate.top_k = args.moe_top_k
-                print(name, m.top_k, m.gate.top_k)
-
-
-def set_top_gate_eval(model, num=2):
-    for name, m in model.named_modules():
-        if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-            if isinstance(m.gate, BaseGate):
-                m.top_k = num
-                m.gate.top_k = num
-                print(name, m.top_k, m.gate.top_k)
-
-# def calculate_train_step(overall, current):
-#     gate_number_list = [2,4,8,16,32]
-#     gate_index = int(len(gate_number_list)*current/overall) 
-#     args.moe_top_k = gate_number_list[gate_index]
-#     return gate_number_list[gate_index]
-
-def calculate_train_step(overall, current, min_experts, max_experts, reverse=False):
-
-    if reverse:
-        number_experts = min_experts - max_experts
-        gate_num = int(number_experts * current/overall) + max_experts
-    
-    else:
-        number_experts = max_experts - min_experts
-        gate_num = int(number_experts * current/overall) + min_experts
-
-    args.moe_top_k = gate_num
-    return gate_num
-
 
 def evaluate(eval_iter):
     # Turn on evaluation mode which disables dropout.
@@ -580,18 +475,14 @@ def evaluate(eval_iter):
 
 def train():
     # Turn on training mode which enables dropout.
-    global train_step, train_loss, best_val_loss, eval_start_time, log_start_time, current_gate, min_experts
+    global train_step, train_loss, best_val_loss, best_val_loss_dense, eval_start_time, log_start_time, current_gate
     model.train()
 
     if args.gate_name == 'CustomDTSGate':
         set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
 
-    if args.gradual_moe:
-        top_gate_num = calculate_train_step(args.max_step, train_step, min_experts, args.moe_num_expert, reverse=args.gradual_reverse)
-        if top_gate_num != current_gate:
-            print('Using new Gate')
-            set_top_gate(model)
-            current_gate = top_gate_num
+    if args.dynamic_moe:
+        current_gate = adjust_moe_gate_number(model, train_step, args, current_gate)
 
     if args.batch_chunk > 1:
         mems = [tuple() for _ in range(args.batch_chunk)]
@@ -653,8 +544,10 @@ def train():
         if train_step % args.log_interval == 1:
             cur_loss = train_loss / args.log_interval
             elapsed = time.time() - log_start_time
+
             if args.gate_name == 'CustomDTSGate':
-                show_dts_gate(model)
+                show_dts_gate_number(model)
+
             log_str = '| epoch {:3d} step {:>8d} | {:>6d} batches | lr {:.3g} ' \
                       '| ms/batch {:5.2f} | loss {:5.2f}'.format(
                 epoch, train_step, batch+1, optimizer.param_groups[0]['lr'],
@@ -668,9 +561,12 @@ def train():
             log_start_time = time.time()
 
         if train_step % args.eval_interval == 0:
-            set_gate(model, True)
+
+            current_gate = set_router_mode(model, args, flag=True)
+            val_loss_dense = evaluate(va_iter)
+            current_gate = set_router_mode(model, args, flag=False)
             val_loss = evaluate(va_iter)
-            set_gate(model, False)
+
             logging('-' * 100)
             log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
                       '| valid loss {:5.2f}'.format(
@@ -682,6 +578,16 @@ def train():
                 log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss))
             logging(log_str)
             logging('-' * 100)
+            log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                      '| Dense valid loss {:5.2f}'.format(
+                train_step // args.eval_interval, train_step,
+                (time.time() - eval_start_time), val_loss_dense)
+            if args.dataset in ['enwik8', 'text8']:
+                log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense / math.log(2))
+            else:
+                log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense))
+            logging(log_str_dense)
+            logging('-' * 100)
             # Save the model if the validation loss is the best we've seen so far.
             if not best_val_loss or val_loss < best_val_loss:
                 if not args.debug:
@@ -690,6 +596,14 @@ def train():
                     with open(os.path.join(args.work_dir, 'optimizer.pt'), 'wb') as f:
                         torch.save(optimizer.state_dict(), f)
                 best_val_loss = val_loss
+
+            if not best_val_loss_dense or val_loss_dense < best_val_loss_dense:
+                if not args.debug:
+                    with open(os.path.join(args.work_dir, 'model_dense.pt'), 'wb') as f:
+                        torch.save(model, f)
+                    with open(os.path.join(args.work_dir, 'optimizer_dense.pt'), 'wb') as f:
+                        torch.save(optimizer.state_dict(), f)
+                best_val_loss_dense = val_loss_dense
 
             # dev-performance based learning rate annealing
             if args.scheduler == 'dev_perf':
@@ -702,12 +616,13 @@ def train():
         if train_step == args.max_step:
             break
 
+
 # Loop over epochs.
 train_step = 0
 train_loss = 0
 best_val_loss = None
+best_val_loss_dense = None
 current_gate = args.moe_top_k
-min_experts = args.moe_top_k
 log_start_time = time.time()
 eval_start_time = time.time()
 
@@ -725,19 +640,39 @@ eval_start_time = time.time()
 
 
 # Load the best saved model.
+with open(os.path.join(args.work_dir, 'model_dense.pt'), 'rb') as f:
+    model = torch.load(f)
+para_model = model.to(device)
+
+# Run on test data.
+for gate_number in [1,2,4,8,16,32,64]:
+    if gate_number <= args.moe_top_k:
+        set_top_k(model, gate_number)
+        test_loss = evaluate(te_iter)
+        logging('=' * 100)
+        if args.dataset in ['enwik8', 'text8']:
+            logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
+                gate_number, test_loss, test_loss / math.log(2)))
+        else:
+            logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
+                gate_number, test_loss, math.exp(test_loss)))
+        logging('=' * 100)
+
+
 with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
     model = torch.load(f)
 para_model = model.to(device)
 
 # Run on test data.
-for gate_number in [1,2,4,8,16]:
-    set_top_gate_eval(model, gate_number)
-    test_loss = evaluate(te_iter)
-    logging('=' * 100)
-    if args.dataset in ['enwik8', 'text8']:
-        logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
-            gate_number, test_loss, test_loss / math.log(2)))
-    else:
-        logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
-            gate_number, test_loss, math.exp(test_loss)))
-    logging('=' * 100)
+for gate_number in [1,2,4,8,16,32,64]:
+    if gate_number <= args.moe_top_k:
+        set_top_k(model, gate_number)
+        test_loss = evaluate(te_iter)
+        logging('=' * 100)
+        if args.dataset in ['enwik8', 'text8']:
+            logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
+                gate_number, test_loss, test_loss / math.log(2)))
+        else:
+            logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
+                gate_number, test_loss, math.exp(test_loss)))
+        logging('=' * 100)
