@@ -344,6 +344,7 @@ args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
 # for Dense to Sparse Method
 set_threshold(model, args)
+freeze_part_weight(model, args)
 
 
 if args.fp16:

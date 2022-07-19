@@ -41,17 +41,19 @@ def set_router_mode(model, args, flag=True):
 
 def freeze_part_weight(model, args):
     if args.freeze_gate:
-        print('Freeze Router')
+        print('* Freeze Router')
         for name, p in model.named_parameters():
             if 'gate.gate' in name:
                 p.requires_grad = False
 
     if args.freeze_main_network:
+        print('* Freeze All')
         for name, p in model.named_parameters():
             if '.experts.' in name:
                 p.requires_grad = False
 
     if args.freeze_main_network_all:
+        print('* Freeze Attention')
         for name, p in model.named_parameters():
             if 'word_emb.emb_layers' in name: continue
             if 'crit.out_layers' in name: continue 

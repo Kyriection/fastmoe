@@ -338,7 +338,7 @@ args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
 # for Dense to Sparse Method
 set_threshold(model, args)
-
+freeze_part_weight(model, args)
 
 if args.fp16:
     model = model.half()
@@ -651,6 +651,10 @@ def train():
                     scheduler_sparse.step(val_loss)
 
             eval_start_time = time.time()
+
+        if train_step == args.dynamic_router_start:
+            args.freeze_gate = True
+            freeze_part_weight(model, args)
 
         if train_step == args.max_step:
             break
