@@ -21,7 +21,7 @@ plt.plot(x, eval_losses)
 plt.ylabel('Eval: bpc')
 plt.xlabel('Iterations')
 plt.title(sys.argv[1])
-plt.savefig('{}.png'.format(sys.argv[1][4:-5]), bbox_inches='tight')
+plt.savefig('{}.png'.format(sys.argv[1][4:-4]), bbox_inches='tight')
 plt.close()
 
 
