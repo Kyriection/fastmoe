@@ -22,8 +22,8 @@ python -u train.py \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name $1 \
     --moe_index $2 \
-    --freeze_gate \
     --dynamic_moe \
     --dynamic_moe_mode $3 \
     --dynamic_overall_steps $4 \
-    --work_dir $5
+    --work_dir $5 \
+    --dynamic_router_start 40000 

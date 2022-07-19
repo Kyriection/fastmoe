@@ -26,4 +26,7 @@ python -u train.py \
     --dynamic_moe \
     --dynamic_moe_mode $3 \
     --dynamic_overall_steps $4 \
-    --work_dir $5
+    --work_dir $5 \
+    --swad \
+    --swad_start 250000 \
+    --swad_end 400000
