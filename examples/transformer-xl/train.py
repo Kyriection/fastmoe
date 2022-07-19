@@ -181,7 +181,8 @@ parser.add_argument('--num_expert', type=int, default=64)
 parser.add_argument('--swad', action='store_true')
 parser.add_argument('--swad_start', type=int, default=0)
 parser.add_argument('--swad_end', type=int, default=400000)
-
+## Dynamic Routing
+parser.add_argument('--dynamic_router_start', type=int, default=-1)
 
 args = parser.parse_args()
 args.tied = not args.not_tied
