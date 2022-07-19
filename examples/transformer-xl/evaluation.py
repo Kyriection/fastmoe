@@ -189,7 +189,18 @@ if args.d_embed < 0:
 assert args.ext_len >= 0, 'extended context length must be non-negative'
 assert args.batch_size % args.batch_chunk == 0
 
+
 args.work_dir = '{}-{}'.format(args.work_dir, args.dataset)
+folder_list = os.listdir(args.work_dir)
+print(folder_list)
+for folder_name in folder_list:
+    if os.path.isdir(os.path.join(args.work_dir, folder_name)):
+        sub_list = os.listdir(os.path.join(args.work_dir, folder_name))
+        if 'model.pt' in sub_list and 'model_dense.pt' in sub_list:
+            print('Eval on {}'.format(folder_name))
+            args.work_dir = os.path.join(args.work_dir, folder_name)
+            break
+
 # args.work_dir = os.path.join(args.work_dir, time.strftime('%Y%m%d-%H%M%S'))
 logging = create_exp_dir(args.work_dir,
     scripts_to_save=['train.py', 'mem_transformer.py'], debug=args.debug)
