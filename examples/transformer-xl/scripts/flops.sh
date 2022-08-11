@@ -19,5 +19,5 @@ python -u flops.py \
     --eval_tgt_len 128 \
     --batch_size 22 \
     --work_dir test_dir \
-    --moe --moe-num-expert 16 --moe-top-k 4 \
+    --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate
