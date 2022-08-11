@@ -20,4 +20,4 @@ python -u flops.py \
     --batch_size 22 \
     --work_dir test_dir \
     --moe --moe-num-expert 16 --moe-top-k 16 \
-    --gate_name CustomNaiveGat
+    --gate_name CustomNaiveGate
