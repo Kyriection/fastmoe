@@ -18,4 +18,6 @@ python -u flops.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 22 \
-    --work_dir test_dir 
+    --work_dir test_dir \
+    --moe --moe-num-expert 16 --moe-top-k 16 \
+    --gate_name CustomNaiveGat
