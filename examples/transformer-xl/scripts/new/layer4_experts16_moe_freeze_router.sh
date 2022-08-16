@@ -14,7 +14,7 @@ python -u train.py \
     --optim adam \
     --lr 0.00025 \
     --warmup_step 0 \
-    --max_step 2000 \
+    --max_step 200 \
     --log-interval 10 \
     --eval-interval 10 \
     --tgt_len 512 \
