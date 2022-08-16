@@ -487,22 +487,23 @@ def train():
     global train_step, train_loss, best_val_loss, best_val_loss_dense, eval_start_time, log_start_time, current_gate
     model.train()
 
-    print(current_gate)
-
-    if args.gate_name == 'CustomDTSGate':
-        set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
-
-    if args.dynamic_moe:
-        current_gate = adjust_moe_gate_number(model, train_step, args, current_gate)
-
-    print(current_gate)
-
     if args.batch_chunk > 1:
         mems = [tuple() for _ in range(args.batch_chunk)]
     else:
         mems = tuple()
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
+
+        print(current_gate)
+
+        if args.gate_name == 'CustomDTSGate':
+            set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
+
+        if args.dynamic_moe:
+            current_gate = adjust_moe_gate_number(model, train_step, args, current_gate)
+
+        print(current_gate)
+
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
