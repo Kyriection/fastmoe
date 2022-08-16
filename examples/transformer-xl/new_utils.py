@@ -6,7 +6,7 @@ from fmoe.gates.base_gate import BaseGate
 
 __all__ = ['set_top_k', 'set_router_mode', 'freeze_part_weight', 'adjust_moe_gate_number',
             'show_dts_gate_number', 'set_temperature', 'set_threshold', 
-            'SWA_Average']
+            'SWA_Average', 'collect_top_k']
 
 
 def set_top_k(model, num=2):
@@ -16,6 +16,14 @@ def set_top_k(model, num=2):
                 m.top_k = num
                 m.gate.top_k = num
                 print('Layer name: {}, Top-K = {}, {}'.format(name, m.top_k, m.gate.top_k))
+
+def collect_top_k(model):
+    for name, m in model.named_modules():
+        if hasattr(m, 'top_k') and hasattr(m, 'gate'):
+            if isinstance(m.gate, BaseGate):
+                top_k = m.gate.top_k
+                break 
+    return top_k
 
 def set_router_mode(model, args, flag=True):
     for name, m in model.named_modules():
