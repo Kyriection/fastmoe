@@ -90,7 +90,19 @@ def calculate_gate_number(steps, args, overall_steps, min_experts, max_experts):
         number_experts = min_experts - max_experts
         cosine_value = np.cos(np.pi * steps / (2 * overall_steps))
         gate_num = round(number_experts * cosine_value) + max_experts
+    elif args.dynamic_moe_mode == 'multi_step_increase':
+        custom_gate_number = [1,2,4,8,16]
+        length = len(custom_gate_number)
+        gate_num_index = int(length * steps / overall_steps)
+        gate_num = custom_gate_number[gate_num_index]
+    elif args.dynamic_moe_mode == 'multi_step_decrease':
+        custom_gate_number = [16,8,4,2,1]
+        length = len(custom_gate_number)
+        gate_num_index = int(length * steps / overall_steps)
+        gate_num = custom_gate_number[gate_num_index]
+
     gate_num = np.clip(gate_num, min_experts, max_experts)
+
     return gate_num
 
 def adjust_moe_gate_number(model, steps, args, current_gate):
