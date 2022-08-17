@@ -169,6 +169,9 @@ parser.add_argument('--dynamic_moe', action='store_true',
                     help='dynamic change moe top-k')
 parser.add_argument('--dynamic_moe_mode', type=str, default='linear_increase')
 parser.add_argument('--dynamic_overall_steps', type=int, default=-1)
+parser.add_argument('--moe-top-k-min', type=int, default=2)
+parser.add_argument('--moe-top-k-max', type=int, default=16)
+
 ## Dense to Sparse
 parser.add_argument('--min_temp', type=int, default=0.3)
 parser.add_argument('--max_temp', type=int, default=2)
@@ -502,7 +505,6 @@ def train():
 
         current_top_k = collect_top_k(model)
         all_top_k.append(current_top_k)
-        print(current_top_k)
 
         model.zero_grad()
         if args.batch_chunk > 1:
@@ -577,77 +579,77 @@ def train():
         if train_step % args.eval_interval == 0:
 
             current_gate = set_router_mode(model, args, flag=True)
-            # val_loss_dense = evaluate(model, va_iter)
+            val_loss_dense = evaluate(model, va_iter)
             current_gate = set_router_mode(model, args, flag=False)
-            # val_loss = evaluate(model, va_iter)
+            val_loss = evaluate(model, va_iter)
 
-            # if args.swad:
-            #     swa_model.update_parameters(model, train_step)
-            #     current_gate = set_router_mode(swa_model.average_model, args, flag=True)
-            #     val_loss_dense_swa = evaluate(swa_model.average_model, va_iter)
-            #     current_gate = set_router_mode(swa_model.average_model, args, flag=False)
-            #     val_loss_swa = evaluate(swa_model.average_model, va_iter)
-            #     logging('-' * 100)
-            #     log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
-            #             '| SWA valid loss {:5.2f}'.format(
-            #         train_step // args.eval_interval, train_step,
-            #         (time.time() - eval_start_time), val_loss_swa)
-            #     if args.dataset in ['enwik8', 'text8']:
-            #         log_str += ' | bpc {:9.5f}'.format(val_loss_swa / math.log(2))
-            #     else:
-            #         log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_swa))
-            #     logging(log_str)
-            #     logging('-' * 100)
-            #     log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
-            #             '| SWA Dense valid loss {:5.2f}'.format(
-            #         train_step // args.eval_interval, train_step,
-            #         (time.time() - eval_start_time), val_loss_dense_swa)
-            #     if args.dataset in ['enwik8', 'text8']:
-            #         log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense_swa / math.log(2))
-            #     else:
-            #         log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense_swa))
-            #     logging(log_str_dense)
-            #     logging('-' * 100)
-            #     with open(os.path.join(args.work_dir, 'model_swa.pt'), 'wb') as f:
-            #         torch.save(swa_model.average_model, f)
+            if args.swad:
+                swa_model.update_parameters(model, train_step)
+                current_gate = set_router_mode(swa_model.average_model, args, flag=True)
+                val_loss_dense_swa = evaluate(swa_model.average_model, va_iter)
+                current_gate = set_router_mode(swa_model.average_model, args, flag=False)
+                val_loss_swa = evaluate(swa_model.average_model, va_iter)
+                logging('-' * 100)
+                log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                        '| SWA valid loss {:5.2f}'.format(
+                    train_step // args.eval_interval, train_step,
+                    (time.time() - eval_start_time), val_loss_swa)
+                if args.dataset in ['enwik8', 'text8']:
+                    log_str += ' | bpc {:9.5f}'.format(val_loss_swa / math.log(2))
+                else:
+                    log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_swa))
+                logging(log_str)
+                logging('-' * 100)
+                log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                        '| SWA Dense valid loss {:5.2f}'.format(
+                    train_step // args.eval_interval, train_step,
+                    (time.time() - eval_start_time), val_loss_dense_swa)
+                if args.dataset in ['enwik8', 'text8']:
+                    log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense_swa / math.log(2))
+                else:
+                    log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense_swa))
+                logging(log_str_dense)
+                logging('-' * 100)
+                with open(os.path.join(args.work_dir, 'model_swa.pt'), 'wb') as f:
+                    torch.save(swa_model.average_model, f)
 
-            # logging('-' * 100)
-            # log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
-            #           '| valid loss {:5.2f}'.format(
-            #     train_step // args.eval_interval, train_step,
-            #     (time.time() - eval_start_time), val_loss)
-            # if args.dataset in ['enwik8', 'text8']:
-            #     log_str += ' | bpc {:9.5f}'.format(val_loss / math.log(2))
-            # else:
-            #     log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss))
-            # logging(log_str)
-            # logging('-' * 100)
-            # log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
-            #           '| Dense valid loss {:5.2f}'.format(
-            #     train_step // args.eval_interval, train_step,
-            #     (time.time() - eval_start_time), val_loss_dense)
-            # if args.dataset in ['enwik8', 'text8']:
-            #     log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense / math.log(2))
-            # else:
-            #     log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense))
-            # logging(log_str_dense)
-            # logging('-' * 100)
-            # # Save the model if the validation loss is the best we've seen so far.
-            # if not best_val_loss or val_loss < best_val_loss:
-            #     if not args.debug:
-            #         with open(os.path.join(args.work_dir, 'model.pt'), 'wb') as f:
-            #             torch.save(model, f)
-            #         with open(os.path.join(args.work_dir, 'optimizer.pt'), 'wb') as f:
-            #             torch.save(optimizer.state_dict(), f)
-            #     best_val_loss = val_loss
+            logging('-' * 100)
+            log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                      '| valid loss {:5.2f}'.format(
+                train_step // args.eval_interval, train_step,
+                (time.time() - eval_start_time), val_loss)
+            if args.dataset in ['enwik8', 'text8']:
+                log_str += ' | bpc {:9.5f}'.format(val_loss / math.log(2))
+            else:
+                log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss))
+            logging(log_str)
+            logging('-' * 100)
+            log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
+                      '| Dense valid loss {:5.2f}'.format(
+                train_step // args.eval_interval, train_step,
+                (time.time() - eval_start_time), val_loss_dense)
+            if args.dataset in ['enwik8', 'text8']:
+                log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense / math.log(2))
+            else:
+                log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense))
+            logging(log_str_dense)
+            logging('-' * 100)
+            # Save the model if the validation loss is the best we've seen so far.
+            if not best_val_loss or val_loss < best_val_loss:
+                if not args.debug:
+                    with open(os.path.join(args.work_dir, 'model.pt'), 'wb') as f:
+                        torch.save(model, f)
+                    with open(os.path.join(args.work_dir, 'optimizer.pt'), 'wb') as f:
+                        torch.save(optimizer.state_dict(), f)
+                best_val_loss = val_loss
 
-            # if not best_val_loss_dense or val_loss_dense < best_val_loss_dense:
-            #     if not args.debug:
-            #         with open(os.path.join(args.work_dir, 'model_dense.pt'), 'wb') as f:
-            #             torch.save(model, f)
-            #         with open(os.path.join(args.work_dir, 'optimizer_dense.pt'), 'wb') as f:
-            #             torch.save(optimizer.state_dict(), f)
-            #     best_val_loss_dense = val_loss_dense
+            if not best_val_loss_dense or val_loss_dense < best_val_loss_dense:
+                if not args.debug:
+                    with open(os.path.join(args.work_dir, 'model_dense.pt'), 'wb') as f:
+                        torch.save(model, f)
+                    with open(os.path.join(args.work_dir, 'optimizer_dense.pt'), 'wb') as f:
+                        torch.save(optimizer.state_dict(), f)
+                best_val_loss_dense = val_loss_dense
 
             # dev-performance based learning rate annealing
             if args.scheduler == 'dev_perf':
@@ -727,7 +729,6 @@ for gate_number in [1,2,4,8,16,32,64]:
         logging('=' * 100)
 
 
-
 if args.swad:
     with open(os.path.join(args.work_dir, 'model_swa.pt'), 'rb') as f:
         model = torch.load(f)
@@ -746,3 +747,7 @@ if args.swad:
                 logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
                     gate_number, test_loss, math.exp(test_loss)))
             logging('=' * 100)
+
+
+all_top_k = np.array(all_top_k)
+print('* Mean Top-K During Training = {}-[{}]'.format(np.mean(all_top_k), all_top_k.shape[0]))

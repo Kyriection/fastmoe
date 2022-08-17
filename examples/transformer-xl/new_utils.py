@@ -94,7 +94,7 @@ def calculate_gate_number(steps, args, overall_steps, min_experts, max_experts):
     return gate_num
 
 def adjust_moe_gate_number(model, steps, args, current_gate):
-    new_gate_num = calculate_gate_number(steps, args, args.dynamic_overall_steps, args.moe_top_k, args.moe_num_expert)
+    new_gate_num = calculate_gate_number(steps, args, args.dynamic_overall_steps, args.moe_top_k_min, args.moe_top_k_max)
     if new_gate_num != current_gate:
         print('* Set New Top-k = {}'.format(new_gate_num))
         set_top_k(model, new_gate_num)

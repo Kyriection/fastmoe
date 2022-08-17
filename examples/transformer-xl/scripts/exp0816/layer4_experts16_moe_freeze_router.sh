@@ -18,12 +18,15 @@ python -u train.py \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 22 \
+    --batch_size 64 \
+    --multi_gpu \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name $1 \
     --moe_index $2 \
     --freeze_gate \
     --dynamic_moe \
     --dynamic_moe_mode $3 \
-    --dynamic_overall_steps $4 \
-    --work_dir $5
+    --dynamic_overall_steps 400000 \
+    --moe-top-k-min $4 \
+    --moe-top-k-max $5 \
+    --work_dir $6
