@@ -96,7 +96,7 @@ elif [[ $1 == 'exp9' ]]; then
     MIN_K=1
     MAX_K=16
     SAVE_DIR=MoE4-16_RandomWeight_ALL_${Dynamic_mode}_${MIN_K}_${MAX_K}
-    nohup bash scripts/exp0816/layer4_experts16_moe_freeze_router.sh \
+    nohup bash scripts/exp0816/layer4_experts16_moe_freeze_router_single.sh \
         ${GATE_NAME} ${MoE_INDEX} ${Dynamic_mode} ${MIN_K} ${MAX_K} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 elif [[ $1 == 'exp10' ]]; then
     echo 'Run Experiment 10'
