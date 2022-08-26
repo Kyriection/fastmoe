@@ -169,6 +169,9 @@ parser.add_argument('--dynamic_moe', action='store_true',
                     help='dynamic change moe top-k')
 parser.add_argument('--dynamic_moe_mode', type=str, default='linear_increase')
 parser.add_argument('--dynamic_overall_steps', type=int, default=-1)
+parser.add_argument('--moe-top-k-min', type=int, default=2)
+parser.add_argument('--moe-top-k-max', type=int, default=16)
+
 ## Dense to Sparse
 parser.add_argument('--min_temp', type=int, default=0.3)
 parser.add_argument('--max_temp', type=int, default=2)
@@ -236,17 +239,6 @@ va_iter = corpus.get_iterator('valid', eval_batch_size, args.eval_tgt_len,
     device=device, ext_len=args.ext_len)
 te_iter = corpus.get_iterator('test', eval_batch_size, args.eval_tgt_len,
     device=device, ext_len=args.ext_len)
-
-
-
-
-
-
-
-
-
-
-
 
 # adaptive softmax / embedding
 cutoffs, tie_projs = [], [False]
@@ -495,14 +487,8 @@ def evaluate(model, eval_iter):
 
 def train():
     # Turn on training mode which enables dropout.
-    global train_step, train_loss, best_val_loss, best_val_loss_dense, eval_start_time, log_start_time, current_gate
+    global train_step, train_loss, best_val_loss, best_val_loss_dense, eval_start_time, log_start_time, current_gate, all_top_k
     model.train()
-
-    if args.gate_name == 'CustomDTSGate':
-        set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
-
-    if args.dynamic_moe:
-        current_gate = adjust_moe_gate_number(model, train_step, args, current_gate)
 
     if args.batch_chunk > 1:
         mems = [tuple() for _ in range(args.batch_chunk)]
@@ -510,6 +496,16 @@ def train():
         mems = tuple()
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
     for batch, (data, target, seq_len) in enumerate(train_iter):
+
+        if args.gate_name == 'CustomDTSGate':
+            set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
+
+        if args.dynamic_moe:
+            current_gate = adjust_moe_gate_number(model, train_step, args, current_gate)
+
+        current_top_k = collect_top_k(model)
+        all_top_k.append(current_top_k)
+
         model.zero_grad()
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
@@ -679,6 +675,7 @@ best_val_loss_dense = None
 current_gate = args.moe_top_k
 log_start_time = time.time()
 eval_start_time = time.time()
+all_top_k = []
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:
@@ -732,7 +729,6 @@ for gate_number in [1,2,4,8,16,32,64]:
         logging('=' * 100)
 
 
-
 if args.swad:
     with open(os.path.join(args.work_dir, 'model_swa.pt'), 'rb') as f:
         model = torch.load(f)
@@ -751,3 +747,7 @@ if args.swad:
                 logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
                     gate_number, test_loss, math.exp(test_loss)))
             logging('=' * 100)
+
+
+all_top_k = np.array(all_top_k)
+print('* Mean Top-K During Training = {}-[{}]'.format(np.mean(all_top_k), all_top_k.shape[0]))
