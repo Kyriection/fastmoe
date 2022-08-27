@@ -113,8 +113,62 @@ elif [[ $1 == 'exp9' ]]; then
     MIN_K=8
     MAX_K=16
     SAVE_DIR=MoE${NUM_LAYER}-${NUM_EXPERT}_Naive_ALL_${Dynamic_mode}_${MIN_K}_${MAX_K}
-    nohup bash scripts/exp0827/moe.sh \
+    nohup bash scripts/exp0827/moe_single.sh \
         ${GATE_NAME} ${Dynamic_mode} ${MIN_K} ${MAX_K} ${SAVE_DIR} ${NUM_LAYER} ${NUM_EXPERT} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+elif [[ $1 == 'exp10' ]]; then
+    echo 'Run Experiment 10'
+    DATE=0827
+    NUM_LAYER=4
+    NUM_DIM=2048
+    SAVE_DIR=MoE${NUM_LAYER}-${NUM_DIM}_Dense
+    nohup bash scripts/exp0827/dense_single.sh \
+        ${NUM_LAYER} ${NUM_DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+elif [[ $1 == 'exp11' ]]; then
+    echo 'Run Experiment 11'
+    DATE=0827
+    NUM_LAYER=4
+    NUM_DIM=4096
+    SAVE_DIR=MoE${NUM_LAYER}-${NUM_DIM}_Dense
+    nohup bash scripts/exp0827/dense_single.sh \
+        ${NUM_LAYER} ${NUM_DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+elif [[ $1 == 'exp12' ]]; then
+    echo 'Run Experiment 12'
+    DATE=0827
+    NUM_LAYER=4
+    NUM_DIM=16384
+    SAVE_DIR=MoE${NUM_LAYER}-${NUM_DIM}_Dense
+    nohup bash scripts/exp0827/dense_single.sh \
+        ${NUM_LAYER} ${NUM_DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+elif [[ $1 == 'exp13' ]]; then
+    echo 'Run Experiment 13'
+    DATE=0827
+    NUM_LAYER=2
+    NUM_DIM=8192
+    SAVE_DIR=MoE${NUM_LAYER}-${NUM_DIM}_Dense
+    nohup bash scripts/exp0827/dense_single.sh \
+        ${NUM_LAYER} ${NUM_DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+elif [[ $1 == 'exp14' ]]; then
+    echo 'Run Experiment 14'
+    DATE=0827
+    NUM_LAYER=8
+    NUM_DIM=8192
+    SAVE_DIR=MoE${NUM_LAYER}-${NUM_DIM}_Dense
+    nohup bash scripts/exp0827/dense_single.sh \
+        ${NUM_LAYER} ${NUM_DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+elif [[ $1 == 'exp15' ]]; then
+    echo 'Run Experiment 15'
+    DATE=0827
+    NUM_LAYER=12
+    NUM_DIM=8192
+    SAVE_DIR=MoE${NUM_LAYER}-${NUM_DIM}_Dense
+    nohup bash scripts/exp0827/dense_single.sh \
+        ${NUM_LAYER} ${NUM_DIM} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 else
     echo 'unknown argment 1'
