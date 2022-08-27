@@ -18,6 +18,7 @@ def set_top_k(model, num=2):
                 print('Layer name: {}, Top-K = {}, {}'.format(name, m.top_k, m.gate.top_k))
 
 def collect_top_k(model):
+    top_k = None
     for name, m in model.named_modules():
         if hasattr(m, 'top_k') and hasattr(m, 'gate'):
             if isinstance(m.gate, BaseGate):
