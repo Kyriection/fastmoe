@@ -903,6 +903,8 @@ class MemTransformerLM(nn.Module):
         tgt_len = target.size(0)
         hidden, new_mems = self._forward(data, mems=mems)
 
+        import pdb; pdb.set_trace()
+
         pred_hid = hidden[-tgt_len:]
         if self.sample_softmax > 0 and self.training:
             assert self.tie_weight
