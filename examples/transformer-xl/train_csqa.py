@@ -508,7 +508,7 @@ def train():
 
         model.zero_grad()
 
-        import pdb; pdb.trace()
+        import pdb; pdb.set_trace()
 
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
