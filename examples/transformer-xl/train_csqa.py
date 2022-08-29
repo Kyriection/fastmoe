@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser(description='PyTorch Transformer Language Model
 parser.add_argument('--data', type=str, default='../data/wikitext-103',
                     help='location of the data corpus')
 parser.add_argument('--dataset', type=str, default='wt103',
-                    choices=['wt103', 'lm1b', 'enwik8', 'text8'],
+                    choices=['wt103', 'lm1b', 'enwik8', 'text8', 'csqa'],
                     help='dataset name')
 parser.add_argument('--n_layer', type=int, default=12,
                     help='number of total layers')
@@ -229,6 +229,9 @@ device = torch.device('cuda' if args.cuda else 'cpu')
 # Load data
 ###############################################################################
 corpus = get_lm_corpus(args.data, args.dataset)
+
+print('done')
+
 ntokens = len(corpus.vocab)
 args.n_token = ntokens
 

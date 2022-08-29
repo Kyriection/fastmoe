@@ -229,11 +229,6 @@ device = torch.device('cuda' if args.cuda else 'cpu')
 # Load data
 ###############################################################################
 corpus = get_lm_corpus(args.data, args.dataset)
-
-
-print('done')
-
-
 ntokens = len(corpus.vocab)
 args.n_token = ntokens
 
