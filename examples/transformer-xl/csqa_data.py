@@ -2,7 +2,7 @@ import os
 import sys
 import json 
 
-import pdb; pdb.trace()
+import pdb; pdb.set_trace()
 
 with open(sys.argv[1]) as h:
     for line in h:
