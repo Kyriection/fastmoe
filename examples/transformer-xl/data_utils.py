@@ -193,6 +193,11 @@ class Corpus(object):
             train_paths = glob.glob(train_path_pattern)
             # the vocab will load from file when build_vocab() is called
 
+        elif self.dataset == 'csqa':
+            result = self.vocab.count_csqa(os.path.join(path, 'train_rand_split.jsonl'))
+        import pdb; pdb.set_trace()
+
+
         self.vocab.build_vocab()
 
         if self.dataset in ['ptb', 'wt2', 'wt103']:
@@ -251,7 +256,7 @@ def get_lm_corpus(datadir, dataset):
             kwargs['special'] = []
             kwargs['lower_case'] = False
             kwargs['vocab_file'] = os.path.join(datadir, '1b_word_vocab.txt')
-        elif dataset in ['enwik8', 'text8']:
+        elif dataset in ['enwik8', 'text8', 'csqa']:
             pass
 
         corpus = Corpus(datadir, dataset, **kwargs)

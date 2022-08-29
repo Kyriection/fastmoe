@@ -1,4 +1,5 @@
 import os
+import json 
 from collections import Counter, OrderedDict
 
 import torch
@@ -46,6 +47,31 @@ class Vocab(object):
                 self.counter.update(symbols)
                 sents.append(symbols)
 
+        return sents
+
+    def count_csqa(self, path, num_classes=5, verbose=False, add_eos=True):
+        if verbose: print('counting file {} ...'.format(path))
+        assert os.path.exists(path)
+
+        sents = []
+        with open(path, 'r', encoding='utf-8') as f:
+            for idx, line in enumerate(f):
+                if verbose and idx > 0 and idx % 500000 == 0:
+                    print('    line {}'.format(idx))
+
+                import pdb; pdb.set_trace()
+
+                example = json.loads(line.strip())
+                question = example["question"]["stem"]
+                assert len(example["question"]["choices"]) == num_classes
+                # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
+                question = "Q: " + question
+                question_toks = self.tokenize(question, add_eos=add_eos)
+                for i, choice in enumerate(example["question"]["choices"]):
+                    src = "A: " + choice["text"]
+                    src_bin = torch.cat([question_toks, self.tokenize(src, add_eos=add_eos)])
+                    self.counter.update(src_bin)
+                    sents.append(src_bin)
         return sents
 
     def count_sents(self, sents, verbose=False):
