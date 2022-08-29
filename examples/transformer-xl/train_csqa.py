@@ -236,6 +236,7 @@ ntokens = len(corpus.vocab)
 args.n_token = ntokens
 
 eval_batch_size = 10
+
 tr_iter = corpus.get_iterator('train', args.batch_size, args.tgt_len,
     device=device, ext_len=args.ext_len)
 va_iter = corpus.get_iterator('valid', eval_batch_size, args.eval_tgt_len,

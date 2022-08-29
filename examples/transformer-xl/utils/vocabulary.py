@@ -131,7 +131,7 @@ class Vocab(object):
 
         return encoded
 
-    def encode_csqa_file(self, path, num_classes=5, ordered=False, verbose=False, add_eos=False,
+    def encode_csqa_file(self, path, num_classes=5, verbose=False, add_eos=False,
             add_double_eos=False):
         if verbose: print('encoding file {} ...'.format(path))
         assert os.path.exists(path)
@@ -139,9 +139,6 @@ class Vocab(object):
         labels = []
 
         with open(path, 'r', encoding='utf-8') as f:
-
-            import pdb; pdb.set_trace()
-
             for idx, line in enumerate(f):
                 if verbose and idx > 0 and idx % 500000 == 0:
                     print('    line {}'.format(idx))
@@ -160,10 +157,7 @@ class Vocab(object):
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
             labels = torch.LongTensor(labels)
-        pdb.set_trace()
-        if ordered:
-            for i in range(num_classes):
-                encoded[i] = torch.cat(encoded[i])
+
         return [encoded, labels]
 
     def encode_sents(self, sents, ordered=False, verbose=False):
