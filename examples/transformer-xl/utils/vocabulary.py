@@ -58,9 +58,6 @@ class Vocab(object):
             for idx, line in enumerate(f):
                 if verbose and idx > 0 and idx % 500000 == 0:
                     print('    line {}'.format(idx))
-
-                import pdb; pdb.set_trace()
-
                 example = json.loads(line.strip())
                 question = example["question"]["stem"]
                 assert len(example["question"]["choices"]) == num_classes
