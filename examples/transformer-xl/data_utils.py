@@ -194,9 +194,9 @@ class Corpus(object):
             # the vocab will load from file when build_vocab() is called
 
         elif self.dataset == 'csqa':
-            result = self.vocab.count_csqa(os.path.join(path, 'train_rand_split.jsonl'))
-        import pdb; pdb.set_trace()
-
+            self.vocab.count_csqa(os.path.join(path, 'train_rand_split.jsonl'))
+            self.vocab.count_csqa(os.path.join(path, 'dev_rand_split.jsonl'))
+            self.vocab.count_csqa(os.path.join(path, 'test_rand_split_no_answers.jsonl'))
 
         self.vocab.build_vocab()
 
@@ -220,6 +220,11 @@ class Corpus(object):
                 os.path.join(path, 'valid.txt'), ordered=False, add_double_eos=True)
             self.test  = self.vocab.encode_file(
                 os.path.join(path, 'test.txt'), ordered=False, add_double_eos=True)
+        elif self.dataset == 'csqa':
+            self.train = self.vocab.encode_csqa_file(
+                os.path.join(path, 'train_rand_split.jsonl'), ordered=True, add_double_eos=True)
+            self.valid = self.vocab.encode_csqa_file(
+                os.path.join(path, 'dev_rand_split.jsonl'), ordered=True, add_double_eos=True)
 
     def get_iterator(self, split, *args, **kwargs):
         if split == 'train':

@@ -131,6 +131,41 @@ class Vocab(object):
 
         return encoded
 
+    def encode_csqa_file(self, path, num_classes=5, ordered=False, verbose=False, add_eos=False,
+            add_double_eos=False):
+        if verbose: print('encoding file {} ...'.format(path))
+        assert os.path.exists(path)
+        encoded = [[] for i in range(num_classes)]
+        labels = []
+
+        with open(path, 'r', encoding='utf-8') as f:
+
+            import pdb; pdb.set_trace()
+
+            for idx, line in enumerate(f):
+                if verbose and idx > 0 and idx % 500000 == 0:
+                    print('    line {}'.format(idx))
+                example = json.loads(line.strip())
+                if "answerKey" in example:
+                    label = ord(example["answerKey"]) - ord("A")
+                    labels.append(label)
+                question = example["question"]["stem"]
+                assert len(example["question"]["choices"]) == num_classes
+                # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
+                question = "Q: " + question
+                for i, choice in enumerate(example["question"]["choices"]):
+                    src = question + "A: " + choice["text"]
+                    src_bin = self.tokenize(src,  add_eos=add_eos,
+                        add_double_eos=add_double_eos)
+                    encoded[i].append(self.convert_to_tensor(src_bin))
+
+            labels = torch.LongTensor(labels)
+        pdb.set_trace()
+        if ordered:
+            for i in range(num_classes):
+                encoded[i] = torch.cat(encoded[i])
+        return [encoded, labels]
+
     def encode_sents(self, sents, ordered=False, verbose=False):
         if verbose: print('encoding {} sents ...'.format(len(sents)))
         encoded = []
