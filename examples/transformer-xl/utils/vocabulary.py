@@ -69,9 +69,10 @@ class Vocab(object):
                 question_toks = self.tokenize(question, add_eos=add_eos)
                 for i, choice in enumerate(example["question"]["choices"]):
                     src = "A: " + choice["text"]
-                    src_bin = torch.cat([question_toks, self.tokenize(src, add_eos=add_eos)])
-                    self.counter.update(src_bin)
-                    sents.append(src_bin)
+                    src_bin = self.tokenize(src, add_eos=add_eos)
+                    question_toks.extend(src_bin)
+                self.counter.update(question_toks)
+                sents.append(question_toks)
         return sents
 
     def count_sents(self, sents, verbose=False):
