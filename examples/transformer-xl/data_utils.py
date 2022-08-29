@@ -194,9 +194,9 @@ class Corpus(object):
             # the vocab will load from file when build_vocab() is called
 
         elif self.dataset == 'csqa':
-            self.vocab.count_csqa(os.path.join(path, 'train_rand_split.jsonl'))
-            self.vocab.count_csqa(os.path.join(path, 'dev_rand_split.jsonl'))
-            self.vocab.count_csqa(os.path.join(path, 'test_rand_split_no_answers.jsonl'))
+            self.vocab.count_csqa(os.path.join(path, 'train_rand_split.jsonl'), add_double_eos=True)
+            self.vocab.count_csqa(os.path.join(path, 'dev_rand_split.jsonl'), add_double_eos=True)
+            self.vocab.count_csqa(os.path.join(path, 'test_rand_split_no_answers.jsonl'), add_double_eos=True)
 
         self.vocab.build_vocab()
 
