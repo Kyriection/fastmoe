@@ -154,7 +154,7 @@ class Vocab(object):
                 # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
                 question = "Q: " + question
                 for i, choice in enumerate(example["question"]["choices"]):
-                    src = question + "A: " + choice["text"]
+                    src = question + " A: " + choice["text"]
                     src_bin = self.tokenize(src,  add_eos=add_eos,
                         add_double_eos=add_double_eos)
                     encoded[i].append(self.convert_to_tensor(src_bin))
@@ -199,6 +199,7 @@ class Vocab(object):
             return self.sym2idx[sym]
         else:
             # print('encounter unk {}'.format(sym))
+            print(sym)
             assert '<eos>' not in sym
             assert hasattr(self, 'unk_idx')
             return self.sym2idx.get(sym, self.unk_idx)
