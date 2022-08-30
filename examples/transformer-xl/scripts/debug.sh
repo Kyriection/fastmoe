@@ -15,6 +15,8 @@ python -u train_csqa.py \
     --lr 0.00025 \
     --warmup_step 0 \
     --max_step 400000 \
+    --eval-interval 50 \
+    --log-interval 50 \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
