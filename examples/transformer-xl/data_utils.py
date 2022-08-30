@@ -266,17 +266,16 @@ class Corpus(object):
                 dataset = CSQADataset(self.train)
                 data_iter = DataLoader(dataset, *args, shuffle=True, 
                                     num_workers=4, drop_last=False, pin_memory=True)
-                for idx, data_list in enumerate(data_iter):
-                    import pdb; pdb.set_trace()
-
-
         elif split in ['valid', 'test']:
             data = self.valid if split == 'valid' else self.test
             if self.dataset in ['ptb', 'wt2', 'wt103', 'enwik8', 'text8']:
                 data_iter = LMOrderedIterator(data, *args, **kwargs)
             elif self.dataset == 'lm1b':
                 data_iter = LMShuffledIterator(data, *args, **kwargs)
-
+            elif self.dataset == 'csqa':
+                dataset = CSQADataset(self.valid)
+                data_iter = DataLoader(dataset, *args, shuffle=False, 
+                                    num_workers=4, drop_last=False, pin_memory=True)
         return data_iter
 
 

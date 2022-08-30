@@ -2,8 +2,8 @@
 echo 'Run training...'
 python -u train_csqa.py \
     --cuda \
-    --data ../data/csqa/ \
-    --dataset csqa \
+    --data ../data/enwik8/ \
+    --dataset enwik8 \
     --n_layer 4 \
     --d_model 256 \
     --n_head 8 \

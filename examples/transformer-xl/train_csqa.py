@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from data_utils import get_lm_corpus
-from mem_transformer import MemTransformerLM
+from mem_transformer_csqa import MemTransformerLM
 from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
 from fmoe.gates.base_gate import BaseGate
@@ -236,18 +236,9 @@ eval_batch_size = 10
 
 # for CSQA
 tr_iter = corpus.get_iterator('train', args.batch_size)
+va_iter = corpus.get_iterator('valid', args.batch_size)
+te_iter = va_iter
 
-
-
-
-
-
-# tr_iter = corpus.get_iterator('train', args.batch_size, args.tgt_len,
-#     device=device, ext_len=args.ext_len)
-# va_iter = corpus.get_iterator('valid', eval_batch_size, args.eval_tgt_len,
-#     device=device, ext_len=args.ext_len)
-# te_iter = corpus.get_iterator('test', eval_batch_size, args.eval_tgt_len,
-#     device=device, ext_len=args.ext_len)
 
 # adaptive softmax / embedding
 cutoffs, tie_projs = [], [False]
@@ -516,8 +507,6 @@ def train():
         all_top_k.append(current_top_k)
 
         model.zero_grad()
-
-        import pdb; pdb.set_trace()
 
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)
