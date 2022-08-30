@@ -249,9 +249,9 @@ class Corpus(object):
                 os.path.join(path, 'test.txt'), ordered=False, add_double_eos=True)
         elif self.dataset == 'csqa':
             self.train = self.vocab.encode_csqa_file(
-                os.path.join(path, 'train_rand_split.jsonl'), add_double_eos=True)
+                os.path.join(path, 'train_rand_split.jsonl'), ordered=True, add_double_eos=True)
             self.valid = self.vocab.encode_csqa_file(
-                os.path.join(path, 'dev_rand_split.jsonl'), add_double_eos=True)
+                os.path.join(path, 'dev_rand_split.jsonl'), ordered=True, add_double_eos=True)
 
     def get_iterator(self, split, *args, **kwargs):
         if split == 'train':
