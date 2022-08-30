@@ -498,7 +498,7 @@ def train():
 
     NUM_CLASS = 5
 
-    for batch, (data) in enumerate(train_iter):
+    for batch, (data) in enumerate(tr_iter):
 
         if args.gate_name == 'CustomDTSGate':
             set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
