@@ -574,10 +574,10 @@ def train():
                       '| ms/batch {:5.2f} | loss {:5.2f} | Accuracy {:5.2f}'.format(
                 epoch, train_step, batch+1, optimizer.param_groups[0]['lr'],
                 elapsed * 1000 / args.log_interval, cur_loss, cur_acc*100)
-            if args.dataset in ['enwik8', 'text8']:
-                log_str += ' | bpc {:9.5f}'.format(cur_loss / math.log(2))
-            else:
-                log_str += ' | ppl {:9.3f}'.format(math.exp(cur_loss))
+            # if args.dataset in ['enwik8', 'text8']:
+            #     log_str += ' | bpc {:9.5f}'.format(cur_loss / math.log(2))
+            # else:
+            #     log_str += ' | ppl {:9.3f}'.format(math.exp(cur_loss))
             logging(log_str)
             train_loss = 0
             log_start_time = time.time()
