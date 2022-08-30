@@ -505,8 +505,10 @@ def train():
         mems = [tuple() for _ in range(args.batch_chunk)]
     else:
         mems = tuple()
-    train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
-    for batch, (data, target, seq_len) in enumerate(train_iter):
+
+    NUM_CLASS = 5
+
+    for batch, (data) in enumerate(train_iter):
 
         if args.gate_name == 'CustomDTSGate':
             set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
@@ -518,6 +520,16 @@ def train():
         all_top_k.append(current_top_k)
 
         model.zero_grad()
+
+        scores = []
+        for idx in range(NUM_CLASS):
+            score = para_model(data[idx], *mems)
+            scores.append(score.reshape(-1, 1))
+        predict = torch.cat(scores, dim=-1)
+        print(predict.shape)
+
+
+
 
         if args.batch_chunk > 1:
             data_chunks = torch.chunk(data, args.batch_chunk, 1)

@@ -733,6 +733,9 @@ class MemTransformerLM(nn.Module):
                     elif tie_proj and div_val != 1:
                         self.crit.out_projs[i].weight = self.word_emb.emb_projs[i].weight
 
+
+        self.proj_head = Projection(d_model, 1) # get score
+
         self.same_length = same_length
         self.clamp_len = clamp_len
 
@@ -893,7 +896,7 @@ class MemTransformerLM(nn.Module):
 
         return core_out, new_mems
 
-    def forward(self, data, target, *mems):
+    def forward(self, data, *mems):
 
         import pdb; pdb.set_trace()
         # nn.DataParallel does not allow size(0) tensors to be broadcasted.
@@ -902,20 +905,13 @@ class MemTransformerLM(nn.Module):
         # them together.
         if not mems: mems = self.init_mems(data)
 
-        tgt_len = target.size(0)
         hidden, new_mems = self._forward(data, mems=mems)
+        
+        pdb.set_trace()
+        # hidden (batch-size, token, dimension)
+        pre_logits = F.linear(hidden[:,0,:], self.proj_head.weight, bias=self.proj_head.bias)
 
-        import pdb; pdb.set_trace()
-
-        pred_hid = hidden[-tgt_len:]
-        if self.sample_softmax > 0 and self.training:
-            assert self.tie_weight
-            logit = sample_logits(self.word_emb,
-                self.out_layer.bias, target, pred_hid, self.sampler)
-            loss = -F.log_softmax(logit, -1)[:, :, 0]
-        else:
-            loss = self.crit(pred_hid.view(-1, pred_hid.size(-1)), target.contiguous().view(-1))
-            loss = loss.view(tgt_len, -1)
+        pdb.set_trace()
 
         if new_mems is None:
             return [loss]
