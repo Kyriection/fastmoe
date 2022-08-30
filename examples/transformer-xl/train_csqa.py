@@ -512,7 +512,9 @@ def train():
 
         model.zero_grad()
 
-        data = data.cuda()
+        for data_idx in range(len(data)):
+            data[data_idx] = data[data_idx].cuda()
+
         scores = []
         for idx in range(NUM_CLASS):
             score = para_model(data[idx], *mems)
