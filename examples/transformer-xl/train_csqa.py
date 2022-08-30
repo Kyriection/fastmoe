@@ -232,12 +232,23 @@ corpus = get_lm_corpus(args.data, args.dataset)
 ntokens = len(corpus.vocab)
 args.n_token = ntokens
 
-eval_batch_size = 10
+# eval_batch_size = 10
 
-# for CSQA
-tr_iter = corpus.get_iterator('train', args.batch_size)
-va_iter = corpus.get_iterator('valid', args.batch_size)
-te_iter = va_iter
+# # for CSQA
+# tr_iter = corpus.get_iterator('train', args.batch_size)
+# va_iter = corpus.get_iterator('valid', args.batch_size)
+# te_iter = va_iter
+
+
+eval_batch_size = 10
+tr_iter = corpus.get_iterator('train', args.batch_size, args.tgt_len,
+    device=device, ext_len=args.ext_len)
+va_iter = corpus.get_iterator('valid', eval_batch_size, args.eval_tgt_len,
+    device=device, ext_len=args.ext_len)
+te_iter = corpus.get_iterator('test', eval_batch_size, args.eval_tgt_len,
+    device=device, ext_len=args.ext_len)
+
+
 
 
 # adaptive softmax / embedding
