@@ -658,6 +658,8 @@ class MemTransformerLM(nn.Module):
         self.word_emb = AdaptiveEmbedding(n_token, d_embed, d_model, cutoffs,
                                           div_val=div_val)
 
+        self.proj_head = Projection(d_model, 1) # get score
+
         self.drop = nn.Dropout(dropout)
 
         self.n_layer = n_layer
@@ -733,8 +735,6 @@ class MemTransformerLM(nn.Module):
                     elif tie_proj and div_val != 1:
                         self.crit.out_projs[i].weight = self.word_emb.emb_projs[i].weight
 
-
-        self.proj_head = Projection(d_model, 1) # get score
 
         self.same_length = same_length
         self.clamp_len = clamp_len
