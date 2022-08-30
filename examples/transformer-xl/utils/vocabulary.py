@@ -1,6 +1,8 @@
 import os
 import json 
 from collections import Counter, OrderedDict
+import torch.nn.functional as F
+from torch.nn.utils.rnn import pad_sequence
 
 import torch
 
@@ -131,7 +133,7 @@ class Vocab(object):
 
         return encoded
 
-    def encode_csqa_file(self, path, num_classes=5, verbose=False, add_eos=False,
+    def encode_csqa_file(self, path, ordered=False, num_classes=5, verbose=False, add_eos=False,
             add_double_eos=False):
         if verbose: print('encoding file {} ...'.format(path))
         assert os.path.exists(path)
@@ -157,6 +159,11 @@ class Vocab(object):
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
             labels = torch.LongTensor(labels)
+        
+        if ordered:
+            for idx in range(num_classes):
+                encoded[idx] = pad_sequence(encoded[idx])
+                print(encoded[idx].shape)
 
         return [encoded, labels]
 
