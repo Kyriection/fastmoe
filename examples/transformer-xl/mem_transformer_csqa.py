@@ -899,13 +899,13 @@ class MemTransformerLM(nn.Module):
         return core_out, new_mems
 
     def forward(self, data, *mems):
+        data = data.to(self.device)
 
         import pdb; pdb.set_trace()
         # nn.DataParallel does not allow size(0) tensors to be broadcasted.
         # So, have to initialize size(0) mems inside the model forward.
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
-        data = data.to(self.word_emb.device)
         if not mems: mems = self.init_mems(data)
 
         hidden, new_mems = self._forward(data, mems=mems)
