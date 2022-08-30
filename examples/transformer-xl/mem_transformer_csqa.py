@@ -899,7 +899,7 @@ class MemTransformerLM(nn.Module):
         return core_out, new_mems
 
     def forward(self, data, *mems):
-        data = data.to(self.device)
+        data = data.cuda()
 
         import pdb; pdb.set_trace()
         # nn.DataParallel does not allow size(0) tensors to be broadcasted.
