@@ -913,11 +913,7 @@ class MemTransformerLM(nn.Module):
         pre_logits = F.linear(hidden[:,0,:], self.project_weight, bias=self.project_bias)
 
         pdb.set_trace()
-
-        if new_mems is None:
-            return [pre_logits]
-        else:
-            return [pre_logits] + new_mems
+        return pre_logits, new_mems
 
 if __name__ == '__main__':
     import argparse
