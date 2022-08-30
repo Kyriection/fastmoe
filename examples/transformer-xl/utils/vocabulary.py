@@ -160,6 +160,7 @@ class Vocab(object):
 
             labels = torch.LongTensor(labels)
         
+        print(ordered)
         if ordered:
             for idx in range(num_classes):
                 encoded[idx] = pad_sequence(encoded[idx])
