@@ -744,7 +744,7 @@ class MemTransformerLM(nn.Module):
 
     def _create_params(self):
 
-        self.project_weight = nn.Parameter(torch.Tensor(self.d_model, 1))
+        self.project_weight = nn.Parameter(torch.Tensor(1, self.d_model))
         self.project_bias = nn.Parameter(torch.Tensor(1))
 
         if self.attn_type == 0: # default attention
