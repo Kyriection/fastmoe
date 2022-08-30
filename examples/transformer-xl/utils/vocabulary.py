@@ -160,12 +160,12 @@ class Vocab(object):
 
             labels = torch.LongTensor(labels)
         
-        print(ordered)
         if ordered:
             for idx in range(num_classes):
                 encoded[idx] = pad_sequence(encoded[idx])
-                print(encoded[idx].shape)
 
+        encoded = pad_sequence(encoded)
+        print(encoded.shape)
         return [encoded, labels]
 
     def encode_sents(self, sents, ordered=False, verbose=False):
