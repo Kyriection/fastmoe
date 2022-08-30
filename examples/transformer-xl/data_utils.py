@@ -88,7 +88,9 @@ class CSQADataset(Dataset):
 
     def __getitem__(self, index):
 
-        return self.encoded[0][:, index], self.encoded[1][:, index], self.encoded[2][:, index], self.encoded[3][:, index], self.encoded[4][:, index], self.labels[index]
+        return self.encoded[:, 0, index], self.encoded[:, 1, index], \
+            self.encoded[:, 2, index], self.encoded[:, 3, index], \
+            self.encoded[:, 4, index], self.labels[index]
 
 
 class LMShuffledIterator(object):
