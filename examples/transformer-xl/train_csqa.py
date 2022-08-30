@@ -519,7 +519,7 @@ def train():
         for idx in range(NUM_CLASS):
             score = para_model(data[idx], *mems)
             scores.append(score.reshape(-1, 1))
-        predict = torch.cat(scores, dim=-1)
+        predict, mems = torch.cat(scores, dim=-1)
         print(predict.shape)
 
 

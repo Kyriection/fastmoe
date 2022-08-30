@@ -915,9 +915,9 @@ class MemTransformerLM(nn.Module):
         pdb.set_trace()
 
         if new_mems is None:
-            return [loss]
+            return [pre_logits]
         else:
-            return [loss] + new_mems
+            return [pre_logits] + new_mems
 
 if __name__ == '__main__':
     import argparse
