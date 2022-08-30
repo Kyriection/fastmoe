@@ -658,8 +658,6 @@ class MemTransformerLM(nn.Module):
         self.word_emb = AdaptiveEmbedding(n_token, d_embed, d_model, cutoffs,
                                           div_val=div_val)
 
-        self.proj_head = Projection(d_model, 1) # get score
-
         self.drop = nn.Dropout(dropout)
 
         self.n_layer = n_layer
@@ -745,6 +743,10 @@ class MemTransformerLM(nn.Module):
         self.sample_softmax = -1
 
     def _create_params(self):
+
+        self.project_weight = nn.Parameter(torch.Tensor(self.d_model, 1))
+        self.project_bias = nn.Parameter(torch.Tensor(1))
+
         if self.attn_type == 0: # default attention
             self.pos_emb = PositionalEmbedding(self.d_model)
             self.r_w_bias = nn.Parameter(torch.Tensor(self.n_head, self.d_head))
@@ -909,7 +911,7 @@ class MemTransformerLM(nn.Module):
         
         pdb.set_trace()
         # hidden (batch-size, token, dimension)
-        pre_logits = F.linear(hidden[:,0,:], self.proj_head.weight, bias=self.proj_head.bias)
+        pre_logits = F.linear(hidden[:,0,:], self.project_weight, bias=self.project_bias)
 
         pdb.set_trace()
 
