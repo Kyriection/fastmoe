@@ -78,8 +78,6 @@ class CSQADataset(Dataset):
         self.encoded = data[0]
         self.labels = data[1]
 
-        import pdb; pdb.set_trace()
-
         self.n_question = self.labels.shape[0]
 
     def __len__(self):
