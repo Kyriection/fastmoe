@@ -467,13 +467,16 @@ if args.pretrained_weight is not None:
     with open(args.pretrained_weight, 'rb') as f:
         pretrained_model = torch.load(f)
     pretrained_model_checkpoint = pretrained_model.state_dict()
+    filtered_checkpoint = {}
     for key in pretrained_model_checkpoint.keys():
         if not key in model.state_dict():
             logging('Can not load {}'.format(key))
         elif not pretrained_model_checkpoint[key].shape == model.state_dict()[key].shape:
-            logging('Can not load {}'.format(key))
+            logging('Can not load {}, shape do not match'.format(key))
+        else:
+            filtered_checkpoint[key] = pretrained_model_checkpoint[key]
 
-    model.load_state_dict(pretrained_model_checkpoint, strict=False)
+    model.load_state_dict(filtered_checkpoint)
 
 
 def evaluate(model, eval_iter):
