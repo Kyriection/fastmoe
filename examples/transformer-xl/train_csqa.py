@@ -465,10 +465,12 @@ if args.pretrained_weight is not None:
 
     # Load the best saved model.
     with open(args.pretrained_weight, 'rb') as f:
-        model = torch.load(f)
-    para_model = model.to(device)
-
-
+        pretrained_model = torch.load(f)
+    pretrained_model_checkpoint = pretrained_model.state_dict()
+    for key in pretrained_model_checkpoint.keys():
+        if not key in model.state_dict():
+            logging('Can not load {}'.format(key))
+    model.load_state_dict(pretrained_model_checkpoint, strict=False)
 
 
 def evaluate(model, eval_iter):
