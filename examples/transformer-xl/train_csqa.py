@@ -23,6 +23,9 @@ import warnings
 warnings.filterwarnings(action= 'ignore')
 
 parser = argparse.ArgumentParser(description='PyTorch Transformer Language Model')
+
+parser.add_argument('--pretrained_weight', default=None, type=str)
+
 parser.add_argument('--data', type=str, default='../data/wikitext-103',
                     help='location of the data corpus')
 parser.add_argument('--dataset', type=str, default='wt103',
@@ -452,6 +455,20 @@ logging('#non emb params = {}'.format(args.n_nonemb_param))
 ###############################################################################
 # Training code
 ###############################################################################
+
+
+if args.pretrained_weight is not None:
+
+    logging('=' * 100)
+    logging('==== loading pretrained model from {} ===='.format(args.pretrained_weight))
+    logging('=' * 100)
+
+    # Load the best saved model.
+    with open(args.pretrained_weight, 'rb') as f:
+        model = torch.load(f)
+    para_model = model.to(device)
+
+
 
 
 def evaluate(model, eval_iter):
