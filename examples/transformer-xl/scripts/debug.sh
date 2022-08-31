@@ -17,9 +17,9 @@ python -u train_csqa.py \
     --max_step 400000 \
     --eval-interval 50 \
     --log-interval 50 \
-    --tgt_len 512 \
-    --mem_len 512 \
-    --eval_tgt_len 128 \
+    --tgt_len 64 \
+    --mem_len 64 \
+    --eval_tgt_len 64 \
     --batch_size 22 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
