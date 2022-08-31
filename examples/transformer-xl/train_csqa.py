@@ -470,6 +470,9 @@ if args.pretrained_weight is not None:
     for key in pretrained_model_checkpoint.keys():
         if not key in model.state_dict():
             logging('Can not load {}'.format(key))
+        elif not pretrained_model_checkpoint[key].shape == model.state_dict()[key].shape:
+            logging('Can not load {}'.format(key))
+
     model.load_state_dict(pretrained_model_checkpoint, strict=False)
 
 
