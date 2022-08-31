@@ -476,7 +476,7 @@ if args.pretrained_weight is not None:
         else:
             filtered_checkpoint[key] = pretrained_model_checkpoint[key]
 
-    model.load_state_dict(filtered_checkpoint)
+    model.load_state_dict(filtered_checkpoint, strict=False)
 
 
 def evaluate(model, eval_iter):
