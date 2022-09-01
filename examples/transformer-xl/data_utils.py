@@ -114,15 +114,15 @@ class CSQAIterator(object):
 
         return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, sublabels
 
-    def get_fixlen_iter(self, start=0):
+    def get_varlen_iter(self, start=0):
         sample_array = np.random.permutation(self.n_samples)
-        for i in range(0, self.n_samples, self.bsz):
-            sub_index = sample_array[i:i+self.bsz]
+        for i in range(self.n_step):
+            sub_index = sample_array[i*self.bsz:i*self.bsz+self.bsz]
             yield self.get_batch(sub_index)
 
-    def get_varlen_iter(self, start=0, std=5, min_len=5, max_deviation=3):
-        for i in range(0, self.n_samples, self.bsz):
-            sub_index = self.sequence_array[i:i+self.bsz]
+    def get_fixlen_iter(self, start=0, std=5, min_len=5, max_deviation=3):
+        for i in range(self.n_step):
+            sub_index = self.sequence_array[i*self.bsz:i*self.bsz+self.bsz]
             yield self.get_batch(sub_index)
 
     def __iter__(self):
