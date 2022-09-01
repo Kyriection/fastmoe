@@ -920,10 +920,11 @@ class MemTransformerLM(nn.Module):
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
         if not mems: mems = self.init_mems(data)
+        mems = tuple()
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
-        # hidden (batch-size, token, dimension)
+        # hidden (token, batch-size, dimension)
         pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
 
         return pre_logits, new_mems
