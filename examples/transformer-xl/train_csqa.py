@@ -546,6 +546,8 @@ def train():
         model.zero_grad()
         data = list(data)
 
+        pdb.set_trace()
+
         for data_idx in range(len(data)):
             data[data_idx] = data[data_idx].cuda()
 
