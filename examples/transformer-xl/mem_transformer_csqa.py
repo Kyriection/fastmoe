@@ -335,8 +335,6 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[:,:,:,None].bool(), -float('inf')).type_as(attn_score)
 
-
-        pdb.set_trace()
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
         attn_prob = torch.nan_to_num(attn_prob, nan=0.0)
