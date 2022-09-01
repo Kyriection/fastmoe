@@ -815,8 +815,9 @@ class MemTransformerLM(nn.Module):
 
         return new_mems
 
-    def _forward(self, dec_inp, mems=None):
+    def _forward(self, dec_inp, attn_mask, mems=None):
         qlen, bsz = dec_inp.size()
+        attn_mask = attn_mask.reshape(qlen, 1, bsz)
 
         pdb.set_trace()
 
@@ -833,9 +834,13 @@ class MemTransformerLM(nn.Module):
                 mask_shift_len = qlen
             dec_attn_mask = (torch.triu(all_ones, 1+mlen)
                     + torch.tril(all_ones, -mask_shift_len)).byte()[:, :, None] # -1
+            assert False
         else:
             dec_attn_mask = torch.triu(
-                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
+                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,bsz]
+            pdb.set_trace()
+            dec_attn_mask = (dec_attn_mask + attn_mask).byte()
+            
         pdb.set_trace()
 
         hids = []
@@ -913,14 +918,14 @@ class MemTransformerLM(nn.Module):
 
         return core_out, new_mems
 
-    def forward(self, data, *mems):
+    def forward(self, data, attn_mask, *mems):
         # nn.DataParallel does not allow size(0) tensors to be broadcasted.
         # So, have to initialize size(0) mems inside the model forward.
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
         if not mems: mems = self.init_mems(data)
 
-        hidden, new_mems = self._forward(data, mems=mems)
+        hidden, new_mems = self._forward(data, attn_mask, mems=mems)
         # hidden (batch-size, token, dimension)
         pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
 

@@ -66,7 +66,7 @@ class LMOrderedIterator(object):
 
 
 class CSQAIterator(object):
-    def __init__(self, data, bsz, device='cpu'):
+    def __init__(self, data, bsz):
         """
             data: [encoded, labels]
             encoded: [QA1, QA2, QA3, QA4, QA5]
@@ -83,7 +83,6 @@ class CSQAIterator(object):
         
         self.labels = data[1] # Tensor
 
-        self.device = device
         self.n_step = self.labels.size(0) // bsz
         self.n_samples = self.labels.size(0)
         self.sequence_array = np.arange(self.n_samples)
@@ -95,6 +94,7 @@ class CSQAIterator(object):
         subencoded_2 = []
         subencoded_3 = []
         subencoded_4 = []
+        mask_idx = []
         sublabels = []
 
         for idx in index_list:
@@ -104,15 +104,17 @@ class CSQAIterator(object):
             subencoded_3.append(self.encoded_3[idx])
             subencoded_4.append(self.encoded_4[idx])
             sublabels.append(self.labels[idx])
+            mask_idx.append(torch.ones(idx))
         
         subencoded_0 = pad_sequence(subencoded_0)
         subencoded_1 = pad_sequence(subencoded_1)
         subencoded_2 = pad_sequence(subencoded_2)
         subencoded_3 = pad_sequence(subencoded_3)
         subencoded_4 = pad_sequence(subencoded_4)
+        atten_mask = 1 - pad_sequence(mask_idx)
         sublabels = torch.LongTensor(sublabels)
 
-        return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, sublabels
+        return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, atten_mask, sublabels
 
     def get_varlen_iter(self, start=0):
         sample_array = np.random.permutation(self.n_samples)

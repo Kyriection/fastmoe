@@ -243,8 +243,8 @@ eval_batch_size = 10
 # va_iter = corpus.get_iterator('valid', args.batch_size)
 # te_iter = va_iter
 
-tr_iter = corpus.get_iterator('train', args.batch_size, device=device)
-va_iter = corpus.get_iterator('valid', args.batch_size, device=device)
+tr_iter = corpus.get_iterator('train', args.batch_size)
+va_iter = corpus.get_iterator('valid', args.batch_size)
 te_iter = va_iter
 
 
@@ -508,7 +508,7 @@ def evaluate(model, eval_iter):
 
             scores = []
             for idx in range(NUM_CLASS):
-                score, mems = para_model(data[idx], *mems)
+                score, mems = para_model(data[idx], data[-2], *mems)
                 scores.append(score)
             predict = torch.cat(scores, dim=-1)
 
@@ -551,7 +551,7 @@ def train():
 
         scores = []
         for idx in range(NUM_CLASS):
-            score, mems = para_model(data[idx], *mems)
+            score, mems = para_model(data[idx], data[-2], *mems)
             scores.append(score)
         predict = torch.cat(scores, dim=-1)
 
