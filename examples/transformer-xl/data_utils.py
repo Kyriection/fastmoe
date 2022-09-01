@@ -104,7 +104,7 @@ class CSQAIterator(object):
             subencoded_3.append(self.encoded_3[idx])
             subencoded_4.append(self.encoded_4[idx])
             sublabels.append(self.labels[idx])
-            mask_idx.append(torch.ones(idx))
+            mask_idx.append(torch.ones(self.encoded_0[idx].shape[0]))
         
         subencoded_0 = pad_sequence(subencoded_0)
         subencoded_1 = pad_sequence(subencoded_1)
