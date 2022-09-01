@@ -502,6 +502,7 @@ def evaluate(model, eval_iter):
     with torch.no_grad():
         mems = tuple()
         for i, (data) in enumerate(eval_iter):
+            data = list(data)
             for data_idx in range(len(data)):
                 data[data_idx] = data[data_idx].cuda()
 
@@ -541,9 +542,6 @@ def train():
 
         current_top_k = collect_top_k(model)
         all_top_k.append(current_top_k)
-
-        pdb.set_trace()
-
 
         model.zero_grad()
         data = list(data)
