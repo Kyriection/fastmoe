@@ -743,10 +743,17 @@ class MemTransformerLM(nn.Module):
     def backward_compatible(self):
         self.sample_softmax = -1
 
+    def _reset_project_parameters(self):
+        nn.init.kaiming_uniform_(self.project_weight, a=math.sqrt(5))
+        fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight)
+        bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+        nn.init.uniform_(self.project_bias, -bound, bound)
+
     def _create_params(self):
 
-        self.project_weight = nn.Parameter(torch.Tensor(1, self.d_model))
-        self.project_bias = nn.Parameter(torch.Tensor(1))
+        self.project_weight = nn.Parameter(torch.empty(1, self.d_model))
+        self.project_bias = nn.Parameter(torch.empty(0))
+        self._reset_project_parameters()
 
         if self.attn_type == 0: # default attention
             self.pos_emb = PositionalEmbedding(self.d_model)
