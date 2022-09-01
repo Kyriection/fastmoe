@@ -165,7 +165,7 @@ class Vocab(object):
 
             labels = torch.LongTensor(labels)
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
         if ordered:
             for idx in range(num_classes):
