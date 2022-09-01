@@ -813,7 +813,8 @@ class MemTransformerLM(nn.Module):
 
     def _forward(self, dec_inp, attn_mask, mems=None):
         qlen, bsz = dec_inp.size()
-        print(attn_mask.shape)
+        print('attn', attn_mask.shape)
+        print('input', dec_inp.shape)
 
         attn_mask = attn_mask.reshape(qlen, 1, bsz)
 
