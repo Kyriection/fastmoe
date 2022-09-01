@@ -339,6 +339,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
         pdb.set_trace()
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
+        attn_prob = torch.nan_to_num(attn_prob, nan=0.0)
         attn_prob = self.dropatt(attn_prob)
 
         #### compute attention vector
