@@ -12,7 +12,7 @@ python -u train_csqa.py \
     --dropout 0.1 \
     --dropatt 0.0 \
     --optim adam \
-    --lr 0.00025 \
+    --lr $2 \
     --warmup_step 0 \
     --max_step 400000 \
     --eval-interval 500 \
