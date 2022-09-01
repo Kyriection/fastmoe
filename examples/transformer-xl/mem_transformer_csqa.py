@@ -906,6 +906,7 @@ class MemTransformerLM(nn.Module):
         if not mems: mems = self.init_mems(data)
 
         hidden, new_mems = self._forward(data, mems=mems)
+        print(hidden.shape)
         # hidden (batch-size, token, dimension)
         pre_logits = F.linear(hidden[:,0,:], self.project_weight, bias=self.project_bias)
 
