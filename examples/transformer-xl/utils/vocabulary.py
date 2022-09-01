@@ -54,7 +54,7 @@ class Vocab(object):
 
         return sents
 
-    def count_csqa(self, path, num_classes=5, verbose=False, add_eos=False, add_double_eos=False):
+    def count_csqa(self, path, num_classes=5, verbose=False, add_eos=False, add_double_eos=False, add_cls_token=False):
         if verbose: print('counting file {} ...'.format(path))
         assert os.path.exists(path)
 
@@ -68,7 +68,7 @@ class Vocab(object):
                 assert len(example["question"]["choices"]) == num_classes
                 # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
                 question = "Q: " + question
-                question_toks = self.tokenize(question, add_eos=add_eos, add_double_eos=add_double_eos)
+                question_toks = self.tokenize(question, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
                 for i, choice in enumerate(example["question"]["choices"]):
                     src = "A: " + choice["text"]
                     assert (ord(choice["label"]) - ord("A")) == i
