@@ -555,8 +555,6 @@ def train():
             scores.append(score)
         predict = torch.cat(scores, dim=-1)
 
-        pdb.set_trace()
-
         loss = criterion(predict, data[-1])
         loss = loss.float()
 
