@@ -919,8 +919,8 @@ class MemTransformerLM(nn.Module):
         # So, have to initialize size(0) mems inside the model forward.
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
+        mems = tuple()        
         if not mems: mems = self.init_mems(data)
-        mems = tuple()
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
