@@ -820,8 +820,6 @@ class MemTransformerLM(nn.Module):
         print(attn_mask.shape)
         attn_mask = attn_mask.reshape(qlen, 1, bsz)
 
-        pdb.set_trace()
-
         word_emb = self.word_emb(dec_inp)
 
         mlen = mems[0].size(0) if mems is not None else 0
@@ -839,6 +837,7 @@ class MemTransformerLM(nn.Module):
         else:
             dec_attn_mask = torch.triu(
                 word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,bsz]
+            print(dec_attn_mask.shape)
             pdb.set_trace()
             dec_attn_mask = (dec_attn_mask + attn_mask).byte()
             
