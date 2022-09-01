@@ -335,6 +335,8 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[:,:,:,None].bool(), -float('inf')).type_as(attn_score)
 
+
+        pdb.set_trace()
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
         attn_prob = self.dropatt(attn_prob)
@@ -832,8 +834,11 @@ class MemTransformerLM(nn.Module):
             assert False
         else:
             dec_attn_mask = torch.triu(
-                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
-            dec_attn_mask = (dec_attn_mask + attn_mask).byte()
+                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
+
+            # dec_attn_mask = torch.triu(
+            #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+            # dec_attn_mask = (dec_attn_mask + attn_mask).byte()
 
         hids = []
         if self.attn_type == 0: # default
