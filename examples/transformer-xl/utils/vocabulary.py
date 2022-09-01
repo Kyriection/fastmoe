@@ -1,4 +1,5 @@
 import os
+import pdb
 import json 
 from collections import Counter, OrderedDict
 import torch.nn.functional as F
@@ -17,7 +18,7 @@ class Vocab(object):
         self.delimiter = delimiter
         self.vocab_file = vocab_file
 
-    def tokenize(self, line, add_eos=False, add_double_eos=False):
+    def tokenize(self, line, add_eos=False, add_double_eos=False, add_cls_token=False):
         line = line.strip()
         # convert to lower case
         if self.lower_case:
@@ -29,7 +30,9 @@ class Vocab(object):
         else:
             symbols = line.split(self.delimiter)
 
-        if add_double_eos: # lm1b
+        if add_cls_token:
+            return ['<CLS>'] + symbols + ['<S>']
+        elif add_double_eos: # lm1b
             return ['<S>'] + symbols + ['<S>']
         elif add_eos:
             return symbols + ['<eos>']
@@ -68,6 +71,7 @@ class Vocab(object):
                 question_toks = self.tokenize(question, add_eos=add_eos, add_double_eos=add_double_eos)
                 for i, choice in enumerate(example["question"]["choices"]):
                     src = "A: " + choice["text"]
+                    assert (ord(choice["label"]) - ord("A")) == i
                     src_bin = self.tokenize(src, add_eos=add_eos)
                     question_toks.extend(src_bin)
                 self.counter.update(question_toks)
@@ -134,7 +138,7 @@ class Vocab(object):
         return encoded
 
     def encode_csqa_file(self, path, ordered=False, num_classes=5, verbose=False, add_eos=False,
-            add_double_eos=False):
+            add_double_eos=False, add_cls_token=False):
         if verbose: print('encoding file {} ...'.format(path))
         assert os.path.exists(path)
         encoded = [[] for i in range(num_classes)]
@@ -154,18 +158,22 @@ class Vocab(object):
                 question = "Q: " + question
                 for i, choice in enumerate(example["question"]["choices"]):
                     src = question + " A: " + choice["text"]
+                    assert (ord(choice["label"]) - ord("A")) == i
                     src_bin = self.tokenize(src,  add_eos=add_eos,
-                        add_double_eos=add_double_eos)
+                        add_double_eos=add_double_eos, add_cls_token=add_cls_token)
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
             labels = torch.LongTensor(labels)
-        
+
+        pdb.set_trace()
+
         if ordered:
             for idx in range(num_classes):
                 encoded[idx] = pad_sequence(encoded[idx])
 
         encoded = pad_sequence(encoded)
         print(encoded.shape)
+
         return [encoded, labels]
 
     def encode_sents(self, sents, ordered=False, verbose=False):
