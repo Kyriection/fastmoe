@@ -833,12 +833,12 @@ class MemTransformerLM(nn.Module):
                     + torch.tril(all_ones, -mask_shift_len)).byte()[:, :, None] # -1
             assert False
         else:
-            dec_attn_mask = torch.triu(
-                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
-
             # dec_attn_mask = torch.triu(
-            #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
-            # dec_attn_mask = (dec_attn_mask + attn_mask).byte()
+            #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
+
+            dec_attn_mask = torch.triu(
+                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+            dec_attn_mask = (dec_attn_mask + attn_mask).byte()
 
         hids = []
         if self.attn_type == 0: # default
