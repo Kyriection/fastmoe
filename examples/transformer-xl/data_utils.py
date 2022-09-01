@@ -110,7 +110,7 @@ class CSQAIterator(object):
         subencoded_2 = pad_sequence(subencoded_2)
         subencoded_3 = pad_sequence(subencoded_3)
         subencoded_4 = pad_sequence(subencoded_4)
-        sublabels = torch.cat(sublabels)
+        sublabels = torch.LongTensor(sublabels)
 
         return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, sublabels
 
