@@ -20,7 +20,7 @@ python -u train_csqa.py \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 22 \
+    --batch_size 16 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
     --moe_index 0,1,2,3 \

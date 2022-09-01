@@ -508,7 +508,7 @@ def evaluate(model, eval_iter):
 
             scores = []
             for idx in range(NUM_CLASS):
-                score, mems = para_model(data[idx], data[-2], *mems)
+                score, mems = para_model(data[idx], data[idx+5], *mems)
                 scores.append(score)
             predict = torch.cat(scores, dim=-1)
 
@@ -551,7 +551,7 @@ def train():
 
         scores = []
         for idx in range(NUM_CLASS):
-            score, mems = para_model(data[idx], data[-2], *mems)
+            score, mems = para_model(data[idx], data[idx+5], *mems)
             scores.append(score)
         predict = torch.cat(scores, dim=-1)
 

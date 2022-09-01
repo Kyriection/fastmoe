@@ -94,7 +94,11 @@ class CSQAIterator(object):
         subencoded_2 = []
         subencoded_3 = []
         subencoded_4 = []
-        mask_idx = []
+        mask_idx_0 = []
+        mask_idx_1 = []
+        mask_idx_2 = []
+        mask_idx_3 = []
+        mask_idx_4 = []
         sublabels = []
 
         for idx in index_list:
@@ -104,17 +108,26 @@ class CSQAIterator(object):
             subencoded_3.append(self.encoded_3[idx])
             subencoded_4.append(self.encoded_4[idx])
             sublabels.append(self.labels[idx])
-            mask_idx.append(torch.ones(self.encoded_0[idx].shape[0]))
+            mask_idx_0.append(torch.ones(self.encoded_0[idx].shape[0]))
+            mask_idx_1.append(torch.ones(self.encoded_1[idx].shape[0]))
+            mask_idx_2.append(torch.ones(self.encoded_2[idx].shape[0]))
+            mask_idx_3.append(torch.ones(self.encoded_3[idx].shape[0]))
+            mask_idx_4.append(torch.ones(self.encoded_4[idx].shape[0]))
         
         subencoded_0 = pad_sequence(subencoded_0)
         subencoded_1 = pad_sequence(subencoded_1)
         subencoded_2 = pad_sequence(subencoded_2)
         subencoded_3 = pad_sequence(subencoded_3)
         subencoded_4 = pad_sequence(subencoded_4)
-        atten_mask = 1 - pad_sequence(mask_idx)
+        atten_mask_0 = 1 - pad_sequence(mask_idx_0)
+        atten_mask_1 = 1 - pad_sequence(mask_idx_1)
+        atten_mask_2 = 1 - pad_sequence(mask_idx_2)
+        atten_mask_3 = 1 - pad_sequence(mask_idx_3)
+        atten_mask_4 = 1 - pad_sequence(mask_idx_4)
         sublabels = torch.LongTensor(sublabels)
 
-        return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, atten_mask, sublabels
+        return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, \
+                atten_mask_0, atten_mask_1, atten_mask_2, atten_mask_3, atten_mask_4, sublabels
 
     def get_varlen_iter(self, start=0):
         sample_array = np.random.permutation(self.n_samples)
