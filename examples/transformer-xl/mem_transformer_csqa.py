@@ -923,7 +923,6 @@ class MemTransformerLM(nn.Module):
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
-        pdb.set_trace()
         # hidden (batch-size, token, dimension)
         pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
 
