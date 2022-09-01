@@ -327,11 +327,14 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
         attn_score.mul_(self.scale)
 
         #### compute attention probability
+        pdb.set_trace()
         if attn_mask is not None and attn_mask.any().item():
             if attn_mask.dim() == 2:
+                pdb.set_trace()
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[None,:,:,None].bool(), -float('inf')).type_as(attn_score)
             elif attn_mask.dim() == 3:
+                pdb.set_trace()
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[:,:,:,None].bool(), -float('inf')).type_as(attn_score)
 
