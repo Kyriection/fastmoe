@@ -327,18 +327,14 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
         attn_score.mul_(self.scale)
 
         #### compute attention probability
-        pdb.set_trace()
         if attn_mask is not None and attn_mask.any().item():
             if attn_mask.dim() == 2:
-                pdb.set_trace()
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[None,:,:,None].bool(), -float('inf')).type_as(attn_score)
             elif attn_mask.dim() == 3:
-                pdb.set_trace()
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[:,:,:,None].bool(), -float('inf')).type_as(attn_score)
 
-        pdb.set_trace()
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
         attn_prob = self.dropatt(attn_prob)
@@ -817,7 +813,7 @@ class MemTransformerLM(nn.Module):
 
     def _forward(self, dec_inp, attn_mask, mems=None):
         qlen, bsz = dec_inp.size()
-        print(attn_mask.shape)
+
         attn_mask = attn_mask.reshape(qlen, 1, bsz)
 
         word_emb = self.word_emb(dec_inp)
@@ -837,11 +833,7 @@ class MemTransformerLM(nn.Module):
         else:
             dec_attn_mask = torch.triu(
                 word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
-            print(dec_attn_mask.shape)
-            pdb.set_trace()
             dec_attn_mask = (dec_attn_mask + attn_mask).byte()
-            
-        pdb.set_trace()
 
         hids = []
         if self.attn_type == 0: # default
