@@ -167,12 +167,12 @@ class Vocab(object):
 
         # pdb.set_trace()
 
-        if ordered:
-            for idx in range(num_classes):
-                encoded[idx] = pad_sequence(encoded[idx])
+        # if ordered:
+        #     for idx in range(num_classes):
+        #         encoded[idx] = pad_sequence(encoded[idx])
 
-        encoded = pad_sequence(encoded)
-        print(encoded.shape)
+        # encoded = pad_sequence(encoded)
+        # print(encoded.shape)
 
         return [encoded, labels]
 

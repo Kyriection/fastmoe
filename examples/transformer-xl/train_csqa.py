@@ -1,4 +1,5 @@
 # coding: utf-8
+import pdb
 import argparse
 import time
 import math
@@ -238,10 +239,13 @@ args.n_token = ntokens
 eval_batch_size = 10
 
 # for CSQA
-tr_iter = corpus.get_iterator('train', args.batch_size)
-va_iter = corpus.get_iterator('valid', args.batch_size)
-te_iter = va_iter
+# tr_iter = corpus.get_iterator('train', args.batch_size)
+# va_iter = corpus.get_iterator('valid', args.batch_size)
+# te_iter = va_iter
 
+tr_iter = corpus.get_iterator('train', args.batch_size, device=device)
+va_iter = corpus.get_iterator('valid', args.batch_size, device=device)
+te_iter = va_iter
 
 
 # adaptive softmax / embedding
@@ -537,6 +541,9 @@ def train():
 
         current_top_k = collect_top_k(model)
         all_top_k.append(current_top_k)
+
+        pdb.set_trace()
+
 
         model.zero_grad()
 

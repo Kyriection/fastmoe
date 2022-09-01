@@ -65,6 +65,71 @@ class LMOrderedIterator(object):
         return self.get_fixlen_iter()
 
 
+class CSQAIterator(object):
+    def __init__(self, data, bsz, device='cpu'):
+        """
+            data: [encoded, labels]
+            encoded: [QA1, QA2, QA3, QA4, QA5]
+            QAx: [tensor]
+        """
+
+        self.bsz = bsz
+
+        self.encoded_0 = data[0][0] # List
+        self.encoded_1 = data[0][1]
+        self.encoded_2 = data[0][2]
+        self.encoded_3 = data[0][3]
+        self.encoded_4 = data[0][4]
+        
+        self.labels = data[1] # Tensor
+
+        self.device = device
+        self.n_step = self.labels.size(0) // bsz
+        self.n_samples = self.labels.size(0)
+        self.sequence_array = np.arange(self.n_samples)
+
+    def get_batch(self, index_list):
+
+        subencoded_0 = []
+        subencoded_1 = []
+        subencoded_2 = []
+        subencoded_3 = []
+        subencoded_4 = []
+        sublabels = []
+
+        for idx in index_list:
+            subencoded_0.append(self.encoded_0[idx])
+            subencoded_1.append(self.encoded_1[idx])
+            subencoded_2.append(self.encoded_2[idx])
+            subencoded_3.append(self.encoded_3[idx])
+            subencoded_4.append(self.encoded_4[idx])
+            sublabels.append(self.labels[idx])
+        
+        subencoded_0 = pad_sequence(subencoded_0)
+        subencoded_1 = pad_sequence(subencoded_1)
+        subencoded_2 = pad_sequence(subencoded_2)
+        subencoded_3 = pad_sequence(subencoded_3)
+        subencoded_4 = pad_sequence(subencoded_4)
+        sublabels = torch.cat(sublabels)
+
+        return subencoded_0, subencoded_1, subencoded_2, subencoded_3, subencoded_4, sublabels
+
+    def get_fixlen_iter(self, start=0):
+        sample_array = np.random.permutation(self.n_samples)
+        for i in range(0, self.n_samples, self.bsz):
+            sub_index = sample_array[i:i+self.bsz]
+            yield self.get_batch(sub_index)
+
+    def get_varlen_iter(self, start=0, std=5, min_len=5, max_deviation=3):
+        for i in range(0, self.n_samples, self.bsz):
+            sub_index = self.sequence_array[i:i+self.bsz]
+            yield self.get_batch(sub_index)
+
+    def __iter__(self):
+        return self.get_fixlen_iter()
+
+
+
 class CSQADataset(Dataset):
 
     def __init__(self, data):
@@ -263,9 +328,13 @@ class Corpus(object):
                 kwargs['shuffle'] = True
                 data_iter = LMMultiFileIterator(self.train, self.vocab, *args, **kwargs)
             elif self.dataset == 'csqa':
-                dataset = CSQADataset(self.train)
-                data_iter = DataLoader(dataset, *args, shuffle=True, 
-                                    num_workers=4, drop_last=False, pin_memory=True)
+                data_iter = CSQAIterator(self.train, *args, **kwargs)
+
+
+                # dataset = CSQADataset(self.train)
+                # data_iter = DataLoader(dataset, *args, shuffle=True, 
+                #                     num_workers=4, drop_last=False, pin_memory=True)
+
         elif split in ['valid', 'test']:
             data = self.valid if split == 'valid' else self.test
             if self.dataset in ['ptb', 'wt2', 'wt103', 'enwik8', 'text8']:
@@ -273,9 +342,11 @@ class Corpus(object):
             elif self.dataset == 'lm1b':
                 data_iter = LMShuffledIterator(data, *args, **kwargs)
             elif self.dataset == 'csqa':
-                dataset = CSQADataset(self.valid)
-                data_iter = DataLoader(dataset, *args, shuffle=False, 
-                                    num_workers=4, drop_last=False, pin_memory=True)
+                data_iter = CSQAIterator(self.valid, *args, **kwargs)
+
+                # dataset = CSQADataset(self.valid)
+                # data_iter = DataLoader(dataset, *args, shuffle=False, 
+                #                     num_workers=4, drop_last=False, pin_memory=True)
         return data_iter
 
 
