@@ -901,8 +901,6 @@ class MemTransformerLM(nn.Module):
         # them together.
         if not mems: mems = self.init_mems(data)
 
-        pdb.set_trace()
-
         tgt_len = target.size(0)
         hidden, new_mems = self._forward(data, mems=mems)
 
