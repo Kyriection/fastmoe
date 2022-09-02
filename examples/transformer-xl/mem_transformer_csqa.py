@@ -188,7 +188,6 @@ class MultiHeadAttn(nn.Module):
 
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
-        attn_prob = torch.nan_to_num(attn_prob, nan=0.0)
         attn_prob = self.dropatt(attn_prob)
 
         # [qlen x klen x bsz x n_head] + [klen x bsz x n_head x d_head] -> [qlen x bsz x n_head x d_head]
@@ -704,17 +703,13 @@ class MemTransformerLM(nn.Module):
         elif attn_type in [2, 3]: # absolute embeddings
             for i in range(n_layer):
                 self.layers.append(
-                #     DecoderLayer(
-                #         n_head, d_model, d_head, d_inner, dropout,
-                #         dropatt=dropatt, pre_lnorm=pre_lnorm,
-                #         moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name,  
-                #         dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
-                # )
                     DecoderLayer(
                         n_head, d_model, d_head, d_inner, dropout,
                         dropatt=dropatt, pre_lnorm=pre_lnorm,
-                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
+                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name,  
+                        dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
+
         self.sample_softmax = sample_softmax
         # use sampled softmax
         if sample_softmax > 0:

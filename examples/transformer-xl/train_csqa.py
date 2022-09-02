@@ -364,6 +364,8 @@ if args.multi_gpu:
 else:
     para_model = model.to(device)
 
+print(para_model)
+
 if args.swad:
     assert not args.restart
     print('Initial SWAD Model')
