@@ -26,7 +26,8 @@ python -u train_csqa.py \
     --moe_index 0,1,2,3 \
     --work_dir debug \
     --pretrained_weight $1 \
-    --clip $3
+    --attn_type 2 \
+    --mem_len 0
 
 
 
