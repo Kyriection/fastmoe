@@ -703,13 +703,17 @@ class MemTransformerLM(nn.Module):
         elif attn_type in [2, 3]: # absolute embeddings
             for i in range(n_layer):
                 self.layers.append(
+                #     DecoderLayer(
+                #         n_head, d_model, d_head, d_inner, dropout,
+                #         dropatt=dropatt, pre_lnorm=pre_lnorm,
+                #         moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name,  
+                #         dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
+                # )
                     DecoderLayer(
                         n_head, d_model, d_head, d_inner, dropout,
                         dropatt=dropatt, pre_lnorm=pre_lnorm,
-                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name,  
-                        dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
+                        moe=moe, moe_num_expert=moe_num_expert, moe_top_k=moe_top_k, gate_name=gate_name)
                 )
-
         self.sample_softmax = sample_softmax
         # use sampled softmax
         if sample_softmax > 0:
