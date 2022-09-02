@@ -364,8 +364,6 @@ if args.multi_gpu:
 else:
     para_model = model.to(device)
 
-print(para_model)
-
 if args.swad:
     assert not args.restart
     print('Initial SWAD Model')
@@ -457,7 +455,7 @@ for k, v in args.__dict__.items():
 logging('=' * 100)
 logging('#params = {}'.format(args.n_all_param))
 logging('#non emb params = {}'.format(args.n_nonemb_param))
-
+print(model)
 ###############################################################################
 # Training code
 ###############################################################################
