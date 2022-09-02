@@ -4,6 +4,7 @@ import functools
 
 import numpy as np
 
+import pdb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -899,6 +900,8 @@ class MemTransformerLM(nn.Module):
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
         if not mems: mems = self.init_mems(data)
+
+        pdb.set_trace()
 
         tgt_len = target.size(0)
         hidden, new_mems = self._forward(data, mems=mems)
