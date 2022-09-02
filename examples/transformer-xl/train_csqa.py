@@ -559,6 +559,9 @@ def train():
         loss = criterion(predict, data[-1])
         loss = loss.float()
 
+        print(predict.argmax(-1))
+        print(data[-1])
+
         train_correct += (predict.argmax(-1) == data[-1]).sum().item()
         train_n += data[-1].shape[0]
 
