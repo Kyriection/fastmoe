@@ -25,7 +25,8 @@ python -u train_csqa.py \
     --gate_name CustomNaiveGate \
     --moe_index 0,1,2,3 \
     --work_dir debug \
-    --pretrained_weight $1
+    --pretrained_weight $1 \
+    --clip $3
 
 
 

@@ -555,7 +555,6 @@ def train():
             scores.append(score)
         predict = torch.cat(scores, dim=-1)
 
-        pdb.set_trace()
 
         loss = criterion(predict, data[-1])
         loss = loss.float()
@@ -577,6 +576,10 @@ def train():
         optimizer.step()
         if args.sample_softmax > 0:
             optimizer_sparse.step()
+
+
+
+
 
         # step-wise learning rate annealing
         train_step += 1
