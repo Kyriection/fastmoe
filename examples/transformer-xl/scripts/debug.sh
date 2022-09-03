@@ -12,7 +12,7 @@ python -u train_csqa.py \
     --dropout 0.1 \
     --dropatt 0.0 \
     --optim adam \
-    --lr $1 \
+    --lr 0.00025 \
     --warmup_step 0 \
     --max_step 4000 \
     --eval-interval 500 \
@@ -24,7 +24,8 @@ python -u train_csqa.py \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
     --moe_index 0,1,2,3 \
-    --work_dir debug 
+    --work_dir debug \
+    --pretrained_weight $1
 
 
 
