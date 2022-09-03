@@ -102,7 +102,6 @@ class CSQAIterator(object):
         sublabels = []
 
         for idx in index_list:
-            pdb.set_trace()
             subencoded_0.append(self.encoded_0[idx])
             subencoded_1.append(self.encoded_1[idx])
             subencoded_2.append(self.encoded_2[idx])

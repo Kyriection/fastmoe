@@ -547,6 +547,7 @@ def train():
         data = list(data)
 
         for data_idx in range(len(data)):
+            pdb.set_trace()
             data[data_idx] = data[data_idx].cuda()
 
         scores = []
