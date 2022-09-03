@@ -921,8 +921,30 @@ class MemTransformerLM(nn.Module):
         # them together.
 
         if not mems: mems = self.init_mems(data)
-
+        
+        tgt_len = target.size(0)
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
+
+        pred_hid = hidden[-tgt_len:]
+
+        pdb.set_trace()
+
+
+        if self.sample_softmax > 0 and self.training:
+            assert self.tie_weight
+            logit = sample_logits(self.word_emb,
+                self.out_layer.bias, target, pred_hid, self.sampler)
+            loss = -F.log_softmax(logit, -1)[:, :, 0]
+        else:
+            loss = self.crit(pred_hid.view(-1, pred_hid.size(-1)), target.contiguous().view(-1))
+            loss = loss.view(tgt_len, -1)
+
+        pdb.set_trace()
+
+        if new_mems is None:
+            return [loss]
+        else:
+            return [loss] + new_mems
 
         # hidden (token, batch-size, dimension)
         pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
