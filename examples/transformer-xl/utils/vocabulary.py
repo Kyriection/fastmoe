@@ -159,7 +159,7 @@ class Vocab(object):
                 assert len(example["question"]["choices"]) == num_classes
                 # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
                 question = "Q: " + question
-                question_bin = self.tokenize(src,  add_eos=add_eos,
+                question_bin = self.tokenize(question,  add_eos=add_eos,
                         add_double_eos=add_double_eos, add_cls_token=add_cls_token)
                 for i, choice in enumerate(example["question"]["choices"]):
                     src = " A: " + choice["text"]
