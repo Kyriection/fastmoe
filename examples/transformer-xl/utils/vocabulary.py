@@ -18,7 +18,7 @@ class Vocab(object):
         self.delimiter = delimiter
         self.vocab_file = vocab_file
 
-    def tokenize(self, line, add_eos=False, add_double_eos=False, add_cls_token=False):
+    def tokenize(self, line, add_eos=False, add_double_eos=False, add_cls_token=False, add_s=False):
         line = line.strip()
         # convert to lower case
         if self.lower_case:
@@ -36,6 +36,8 @@ class Vocab(object):
             return ['<S>'] + symbols + ['<S>']
         elif add_eos:
             return symbols + ['<eos>']
+        elif add_s:
+            return symbols + ['<S>']
         else:
             return symbols
 
@@ -157,11 +159,12 @@ class Vocab(object):
                 assert len(example["question"]["choices"]) == num_classes
                 # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
                 question = "Q: " + question
-                for i, choice in enumerate(example["question"]["choices"]):
-                    src = question + ' <S> ' + " A: " + choice["text"]
-                    assert (ord(choice["label"]) - ord("A")) == i
-                    src_bin = self.tokenize(src,  add_eos=add_eos,
+                question_bin = self.tokenize(src,  add_eos=add_eos,
                         add_double_eos=add_double_eos, add_cls_token=add_cls_token)
+                for i, choice in enumerate(example["question"]["choices"]):
+                    src = " A: " + choice["text"]
+                    assert (ord(choice["label"]) - ord("A")) == i
+                    src_bin = question_bin + self.tokenize(src, add_s=True)
                     pdb.set_trace()
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
