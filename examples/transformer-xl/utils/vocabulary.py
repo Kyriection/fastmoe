@@ -156,9 +156,9 @@ class Vocab(object):
                 question = example["question"]["stem"]
                 assert len(example["question"]["choices"]) == num_classes
                 # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
-                question = "Q:" + question
+                question = "Q: " + question
                 for i, choice in enumerate(example["question"]["choices"]):
-                    src = question +'<S>' + "A:" + choice["text"]
+                    src = question +' <S> ' + "A: " + choice["text"]
                     assert (ord(choice["label"]) - ord("A")) == i
                     src_bin = self.tokenize(src,  add_eos=add_eos,
                         add_double_eos=add_double_eos, add_cls_token=add_cls_token)
