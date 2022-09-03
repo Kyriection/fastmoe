@@ -162,6 +162,7 @@ class Vocab(object):
                     assert (ord(choice["label"]) - ord("A")) == i
                     src_bin = self.tokenize(src,  add_eos=add_eos,
                         add_double_eos=add_double_eos, add_cls_token=add_cls_token)
+                    pdb.set_trace()
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
             labels = torch.LongTensor(labels)
