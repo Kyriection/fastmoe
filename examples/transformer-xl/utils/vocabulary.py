@@ -146,6 +146,7 @@ class Vocab(object):
 
         with open(path, 'r', encoding='utf-8') as f:
             for idx, line in enumerate(f):
+                pdb.set_trace()
                 if verbose and idx > 0 and idx % 500000 == 0:
                     print('    line {}'.format(idx))
                 example = json.loads(line.strip())
