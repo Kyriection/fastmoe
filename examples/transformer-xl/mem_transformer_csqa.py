@@ -927,8 +927,6 @@ class MemTransformerLM(nn.Module):
         # hidden (token, batch-size, dimension)
         pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
 
-        new_mems = tuple()
-
         return pre_logits, new_mems
 
 if __name__ == '__main__':

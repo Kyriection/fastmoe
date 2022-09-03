@@ -1,5 +1,5 @@
 from collections import defaultdict
-
+import pdb
 import numpy as np
 
 import torch
@@ -83,6 +83,8 @@ class ProjectedAdaptiveLogSoftmax(nn.Module):
         if hidden.size(0) != target.size(0):
             raise RuntimeError('Input and target should have the same size '
                                'in the batch dimension.')
+
+        pdb.set_trace()
 
         if self.n_clusters == 0:
             logit = self._compute_logit(hidden, self.out_layers[0].weight,
