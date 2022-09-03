@@ -455,7 +455,6 @@ for k, v in args.__dict__.items():
 logging('=' * 100)
 logging('#params = {}'.format(args.n_all_param))
 logging('#non emb params = {}'.format(args.n_nonemb_param))
-print(model)
 ###############################################################################
 # Training code
 ###############################################################################
@@ -547,7 +546,6 @@ def train():
         data = list(data)
 
         for data_idx in range(len(data)):
-            pdb.set_trace()
             data[data_idx] = data[data_idx].cuda()
 
         scores = []
