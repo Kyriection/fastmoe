@@ -150,7 +150,6 @@ class Vocab(object):
             for idx, line in enumerate(f):
                 if verbose and idx > 0 and idx % 500000 == 0:
                     print('    line {}'.format(idx))
-                pdb.set_trace()
                 example = json.loads(line.strip())
                 if "answerKey" in example:
                     label = ord(example["answerKey"]) - ord("A")
@@ -165,7 +164,6 @@ class Vocab(object):
                     src = " A: " + choice["text"]
                     assert (ord(choice["label"]) - ord("A")) == i
                     src_bin = question_bin + self.tokenize(src, add_s=True)
-                    pdb.set_trace()
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
             labels = torch.LongTensor(labels)
