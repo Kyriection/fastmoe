@@ -146,9 +146,9 @@ class Vocab(object):
 
         with open(path, 'r', encoding='utf-8') as f:
             for idx, line in enumerate(f):
-                pdb.set_trace()
                 if verbose and idx > 0 and idx % 500000 == 0:
                     print('    line {}'.format(idx))
+                pdb.set_trace()
                 example = json.loads(line.strip())
                 if "answerKey" in example:
                     label = ord(example["answerKey"]) - ord("A")
@@ -156,9 +156,9 @@ class Vocab(object):
                 question = example["question"]["stem"]
                 assert len(example["question"]["choices"]) == num_classes
                 # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
-                question = "Q: " + question
+                question = "Q:" + question
                 for i, choice in enumerate(example["question"]["choices"]):
-                    src = question + " A: " + choice["text"]
+                    src = question +'<S>' + "A:" + choice["text"]
                     assert (ord(choice["label"]) - ord("A")) == i
                     src_bin = self.tokenize(src,  add_eos=add_eos,
                         add_double_eos=add_double_eos, add_cls_token=add_cls_token)
