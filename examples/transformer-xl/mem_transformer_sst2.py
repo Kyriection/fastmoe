@@ -90,7 +90,7 @@ class PositionwiseFF_Dropout(nn.Module):
         self.pre_lnorm = pre_lnorm
 
     def _dropout_forward_corenet(self, inp):
-        pbd.set_trace()
+        pdb.set_trace()
 
         if self.training:
             fc1_shape = self.CoreNet[0].weight.shape
@@ -329,7 +329,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
 
         #### compute attention probability
 
-        pbd.set_trace()
+        pdb.set_trace()
         if attn_mask is not None and attn_mask.any().item():
             if attn_mask.dim() == 2:
                 attn_score = attn_score.float().masked_fill(
@@ -338,7 +338,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[:,:,:,None].bool(), -float('inf')).type_as(attn_score)
 
-        pbd.set_trace()
+        pdb.set_trace()
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
         attn_prob = torch.nan_to_num(attn_prob, nan=0.0)
@@ -351,7 +351,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
         attn_vec = attn_vec.contiguous().view(
             attn_vec.size(0), attn_vec.size(1), self.n_head * self.d_head)
 
-        pbd.set_trace()
+        pdb.set_trace()
         ##### linear projection
         attn_out = self.o_net(attn_vec)
         attn_out = self.drop(attn_out)
