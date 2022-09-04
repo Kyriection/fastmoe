@@ -731,10 +731,10 @@ for gate_number in [1,2,4,8,16,32,64]:
         test_loss = evaluate(model, te_iter)
         logging('=' * 100)
         if args.dataset in ['enwik8', 'text8']:
-            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+            logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
                 gate_number, test_loss))
         else:
-            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+            logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
                 gate_number, test_loss))
         logging('=' * 100)
 
@@ -750,10 +750,10 @@ for gate_number in [1,2,4,8,16,32,64]:
         test_loss = evaluate(model, te_iter)
         logging('=' * 100)
         if args.dataset in ['enwik8', 'text8']:
-            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+            logging('Top-2 | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
                 gate_number, test_loss))
         else:
-            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+            logging('Top-2 | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
                 gate_number, test_loss))
         logging('=' * 100)
 
