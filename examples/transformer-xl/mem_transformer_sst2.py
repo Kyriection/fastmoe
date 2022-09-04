@@ -710,7 +710,14 @@ class MemTransformerLM(nn.Module):
                         dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
 
-        self.activ = nn.Tanh()
+
+        self.project_head = nn.ModuleList(
+            nn.Linear(self.d_model, self.d_model),
+            nn.Tanh(),
+            nn.Dropout(0.1),
+            nn.Linear(self.d_model, 2)
+        )
+        # self.activ = nn.Tanh()
 
         self.sample_softmax = sample_softmax
         # use sampled softmax
@@ -746,27 +753,26 @@ class MemTransformerLM(nn.Module):
     def backward_compatible(self):
         self.sample_softmax = -1
 
-    def _reset_project_parameters(self):
-        nn.init.kaiming_uniform_(self.project_weight, a=math.sqrt(5))
-        fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight)
-        bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-        nn.init.uniform_(self.project_bias, -bound, bound)
-    def _reset_project_parameters2(self):
-        nn.init.kaiming_uniform_(self.project_weight_new, a=math.sqrt(5))
-        fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight_new)
-        bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-        nn.init.uniform_(self.project_bias_new, -bound, bound)
+    # def _reset_project_parameters(self):
+    #     nn.init.kaiming_uniform_(self.project_weight, a=math.sqrt(5))
+    #     fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight)
+    #     bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+    #     nn.init.uniform_(self.project_bias, -bound, bound)
+    # def _reset_project_parameters2(self):
+    #     nn.init.kaiming_uniform_(self.project_weight_new, a=math.sqrt(5))
+    #     fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight_new)
+    #     bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+    #     nn.init.uniform_(self.project_bias_new, -bound, bound)
 
     def _create_params(self):
 
+        # self.project_weight_new = nn.Parameter(torch.empty(self.d_model, self.d_model))
+        # self.project_bias_new = nn.Parameter(torch.empty(self.d_model))
+        # self._reset_project_parameters2()
 
-        self.project_weight_new = nn.Parameter(torch.empty(self.d_model, self.d_model))
-        self.project_bias_new = nn.Parameter(torch.empty(self.d_model))
-        self._reset_project_parameters2()
-
-        self.project_weight = nn.Parameter(torch.empty(2, self.d_model))
-        self.project_bias = nn.Parameter(torch.empty(2))
-        self._reset_project_parameters()
+        # self.project_weight = nn.Parameter(torch.empty(2, self.d_model))
+        # self.project_bias = nn.Parameter(torch.empty(2))
+        # self._reset_project_parameters()
 
         if self.attn_type == 0: # default attention
             self.pos_emb = PositionalEmbedding(self.d_model)
@@ -937,9 +943,11 @@ class MemTransformerLM(nn.Module):
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
         # hidden (token, batch-size, dimension)
-        output = F.linear(hidden[0,:,:], self.project_weight_new, bias=self.project_bias_new)
-        output = self.activ(output)
-        pre_logits = F.linear(self.drop(output), self.project_weight, bias=self.project_bias)
+        # output = F.linear(hidden[0,:,:], self.project_weight_new, bias=self.project_bias_new)
+        # output = self.activ(output)
+        # pre_logits = F.linear(self.drop(output), self.project_weight, bias=self.project_bias)
+
+        pre_logits = self.project_head(hidden[0,:,:])
 
         return pre_logits, new_mems
 
