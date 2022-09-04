@@ -955,6 +955,7 @@ class MemTransformerLM(nn.Module):
         # them together.
 
         if not mems: mems = self.init_mems(data)
+        mems = self.init_mems(data)
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
