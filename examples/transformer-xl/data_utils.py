@@ -177,17 +177,10 @@ class SST2Iterator(object):
         expand_mask_idx = mask_idx.unsqueeze(1).repeat(1, length, 1) # length, length, batch-size
         expand_mask_idx = ((expand_mask_idx + mask_idx)>0).byte()
 
-        import pdb; pdb.set_trace()
-
-
-
-
-
-
         # mask_idx = pad_sequence(mask_idx)
         sublabels = torch.LongTensor(sublabels)
 
-        return subencoded, mask_idx, sublabels
+        return subencoded, expand_mask_idx, sublabels
 
     def get_varlen_iter(self, start=0):
         sample_array = np.random.permutation(self.n_samples)
