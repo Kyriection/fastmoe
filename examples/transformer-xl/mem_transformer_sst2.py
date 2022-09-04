@@ -287,6 +287,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
 
     def forward(self, w, r, r_w_bias, r_r_bias, attn_mask=None, mems=None):
         qlen, rlen, bsz = w.size(0), r.size(0), w.size(1)
+        pdb.set_trace()
 
         if mems is not None:
             cat = torch.cat([mems, w], 0)
