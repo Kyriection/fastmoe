@@ -154,6 +154,7 @@ class SST2Iterator(object):
 
         self.encoded = data[0]
         self.labels = data[1] # Tensor
+        print(labels)
 
         self.n_step = self.labels.size(0) // bsz
         self.n_samples = self.labels.size(0)
