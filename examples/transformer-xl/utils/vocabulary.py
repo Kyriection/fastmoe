@@ -85,32 +85,16 @@ class Vocab(object):
     def count_sst2(self, path, verbose=False, add_eos=False, add_double_eos=False, add_cls_token=False):
         if verbose: print('counting file {} ...'.format(path))
         assert os.path.exists(path)
-
-
         sents = []
         with open(path, 'r', encoding='utf-8') as f:
             tsv_file = csv.reader(f, delimiter="\t")
             for line in tsv_file:
-                print(line)
+                if line[1] == 'label': continue
+                sentence, label = line[0], int(line[1])
+                assert label in [0,1]
+                sentence_toks = self.tokenize(question, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
+                sents.append(sentence_toks)
                 pdb.set_trace()
-
-
-            # for idx, line in enumerate(f):
-            #     if verbose and idx > 0 and idx % 500000 == 0:
-            #         print('    line {}'.format(idx))
-            #     example = json.loads(line.strip())
-            #     question = example["question"]["stem"]
-            #     assert len(example["question"]["choices"]) == num_classes
-            #     # format: `<s> Q: Where would I not want a fox? </s> A: hen house </s>`
-            #     question = "Q: " + question
-            #     question_toks = self.tokenize(question, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
-            #     for i, choice in enumerate(example["question"]["choices"]):
-            #         src = "A: " + choice["text"]
-            #         assert (ord(choice["label"]) - ord("A")) == i
-            #         src_bin = self.tokenize(src, add_eos=add_eos)
-            #         question_toks.extend(src_bin)
-            #     self.counter.update(question_toks)
-            #     sents.append(question_toks)
         return sents
 
     def count_sents(self, sents, verbose=False):
