@@ -148,10 +148,13 @@ class Transformer(nn.Module):
         self.fc = nn.Linear(cfg.dim, cfg.dim)
         self.activ = nn.Tanh()
         self.drop = nn.Dropout(cfg.p_drop_hidden)
-
+        self.classifier = nn.Linear(cfg.dim, 2)
 
     def forward(self, x, seg, mask):
         h = self.embed(x, seg)
         for block in self.blocks:
             h = block(h, mask)
-        return h
+
+        pooled_h = self.activ(self.fc(h[:,0]))
+        logits = self.classifier(self.drop(pooled_h))
+        return logits

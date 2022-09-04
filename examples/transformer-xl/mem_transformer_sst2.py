@@ -939,7 +939,7 @@ class MemTransformerLM(nn.Module):
         # hidden (token, batch-size, dimension)
         output = F.linear(hidden[0,:,:], self.project_weight_new, bias=self.project_bias_new)
         output = self.activ(output)
-        pre_logits = F.linear(output, self.project_weight, bias=self.project_bias)
+        pre_logits = F.linear(self.drop(output), self.project_weight, bias=self.project_bias)
 
         return pre_logits, new_mems
 
