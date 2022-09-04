@@ -80,7 +80,6 @@ python -u train_sst2.py \
     --mem_len 32 \
     --eval_tgt_len 32 \
     --batch_size 16 \
-    --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
     --moe_index 0,1,2,3 \
     --work_dir debug \
