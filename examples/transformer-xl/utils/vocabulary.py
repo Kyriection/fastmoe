@@ -251,6 +251,7 @@ class Vocab(object):
             return self.sym2idx[sym]
         else:
             # print('encounter unk {}'.format(sym))
+            print(sym)
             assert '<eos>' not in sym
             assert hasattr(self, 'unk_idx')
             return self.sym2idx.get(sym, self.unk_idx)
