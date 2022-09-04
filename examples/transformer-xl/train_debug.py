@@ -548,7 +548,7 @@ def train():
         label = label.cuda()
         seg = torch.ones_like(data).cuda()
 
-        predict = para_model(data, seg, mask)
+        predict = para_model(data, None, mask)
 
         loss = criterion(predict, label)
         loss = loss.float()
