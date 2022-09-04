@@ -460,26 +460,26 @@ logging('#non emb params = {}'.format(args.n_nonemb_param))
 ###############################################################################
 
 
-# if args.pretrained_weight is not None:
+if args.pretrained_weight is not None:
 
-#     logging('=' * 100)
-#     logging('==== loading pretrained model from {} ===='.format(args.pretrained_weight))
-#     logging('=' * 100)
+    logging('=' * 100)
+    logging('==== loading pretrained model from {} ===='.format(args.pretrained_weight))
+    logging('=' * 100)
 
-#     # Load the best saved model.
-#     with open(args.pretrained_weight, 'rb') as f:
-#         pretrained_model = torch.load(f)
-#     pretrained_model_checkpoint = pretrained_model.state_dict()
-#     filtered_checkpoint = {}
-#     for key in pretrained_model_checkpoint.keys():
-#         if not key in model.state_dict():
-#             logging('Can not load {}'.format(key))
-#         elif not pretrained_model_checkpoint[key].shape == model.state_dict()[key].shape:
-#             logging('Can not load {}, shape do not match'.format(key))
-#         else:
-#             filtered_checkpoint[key] = pretrained_model_checkpoint[key]
+    # Load the best saved model.
+    with open(args.pretrained_weight, 'rb') as f:
+        pretrained_model = torch.load(f)
+    pretrained_model_checkpoint = pretrained_model.state_dict()
+    filtered_checkpoint = {}
+    for key in pretrained_model_checkpoint.keys():
+        if not key in model.state_dict():
+            logging('Can not load {}'.format(key))
+        elif not pretrained_model_checkpoint[key].shape == model.state_dict()[key].shape:
+            logging('Can not load {}, shape do not match'.format(key))
+        else:
+            filtered_checkpoint[key] = pretrained_model_checkpoint[key]
 
-#     model.load_state_dict(filtered_checkpoint, strict=False)
+    model.load_state_dict(filtered_checkpoint, strict=False)
 
 
 def evaluate(model, eval_iter):
