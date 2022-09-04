@@ -482,6 +482,10 @@ if args.pretrained_weight is not None:
     model.load_state_dict(filtered_checkpoint, strict=False)
 
 
+import pdb; pdb.set_trace()
+
+
+
 def evaluate(model, eval_iter):
     # Turn on evaluation mode which disables dropout.
     model.eval()
