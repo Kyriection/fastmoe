@@ -95,8 +95,7 @@ class Vocab(object):
                 sentence, label = line[0], int(line[1])
                 assert label in [0,1]
                 sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
-                print(sentence_toks)
-                pdb.set_trace()
+                self.counter.update(sentence_toks)
                 sents.append(sentence_toks)
         return sents
 
