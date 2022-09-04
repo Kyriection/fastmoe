@@ -172,6 +172,14 @@ class SST2Iterator(object):
         
         subencoded = pad_sequence(subencoded)
         mask_idx = 1 - pad_sequence(mask_idx)
+
+        import pdb; pdb.set_trace()
+        
+
+
+
+
+
         # mask_idx = pad_sequence(mask_idx)
         sublabels = torch.LongTensor(sublabels)
 
