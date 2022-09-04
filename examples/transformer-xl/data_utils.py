@@ -443,7 +443,7 @@ def get_lm_corpus(datadir, dataset):
             kwargs['special'] = []
             kwargs['lower_case'] = False
             kwargs['vocab_file'] = os.path.join(datadir, '1b_word_vocab.txt')
-        elif dataset in ['csqa']:
+        elif dataset in ['csqa', 'sst2']:
             kwargs['special'] = ['<eos>']
         elif dataset in ['enwik8', 'text8']:
             pass

@@ -834,7 +834,7 @@ class MemTransformerLM(nn.Module):
     def _forward(self, dec_inp, attn_mask, mems=None):
         qlen, bsz = dec_inp.size()
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
         attn_mask = attn_mask.reshape(qlen, 1, bsz)
 
@@ -859,7 +859,7 @@ class MemTransformerLM(nn.Module):
             dec_attn_mask = torch.triu(
                 word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
             dec_attn_mask = (dec_attn_mask + attn_mask).byte()
-        pdb.set_trace()
+        # pdb.set_trace()
         hids = []
         if self.attn_type == 0: # default
             pos_seq = torch.arange(klen-1, -1, -1.0, device=word_emb.device,
@@ -878,7 +878,7 @@ class MemTransformerLM(nn.Module):
                         self.r_r_bias, dec_attn_mask=dec_attn_mask, mems=mems_i)
                 hids.append(core_out)
 
-                pdb.set_trace()
+                # pdb.set_trace()
 
 
         elif self.attn_type == 1: # learnable
