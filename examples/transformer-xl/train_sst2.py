@@ -731,11 +731,11 @@ for gate_number in [1,2,4,8,16,32,64]:
         test_loss = evaluate(model, te_iter)
         logging('=' * 100)
         if args.dataset in ['enwik8', 'text8']:
-            logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
-                gate_number, test_loss, test_loss / math.log(2)))
+            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+                gate_number, test_loss))
         else:
-            logging('Dense | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
-                gate_number, test_loss, math.exp(test_loss)))
+            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+                gate_number, test_loss))
         logging('=' * 100)
 
 
@@ -750,13 +750,12 @@ for gate_number in [1,2,4,8,16,32,64]:
         test_loss = evaluate(model, te_iter)
         logging('=' * 100)
         if args.dataset in ['enwik8', 'text8']:
-            logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
-                gate_number, test_loss, test_loss / math.log(2)))
+            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+                gate_number, test_loss))
         else:
-            logging('| End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
-                gate_number, test_loss, math.exp(test_loss)))
+            logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+                gate_number, test_loss))
         logging('=' * 100)
-
 
 if args.swad:
     with open(os.path.join(args.work_dir, 'model_swa.pt'), 'rb') as f:
@@ -770,11 +769,11 @@ if args.swad:
             test_loss = evaluate(model, te_iter)
             logging('=' * 100)
             if args.dataset in ['enwik8', 'text8']:
-                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
-                    gate_number, test_loss, test_loss / math.log(2)))
+                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+                    gate_number, test_loss))
             else:
-                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
-                    gate_number, test_loss, math.exp(test_loss)))
+                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f}'.format(
+                    gate_number, test_loss))
             logging('=' * 100)
 
 
