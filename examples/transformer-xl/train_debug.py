@@ -546,7 +546,7 @@ def train():
         data = data.transpose(1,0).cuda()
         mask = mask.transpose(1,0).cuda()
         label = label.cuda()
-        seg = torch.ones_like(data)
+        seg = torch.ones_like(data).cuda()
 
         predict = para_model(data, seg, mask)
 
