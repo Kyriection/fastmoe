@@ -351,9 +351,7 @@ args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 from bert import Transformer, Config
 cfg = Config()
 cfg.from_json('a.json')
-print(ntokens)
-cfg.vocab_size = ntokens
-print(ntokens)
+
 
 model = Transformer(cfg)
 print(model)
