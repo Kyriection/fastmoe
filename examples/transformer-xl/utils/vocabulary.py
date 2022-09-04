@@ -210,6 +210,7 @@ class Vocab(object):
                     print('* Ignore ', line)
                     continue
                 sentence, label = line[0], int(line[1])
+                pdb.set_trace()
                 assert label in [0,1]
                 sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
                 encoded.append(sentence_toks)
