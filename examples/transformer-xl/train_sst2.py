@@ -496,23 +496,18 @@ def evaluate(model, eval_iter):
             args.ext_len, args.mem_len+args.tgt_len-args.eval_tgt_len)
 
     # Evaluation
-    NUM_CLASS = 5
     total_len, total_acc = 0, 0.
     with torch.no_grad():
         mems = tuple()
-        for i, (data) in enumerate(eval_iter):
-            data = list(data)
-            for data_idx in range(len(data)):
-                data[data_idx] = data[data_idx].cuda()
+        for i, (data, mask, label) in enumerate(eval_iter):
+            data = data.cuda()
+            mask = mask.cuda()
+            label = label.cuda()
 
-            scores = []
-            for idx in range(NUM_CLASS):
-                score, mems = para_model(data[idx], data[idx+5], *mems)
-                scores.append(score)
-            predict = torch.cat(scores, dim=-1)
+            predict, mems = para_model(data, mask, *mems)
 
-            total_acc += (predict.argmax(-1) == data[-1]).sum().item()
-            total_len += data[-1].shape[0]
+            total_acc += (predict.argmax(-1) == label).sum().item()
+            total_len += label.shape[0]
 
     # Switch back to the training mode
     model.reset_length(args.tgt_len, args.ext_len, args.mem_len)
@@ -531,7 +526,7 @@ def train():
     NUM_CLASS = 5
 
     train_iter = tr_iter.get_varlen_iter()
-    for batch, (data) in enumerate(train_iter):
+    for batch, (data, mask, label) in enumerate(train_iter):
 
         if args.gate_name == 'CustomDTSGate':
             set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
@@ -543,23 +538,17 @@ def train():
         all_top_k.append(current_top_k)
 
         model.zero_grad()
-        data = list(data)
+        data = data.cuda()
+        mask = mask.cuda()
+        label = label.cuda()
 
-        for data_idx in range(len(data)):
-            data[data_idx] = data[data_idx].cuda()
+        predict, mems = para_model(data, mask, *mems)
 
-        scores = []
-        for idx in range(NUM_CLASS):
-            score, mems = para_model(data[idx], data[idx+5], *mems)
-            scores.append(score)
-        predict = torch.cat(scores, dim=-1)
-
-
-        loss = criterion(predict, data[-1])
+        loss = criterion(predict, label)
         loss = loss.float()
 
-        train_correct += (predict.argmax(-1) == data[-1]).sum().item()
-        train_n += data[-1].shape[0]
+        train_correct += (predict.argmax(-1) == label).sum().item()
+        train_n += label.shape[0]
 
         if args.fp16:
             optimizer.backward(loss)

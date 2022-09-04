@@ -94,7 +94,6 @@ class Vocab(object):
                 assert label in [0,1]
                 sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
                 sents.append(sentence_toks)
-                pdb.set_trace()
         return sents
 
     def count_sents(self, sents, verbose=False):
@@ -183,7 +182,7 @@ class Vocab(object):
                     src_bin = question_bin + self.tokenize(src, add_s=True)
                     encoded[i].append(self.convert_to_tensor(src_bin))
 
-            labels = torch.LongTensor(labels)
+        labels = torch.LongTensor(labels)
 
         # pdb.set_trace()
 
@@ -194,6 +193,25 @@ class Vocab(object):
         # encoded = pad_sequence(encoded)
         # print(encoded.shape)
 
+        return [encoded, labels]
+
+    def encode_sst2_file(self, path, verbose=False, add_eos=False,
+            add_double_eos=False, add_cls_token=False):
+        if verbose: print('encoding file {} ...'.format(path))
+        assert os.path.exists(path)
+        encoded = []
+        labels = []
+        with open(path, 'r', encoding='utf-8') as f:
+            tsv_file = csv.reader(f, delimiter="\t")
+            for line in tsv_file:
+                if line[1] == 'label': continue
+                sentence, label = line[0], int(line[1])
+                assert label in [0,1]
+                sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
+                encoded.append(sentence_toks)
+                labels.append(label)
+
+        labels = torch.LongTensor(labels)
         return [encoded, labels]
 
     def encode_sents(self, sents, ordered=False, verbose=False):
