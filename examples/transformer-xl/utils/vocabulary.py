@@ -205,7 +205,7 @@ class Vocab(object):
         labels = []
         with open(path, 'r', encoding='utf-8') as f:
             tsv_file = csv.reader(f, delimiter="\t")
-            for line in tsv_file:                
+            for line in tsv_file: 
                 if not line[1] in ['0', '1']: 
                     print('* Ignore ', line)
                     continue

@@ -154,7 +154,6 @@ class SST2Iterator(object):
 
         self.encoded = data[0]
         self.labels = data[1] # Tensor
-        print(self.labels)
 
         self.n_step = self.labels.size(0) // bsz
         self.n_samples = self.labels.size(0)
@@ -387,9 +386,9 @@ class Corpus(object):
             self.valid = self.vocab.encode_csqa_file(
                 os.path.join(path, 'dev_rand_split.jsonl'), ordered=True, add_cls_token=True)
         elif self.dataset == 'sst2':
-            self.train = self.vocab.count_sst2(
+            self.train = self.vocab.encode_sst2_file(
                 os.path.join(path, 'train.tsv'), add_cls_token=True)
-            self.valid = self.vocab.count_sst2(
+            self.valid = self.vocab.encode_sst2_file(
                 os.path.join(path, 'dev.tsv'), add_cls_token=True)
 
     def get_iterator(self, split, *args, **kwargs):
