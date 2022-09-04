@@ -834,6 +834,8 @@ class MemTransformerLM(nn.Module):
     def _forward(self, dec_inp, attn_mask, mems=None):
         qlen, bsz = dec_inp.size()
 
+        pdb.set_trace()
+
         attn_mask = attn_mask.reshape(qlen, 1, bsz)
 
         word_emb = self.word_emb(dec_inp)

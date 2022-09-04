@@ -171,8 +171,8 @@ class SST2Iterator(object):
             mask_idx.append(torch.ones(self.encoded[idx].shape[0]))
         
         subencoded = pad_sequence(subencoded)
-        # mask_idx = 1 - pad_sequence(mask_idx)
-        mask_idx = pad_sequence(mask_idx)
+        mask_idx = 1 - pad_sequence(mask_idx)
+        # mask_idx = pad_sequence(mask_idx)
         sublabels = torch.LongTensor(sublabels)
 
         return subencoded, mask_idx, sublabels
