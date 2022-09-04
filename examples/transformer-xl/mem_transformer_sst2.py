@@ -874,7 +874,7 @@ class MemTransformerLM(nn.Module):
                                    dtype=word_emb.dtype)
             if self.clamp_len > 0:
                 pos_seq.clamp_(max=self.clamp_len)
-            pdb.set_trace()
+            # pdb.set_trace()
             pos_emb = self.pos_emb(pos_seq)
 
             core_out = self.drop(word_emb)
