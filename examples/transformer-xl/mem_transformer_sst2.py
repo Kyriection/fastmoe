@@ -327,6 +327,8 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
         attn_score.mul_(self.scale)
 
         #### compute attention probability
+
+        pbd.set_trace()
         if attn_mask is not None and attn_mask.any().item():
             if attn_mask.dim() == 2:
                 attn_score = attn_score.float().masked_fill(
@@ -335,6 +337,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
                 attn_score = attn_score.float().masked_fill(
                     attn_mask[:,:,:,None].bool(), -float('inf')).type_as(attn_score)
 
+        pbd.set_trace()
         # [qlen x klen x bsz x n_head]
         attn_prob = F.softmax(attn_score, dim=1)
         attn_prob = torch.nan_to_num(attn_prob, nan=0.0)
@@ -347,6 +350,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
         attn_vec = attn_vec.contiguous().view(
             attn_vec.size(0), attn_vec.size(1), self.n_head * self.d_head)
 
+        pbd.set_trace()
         ##### linear projection
         attn_out = self.o_net(attn_vec)
         attn_out = self.drop(attn_out)
@@ -568,6 +572,7 @@ class RelPartialLearnableDecoderLayer(nn.Module):
         output = self.dec_attn(dec_inp, r, r_w_bias, r_r_bias,
                                attn_mask=dec_attn_mask,
                                mems=mems)
+        pdb.set_trace()
         output = self.pos_ff(output)
 
         return output
@@ -859,13 +864,14 @@ class MemTransformerLM(nn.Module):
             dec_attn_mask = torch.triu(
                 word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
             dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
-        # pdb.set_trace()
+        pdb.set_trace()
         hids = []
         if self.attn_type == 0: # default
             pos_seq = torch.arange(klen-1, -1, -1.0, device=word_emb.device,
                                    dtype=word_emb.dtype)
             if self.clamp_len > 0:
                 pos_seq.clamp_(max=self.clamp_len)
+            pdb.set_trace()
             pos_emb = self.pos_emb(pos_seq)
 
             core_out = self.drop(word_emb)
