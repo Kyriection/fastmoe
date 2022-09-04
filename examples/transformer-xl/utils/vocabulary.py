@@ -90,7 +90,7 @@ class Vocab(object):
             tsv_file = csv.reader(f, delimiter="\t")
             for line in tsv_file:
                 if not line[1] in ['0', '1']: 
-                    print('* Ignore ', line)
+                    # print('* Ignore ', line)
                     continue
                 sentence, label = line[0], int(line[1])
                 assert label in [0,1]
