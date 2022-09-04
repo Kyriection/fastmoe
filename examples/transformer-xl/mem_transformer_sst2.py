@@ -711,12 +711,13 @@ class MemTransformerLM(nn.Module):
                 )
 
 
-        self.project_head = nn.ModuleList(
+        self.project_head = nn.Sequential(
             nn.Linear(self.d_model, self.d_model),
             nn.Tanh(),
             nn.Dropout(0.1),
             nn.Linear(self.d_model, 2)
         )
+
         # self.activ = nn.Tanh()
 
         self.sample_softmax = sample_softmax
