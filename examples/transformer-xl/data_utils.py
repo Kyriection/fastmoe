@@ -307,6 +307,11 @@ class Corpus(object):
             self.vocab.count_csqa(os.path.join(path, 'dev_rand_split.jsonl'), add_cls_token=True)
             self.vocab.count_csqa(os.path.join(path, 'test_rand_split_no_answers.jsonl'), add_cls_token=True)
 
+        elif self.dataset == 'sst2':
+            self.vocab.count_sst2(os.path.join(path, 'train.tsv'), add_cls_token=True)
+            self.vocab.count_sst2(os.path.join(path, 'dev.tsv'), add_cls_token=True)
+            self.vocab.count_sst2(os.path.join(path, 'test.tsv'), add_cls_token=True)
+
         self.vocab.build_vocab()
 
         if self.dataset in ['ptb', 'wt2', 'wt103']:
