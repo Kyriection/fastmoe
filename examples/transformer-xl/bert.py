@@ -144,6 +144,8 @@ class Embeddings(nn.Module):
     "The embedding module from word, position and token_type embeddings."
     def __init__(self, cfg):
         super().__init__()
+
+        print(cfg.vocab_size, cfg.dim)
         self.tok_embed = nn.Embedding(cfg.vocab_size, cfg.dim) # token embedding
         self.pos_embed = nn.Embedding(cfg.max_len, cfg.dim) # position embedding
         self.seg_embed = nn.Embedding(cfg.n_segments, cfg.dim) # segment(token type) embedding
