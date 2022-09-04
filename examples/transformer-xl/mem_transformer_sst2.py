@@ -751,8 +751,18 @@ class MemTransformerLM(nn.Module):
         fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight)
         bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
         nn.init.uniform_(self.project_bias, -bound, bound)
+    def _reset_project_parameters2(self):
+        nn.init.kaiming_uniform_(self.project_weight_new, a=math.sqrt(5))
+        fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight_new)
+        bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+        nn.init.uniform_(self.project_bias_new, -bound, bound)
 
     def _create_params(self):
+
+
+        self.project_weight_new = nn.Parameter(torch.empty(self.d_model, self.d_model))
+        self.project_bias_new = nn.Parameter(torch.empty(self.d_model))
+        self._reset_project_parameters2()
 
         self.project_weight = nn.Parameter(torch.empty(2, self.d_model))
         self.project_bias = nn.Parameter(torch.empty(2))
@@ -927,8 +937,9 @@ class MemTransformerLM(nn.Module):
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
         # hidden (token, batch-size, dimension)
-        predict_token = self.activ(hidden[0,:,:])
-        pre_logits = F.linear(predict_token, self.project_weight, bias=self.project_bias)
+        output = F.linear(hidden[0,:,:], self.project_weight_new, bias=self.project_bias_new)
+        output = self.activ(output)
+        pre_logits = F.linear(output, self.project_weight, bias=self.project_bias)
 
         return pre_logits, new_mems
 
