@@ -172,9 +172,13 @@ class SST2Iterator(object):
         
         subencoded = pad_sequence(subencoded)
         mask_idx = 1 - pad_sequence(mask_idx)
+        length = mask_idx.shape[0]
+
+        expand_mask_idx = mask_idx.unsqueeze(1).repeat(1, length, 1) # length, length, batch-size
+        expand_mask_idx = expand_mask_idx * mask_idx
 
         import pdb; pdb.set_trace()
-        
+
 
 
 
