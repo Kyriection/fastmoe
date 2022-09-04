@@ -482,10 +482,10 @@ if args.pretrained_weight is not None:
     model.load_state_dict(filtered_checkpoint, strict=False)
 
 
-import pdb; pdb.set_trace()
-for name, p in model.named_parameters():
-    print(name, p.shape)
-    pdb.set_trace()
+# import pdb; pdb.set_trace()
+# for name, p in model.named_parameters():
+#     print(name, p.shape)
+#     pdb.set_trace()
 
 
 
