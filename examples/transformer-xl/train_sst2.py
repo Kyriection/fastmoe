@@ -621,20 +621,20 @@ def train():
                         '| SWA valid Accuracy {:5.2f}'.format(
                     train_step // args.eval_interval, train_step,
                     (time.time() - eval_start_time), val_loss_swa)
-                if args.dataset in ['enwik8', 'text8']:
-                    log_str += ' | bpc {:9.5f}'.format(val_loss_swa / math.log(2))
-                else:
-                    log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_swa))
+                # if args.dataset in ['enwik8', 'text8']:
+                #     log_str += ' | bpc {:9.5f}'.format(val_loss_swa / math.log(2))
+                # else:
+                #     log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_swa))
                 logging(log_str)
                 logging('-' * 100)
                 log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
                         '| SWA Dense valid Accuracy {:5.2f}'.format(
                     train_step // args.eval_interval, train_step,
                     (time.time() - eval_start_time), val_loss_dense_swa)
-                if args.dataset in ['enwik8', 'text8']:
-                    log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense_swa / math.log(2))
-                else:
-                    log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense_swa))
+                # if args.dataset in ['enwik8', 'text8']:
+                #     log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense_swa / math.log(2))
+                # else:
+                #     log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense_swa))
                 logging(log_str_dense)
                 logging('-' * 100)
                 with open(os.path.join(args.work_dir, 'model_swa.pt'), 'wb') as f:
@@ -645,20 +645,20 @@ def train():
                       '| valid Accuracy {:5.2f}'.format(
                 train_step // args.eval_interval, train_step,
                 (time.time() - eval_start_time), val_loss)
-            if args.dataset in ['enwik8', 'text8']:
-                log_str += ' | bpc {:9.5f}'.format(val_loss / math.log(2))
-            else:
-                log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss))
+            # if args.dataset in ['enwik8', 'text8']:
+            #     log_str += ' | bpc {:9.5f}'.format(val_loss / math.log(2))
+            # else:
+            #     log_str += ' | valid ppl {:9.3f}'.format(math.exp(val_loss))
             logging(log_str)
             logging('-' * 100)
             log_str_dense = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
                       '| Dense valid Accuracy {:5.2f}'.format(
                 train_step // args.eval_interval, train_step,
                 (time.time() - eval_start_time), val_loss_dense)
-            if args.dataset in ['enwik8', 'text8']:
-                log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense / math.log(2))
-            else:
-                log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense))
+            # if args.dataset in ['enwik8', 'text8']:
+            #     log_str_dense += ' | bpc {:9.5f}'.format(val_loss_dense / math.log(2))
+            # else:
+            #     log_str_dense += ' | valid ppl {:9.3f}'.format(math.exp(val_loss_dense))
             logging(log_str_dense)
             logging('-' * 100)
             # Save the model if the validation loss is the best we've seen so far.
