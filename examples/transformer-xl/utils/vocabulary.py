@@ -90,6 +90,7 @@ class Vocab(object):
             tsv_file = csv.reader(f, delimiter="\t")
             for line in tsv_file:
                 if line[1] == 'label': continue
+                print(line)
                 sentence, label = line[0], int(line[1])
                 assert label in [0,1]
                 sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
