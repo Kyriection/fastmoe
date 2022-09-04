@@ -76,9 +76,9 @@ python -u train_sst2.py \
     --max_step 4000 \
     --eval-interval 500 \
     --log-interval 20 \
-    --tgt_len 512 \
-    --mem_len 512 \
-    --eval_tgt_len 128 \
+    --tgt_len 32 \
+    --mem_len 32 \
+    --eval_tgt_len 32 \
     --batch_size 16 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
