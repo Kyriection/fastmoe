@@ -710,6 +710,8 @@ class MemTransformerLM(nn.Module):
                         dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
 
+        self.activ = nn.Tanh()
+
         self.sample_softmax = sample_softmax
         # use sampled softmax
         if sample_softmax > 0:
@@ -925,7 +927,8 @@ class MemTransformerLM(nn.Module):
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
         # hidden (token, batch-size, dimension)
-        pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
+        predict_token = self.activ(hidden[0,:,:])
+        pre_logits = F.linear(predict_token, self.project_weight, bias=self.project_bias)
 
         return pre_logits, new_mems
 
