@@ -922,16 +922,11 @@ class MemTransformerLM(nn.Module):
 
         if not mems: mems = self.init_mems(data)
         
-        pdb.set_trace()
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
-        
-        pdb.set_trace()
         # hidden (token, batch-size, dimension)
         pre_logits = F.linear(hidden[0,:,:], self.project_weight, bias=self.project_bias)
 
-        
-        pdb.set_trace()
         return pre_logits, new_mems
 
 if __name__ == '__main__':
