@@ -130,7 +130,7 @@ python -u train_sst2.py \
     --optim adam \
     --lr $2 \
     --warmup_step 0 \
-    --max_step 4000 \
+    --max_step 40000 \
     --eval-interval 500 \
     --log-interval 20 \
     --tgt_len 512 \
