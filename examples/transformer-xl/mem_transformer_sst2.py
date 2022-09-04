@@ -90,6 +90,7 @@ class PositionwiseFF_Dropout(nn.Module):
         self.pre_lnorm = pre_lnorm
 
     def _dropout_forward_corenet(self, inp):
+        pbd.set_trace()
 
         if self.training:
             fc1_shape = self.CoreNet[0].weight.shape
