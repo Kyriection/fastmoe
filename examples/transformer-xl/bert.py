@@ -19,7 +19,7 @@ class Config(NamedTuple):
     "Configuration for BERT model"
     vocab_size: int = None # Size of Vocabulary
     dim: int = 768 # Dimension of Hidden Layer in Transformer Encoder
-    n_layers: int = 12 # Numher of Hidden Layers
+    n_layers: int = 6 # Numher of Hidden Layers
     n_heads: int = 12 # Numher of Heads in Multi-Headed Attention Layers
     dim_ff: int = 768*4 # Dimension of Intermediate Layers in Positionwise Feedforward Net
     #activ_fn: str = "gelu" # Non-linear Activation Function Type in Hidden Layers
