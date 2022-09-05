@@ -291,7 +291,7 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
 
         if mems is not None:
             cat = torch.cat([mems, w], 0)
-            print('cat', cat.shape)
+            print('cat', cat.shape, mems.shape, w.shape)
             if self.pre_lnorm:
                 w_heads = self.qkv_net(self.layer_norm(cat))
             else:
