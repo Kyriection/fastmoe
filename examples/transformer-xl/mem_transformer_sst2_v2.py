@@ -291,7 +291,6 @@ class RelPartialLearnableMultiHeadAttn(RelMultiHeadAttn):
 
         if mems is not None:
             cat = torch.cat([mems, w], 0)
-            print('cat', cat.shape, mems.shape, w.shape)
             if self.pre_lnorm:
                 w_heads = self.qkv_net(self.layer_norm(cat))
             else:
@@ -949,10 +948,10 @@ class MemTransformerLM(nn.Module):
         # So, have to initialize size(0) mems inside the model forward.
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
-
+        
         if not mems: mems = self.init_mems(data)
-        # mems = self.init_mems(data)
-
+        
+        print(mems[0].shape)
         hidden, new_mems = self._forward(data, attn_mask, mems_all=mems)
 
         # hidden (token, batch-size, dimension)
