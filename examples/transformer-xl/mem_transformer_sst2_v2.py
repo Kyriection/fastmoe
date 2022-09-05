@@ -840,10 +840,24 @@ class MemTransformerLM(nn.Module):
             dec_attn_mask = torch.triu(
                 word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
 
-            # dec_attn_mask = torch.triu(
-            #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+
+            mem_token_lens = attn_mems.shape[0]
+            if mem_token_lens < qlen:
+                padding_size = qlen-mem_token_lens
+                attn_mems = attn_mems.permute(2,0,1)
+                attn_mems = F.pad(attn_mems, [0, padding_size, 0, 0], value=1)
+                attn_mems = attn_mems.permute(1,2,0)
+            else:
+                attn_mems = attn_mems[:qlen, :, :]
             pdb.set_trace()
-            # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
+            dec_attn_mask = torch.cat([attn_mems, attn_mask]).byte()
+
+
+
+            # # dec_attn_mask = torch.triu(
+            # #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+            # pdb.set_trace()
+            # # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
             dec_attn_mask = attn_mask.byte()
             pdb.set_trace()
 
