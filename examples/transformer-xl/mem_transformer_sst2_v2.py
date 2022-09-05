@@ -811,8 +811,7 @@ class MemTransformerLM(nn.Module):
             for i in range(len(hids)):
                 cat = torch.cat([mems[i], hids[i]], dim=0)
                 new_mems.append(cat[beg_idx:end_idx].detach())
-                attn_mask = attn_mask[:,beg_idx:end_idx,:]
-                print(attn_mask.shape, beg_idx, end_idx)
+            attn_mask = attn_mask[:,beg_idx:end_idx,:]
 
         return new_mems, attn_mask
 
@@ -822,10 +821,6 @@ class MemTransformerLM(nn.Module):
 
         mems = mems_all[0]
         attn_mems = mems_all[1]
-
-        if not attn_mems == None:
-            print(attn_mems.shape)
-            print(mems[0].shape)
 
         word_emb = self.word_emb(dec_inp)
 
