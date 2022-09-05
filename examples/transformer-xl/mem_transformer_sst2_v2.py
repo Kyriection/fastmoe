@@ -851,7 +851,8 @@ class MemTransformerLM(nn.Module):
                     attn_mems = attn_mems.permute(1,2,0)
                 else:
                     attn_mems = attn_mems[:qlen, :, :]
-                pdb.set_trace()
+                # pdb.set_trace()
+                print(attn_mems.shape, attn_mask.shape)
                 dec_attn_mask = torch.cat([attn_mems, attn_mask], dim=1).byte()
 
 
@@ -861,7 +862,7 @@ class MemTransformerLM(nn.Module):
             # pdb.set_trace()
             # # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
             # dec_attn_mask = attn_mask.byte()
-            pdb.set_trace()
+            # pdb.set_trace()
 
         hids = []
         if self.attn_type == 0: # default
