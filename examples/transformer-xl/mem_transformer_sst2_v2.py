@@ -939,6 +939,7 @@ class MemTransformerLM(nn.Module):
         core_out = self.drop(core_out)
 
         new_mems, new_attn_mask = self._update_mems(hids, mems, mlen, qlen, dec_attn_mask)
+        pdb.set_trace()
 
         return core_out, (new_mems, new_attn_mask)
 
