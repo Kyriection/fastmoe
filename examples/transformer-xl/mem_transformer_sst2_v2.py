@@ -950,12 +950,13 @@ class MemTransformerLM(nn.Module):
         # them together.
         
         if not mems: mems = self.init_mems(data)
-        
-        print(mems[0].shape)
+
+        print(mems[0][0].shape)
         hidden, new_mems = self._forward(data, attn_mask, mems_all=mems)
 
         # hidden (token, batch-size, dimension)
         pre_logits = self.project_head(hidden[0,:,:])
+        print(new_mems[0][0].shape)
 
         return pre_logits, new_mems
 
