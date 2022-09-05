@@ -809,10 +809,9 @@ class MemTransformerLM(nn.Module):
             end_idx = mlen + max(0, qlen - 0 - self.ext_len)
             beg_idx = max(0, end_idx - self.mem_len)
             for i in range(len(hids)):
-                print(hids[i].shape, attn_mask.shape)
                 cat = torch.cat([mems[i], hids[i]], dim=0)
                 new_mems.append(cat[beg_idx:end_idx].detach())
-                print(cat.shape, beg_idx, end_idx)
+                attn_mask = attn_mask[:,beg_idx:end_idx,:]
 
         return new_mems, attn_mask
 
@@ -853,7 +852,6 @@ class MemTransformerLM(nn.Module):
                 else:
                     attn_mems = attn_mems[:qlen, :, :]
                 # pdb.set_trace()
-                print(attn_mems.shape, attn_mask.shape)
                 dec_attn_mask = torch.cat([attn_mems, attn_mask], dim=1).byte()
 
 
@@ -951,12 +949,10 @@ class MemTransformerLM(nn.Module):
         
         if not mems: mems = self.init_mems(data)
 
-        print(mems[0][0].shape)
         hidden, new_mems = self._forward(data, attn_mask, mems_all=mems)
 
         # hidden (token, batch-size, dimension)
         pre_logits = self.project_head(hidden[0,:,:])
-        print(new_mems[0][0].shape)
 
         return pre_logits, new_mems
 
