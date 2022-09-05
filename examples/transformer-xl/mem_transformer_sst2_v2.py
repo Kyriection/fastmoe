@@ -938,6 +938,8 @@ class MemTransformerLM(nn.Module):
         core_out = self.drop(core_out)
 
         new_mems = self._update_mems(hids, mems, mlen, qlen)
+        for i in new_mems:
+            print(new_mems.shape)
 
         return core_out, (new_mems, attn_mask)
 
