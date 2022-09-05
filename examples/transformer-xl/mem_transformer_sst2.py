@@ -717,15 +717,12 @@ class MemTransformerLM(nn.Module):
                         dense_drop=layer_dense_drop, expert_drop=expert_drop, num_expert=num_expert)
                 )
 
-
         self.project_head = nn.Sequential(
             nn.Linear(self.d_model, self.d_model),
             nn.Tanh(),
             nn.Dropout(0.1),
             nn.Linear(self.d_model, 2)
         )
-
-        # self.activ = nn.Tanh()
 
         self.sample_softmax = sample_softmax
         # use sampled softmax
@@ -761,27 +758,7 @@ class MemTransformerLM(nn.Module):
     def backward_compatible(self):
         self.sample_softmax = -1
 
-    # def _reset_project_parameters(self):
-    #     nn.init.kaiming_uniform_(self.project_weight, a=math.sqrt(5))
-    #     fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight)
-    #     bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-    #     nn.init.uniform_(self.project_bias, -bound, bound)
-    # def _reset_project_parameters2(self):
-    #     nn.init.kaiming_uniform_(self.project_weight_new, a=math.sqrt(5))
-    #     fan_in, _ = nn.init._calculate_fan_in_and_fan_out(self.project_weight_new)
-    #     bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-    #     nn.init.uniform_(self.project_bias_new, -bound, bound)
-
     def _create_params(self):
-
-        # self.project_weight_new = nn.Parameter(torch.empty(self.d_model, self.d_model))
-        # self.project_bias_new = nn.Parameter(torch.empty(self.d_model))
-        # self._reset_project_parameters2()
-
-        # self.project_weight = nn.Parameter(torch.empty(2, self.d_model))
-        # self.project_bias = nn.Parameter(torch.empty(2))
-        # self._reset_project_parameters()
-
         if self.attn_type == 0: # default attention
             self.pos_emb = PositionalEmbedding(self.d_model)
             self.r_w_bias = nn.Parameter(torch.Tensor(self.n_head, self.d_head))
@@ -841,10 +818,6 @@ class MemTransformerLM(nn.Module):
     def _forward(self, dec_inp, attn_mask, mems=None):
         qlen, bsz = dec_inp.size()
 
-        # pdb.set_trace()
-
-        # attn_mask = attn_mask.reshape(qlen, 1, bsz)
-
         word_emb = self.word_emb(dec_inp)
 
         mlen = mems[0].size(0) if mems is not None else 0
@@ -867,14 +840,14 @@ class MemTransformerLM(nn.Module):
             #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
             # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
             dec_attn_mask = attn_mask.byte()
-        # pdb.set_trace()
+
         hids = []
         if self.attn_type == 0: # default
             pos_seq = torch.arange(klen-1, -1, -1.0, device=word_emb.device,
                                    dtype=word_emb.dtype)
             if self.clamp_len > 0:
                 pos_seq.clamp_(max=self.clamp_len)
-            # pdb.set_trace()
+
             pos_emb = self.pos_emb(pos_seq)
 
             core_out = self.drop(word_emb)
@@ -886,8 +859,6 @@ class MemTransformerLM(nn.Module):
                 core_out = layer(core_out, pos_emb, self.r_w_bias,
                         self.r_r_bias, dec_attn_mask=dec_attn_mask, mems=mems_i)
                 hids.append(core_out)
-
-                # pdb.set_trace()
 
         elif self.attn_type == 1: # learnable
             core_out = self.drop(word_emb)
@@ -959,10 +930,6 @@ class MemTransformerLM(nn.Module):
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
 
         # hidden (token, batch-size, dimension)
-        # output = F.linear(hidden[0,:,:], self.project_weight_new, bias=self.project_bias_new)
-        # output = self.activ(output)
-        # pre_logits = F.linear(self.drop(output), self.project_weight, bias=self.project_bias)
-
         pre_logits = self.project_head(hidden[0,:,:])
 
         return pre_logits, new_mems
