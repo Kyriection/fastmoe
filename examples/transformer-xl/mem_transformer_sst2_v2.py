@@ -824,7 +824,7 @@ class MemTransformerLM(nn.Module):
 
         if not attn_mems == None:
             print(attn_mems.shape)
-            print(mems.shape)
+            print(mems[0].shape)
 
         word_emb = self.word_emb(dec_inp)
 
