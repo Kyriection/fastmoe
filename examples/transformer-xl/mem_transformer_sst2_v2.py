@@ -792,7 +792,7 @@ class MemTransformerLM(nn.Module):
         else:
             return None
 
-    def _update_mems(self, hids, mems, qlen, mlen):
+    def _update_mems(self, hids, mems, qlen, mlen, attn_mask):
         # does not deal with None
         if mems is None: return None
 
@@ -812,8 +812,9 @@ class MemTransformerLM(nn.Module):
 
                 cat = torch.cat([mems[i], hids[i]], dim=0)
                 new_mems.append(cat[beg_idx:end_idx].detach())
+                print(cat.shape)
 
-        return new_mems
+        return new_mems, attn_mask
 
     def _forward(self, dec_inp, attn_mask, mems_all=None):
 
@@ -937,11 +938,9 @@ class MemTransformerLM(nn.Module):
 
         core_out = self.drop(core_out)
 
-        new_mems = self._update_mems(hids, mems, mlen, qlen)
-        for i in new_mems:
-            print(i.shape)
+        new_mems, new_attn_mask = self._update_mems(hids, mems, mlen, qlen, dec_attn_mask)
 
-        return core_out, (new_mems, attn_mask)
+        return core_out, (new_mems, new_attn_mask)
 
     def forward(self, data, attn_mask, *mems):
         # nn.DataParallel does not allow size(0) tensors to be broadcasted.
