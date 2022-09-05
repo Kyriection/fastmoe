@@ -788,7 +788,7 @@ class MemTransformerLM(nn.Module):
                 empty = torch.empty(0, dtype=x.dtype, device=x.device)
                 mems.append(empty)
 
-            return mems
+            return (mems, None)
         else:
             return None
 
@@ -815,8 +815,12 @@ class MemTransformerLM(nn.Module):
 
         return new_mems
 
-    def _forward(self, dec_inp, attn_mask, mems=None):
+    def _forward(self, dec_inp, attn_mask, mems_all=None):
+
         qlen, bsz = dec_inp.size()
+
+        mems = mems_all[0]
+        attn_mems = mems_all[1]
 
         word_emb = self.word_emb(dec_inp)
 
@@ -840,6 +844,7 @@ class MemTransformerLM(nn.Module):
                 word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
             # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
             dec_attn_mask = attn_mask.byte()
+            pdb.set_trace()
 
         hids = []
         if self.attn_type == 0: # default
@@ -916,7 +921,7 @@ class MemTransformerLM(nn.Module):
 
         new_mems = self._update_mems(hids, mems, mlen, qlen)
 
-        return core_out, new_mems
+        return core_out, (new_mems, attn_mask)
 
     def forward(self, data, attn_mask, *mems):
         # nn.DataParallel does not allow size(0) tensors to be broadcasted.
@@ -927,7 +932,7 @@ class MemTransformerLM(nn.Module):
         if not mems: mems = self.init_mems(data)
         # mems = self.init_mems(data)
 
-        hidden, new_mems = self._forward(data, attn_mask, mems=mems)
+        hidden, new_mems = self._forward(data, attn_mask, mems_all=mems)
 
         # hidden (token, batch-size, dimension)
         pre_logits = self.project_head(hidden[0,:,:])
