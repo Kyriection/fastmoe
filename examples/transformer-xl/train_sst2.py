@@ -13,7 +13,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from data_utils import get_lm_corpus
-from mem_transformer_sst2_v2 import MemTransformerLM
+from mem_transformer_sst2 import MemTransformerLM
 from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
 from fmoe.gates.base_gate import BaseGate
@@ -522,8 +522,6 @@ def train():
     
     criterion = nn.CrossEntropyLoss()
     mems = tuple()
-
-    NUM_CLASS = 5
 
     train_iter = tr_iter.get_varlen_iter()
     for batch, (data, mask, label) in enumerate(train_iter):
