@@ -504,7 +504,7 @@ def evaluate(model, eval_iter):
             mask = mask.cuda()
             label = label.cuda()
 
-            predict, mems = para_model(data, mask, *mems)
+            predict, mems = para_model(data, mask, mems)
 
             total_acc += (predict.argmax(-1) == label).sum().item()
             total_len += label.shape[0]
@@ -540,7 +540,7 @@ def train():
         mask = mask.cuda()
         label = label.cuda()
 
-        predict, mems = para_model(data, mask, *mems)
+        predict, mems = para_model(data, mask, mems)
 
         loss = criterion(predict, label)
         loss = loss.float()
