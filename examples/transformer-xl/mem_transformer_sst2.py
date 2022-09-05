@@ -833,12 +833,6 @@ class MemTransformerLM(nn.Module):
                     + torch.tril(all_ones, -mask_shift_len)).byte()[:, :, None] # -1
             assert False
         else:
-            # dec_attn_mask = torch.triu(
-            #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
-
-            dec_attn_mask = torch.triu(
-                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
-            # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
             dec_attn_mask = attn_mask.byte()
 
         hids = []
@@ -924,11 +918,10 @@ class MemTransformerLM(nn.Module):
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
 
-        if not mems: mems = self.init_mems(data)
+        # if not mems: mems = self.init_mems(data)
         # mems = self.init_mems(data)
-
+        mems = None
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
-
         # hidden (token, batch-size, dimension)
         pre_logits = self.project_head(hidden[0,:,:])
 
