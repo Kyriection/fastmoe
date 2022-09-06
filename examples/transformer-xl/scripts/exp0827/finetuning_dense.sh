@@ -20,5 +20,5 @@ python -u train_sst2.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 16 \
-    --work_dir dense_$3_finetune \
+    --work_dir dense_$3_finetune_lr$2 \
     --pretrained_weight $1 
