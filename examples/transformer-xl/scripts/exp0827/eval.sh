@@ -1,6 +1,6 @@
 #!/bin/bash
 echo 'Run Evaluation...'
-python -u evaluation.py \
+CUDA_VISIBLE_DEVICES=$3 nohup python -u evaluation.py \
     --cuda \
     --data ../data/enwik8/ \
     --dataset enwik8 \
@@ -19,4 +19,4 @@ python -u evaluation.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 22 \
-    --work_dir $2
+    --work_dir $2 > log_eval_dense_dim$1.out 2>&1 &
