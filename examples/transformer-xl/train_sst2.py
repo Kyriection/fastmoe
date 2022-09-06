@@ -648,7 +648,7 @@ def train():
                         torch.save(optimizer.state_dict(), f)
                 best_val_acc = val_acc
 
-            if not best_val_acc_dense or val_acc_dense < best_val_acc_dense:
+            if not best_val_acc_dense or val_acc_dense > best_val_acc_dense:
                 if not args.debug:
                     with open(os.path.join(args.work_dir, 'model_dense.pt'), 'wb') as f:
                         torch.save(model, f)
