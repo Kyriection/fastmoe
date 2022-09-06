@@ -25,5 +25,5 @@
 
 CUDA_VISIBLE_DEVICES=0 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh $1 naive_moe_dense_finetuning 16 > log_naive_moe_dense_finetuning_sst2.out 2>&1 &
 CUDA_VISIBLE_DEVICES=1 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh $1 naive_moe_gradual_finetuning 8 > log_naive_moe_gradual_finetuning_8_sst2.out 2>&1 &
-CUDA_VISIBLE_DEVICES=2 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh random naive_moe_dense_finetuning 16 > log_naive_moe_dense_finetuning_sst2_randominit.out 2>&1 &
-CUDA_VISIBLE_DEVICES=3 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh random naive_moe_gradual_finetuning 8 > log_naive_moe_gradual_finetuning_8_sst2_randominit.out 2>&1 &
+CUDA_VISIBLE_DEVICES=2 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh random naive_moe_dense_finetuning_randominit 16 > log_naive_moe_dense_finetuning_sst2_randominit.out 2>&1 &
+CUDA_VISIBLE_DEVICES=3 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh random naive_moe_gradual_finetuning_randominit 8 > log_naive_moe_gradual_finetuning_8_sst2_randominit.out 2>&1 &
