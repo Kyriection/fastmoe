@@ -7,7 +7,7 @@ python -u train_sst2.py \
     --d_model 256 \
     --n_head 8 \
     --d_head 64 \
-    --d_inner 512 \
+    --d_inner $3 \
     --dropout 0.1 \
     --dropatt 0.0 \
     --optim adam \
