@@ -460,7 +460,7 @@ logging('#non emb params = {}'.format(args.n_nonemb_param))
 ###############################################################################
 
 
-if args.pretrained_weight is not 'None':
+if args.pretrained_weight is not 'random':
 
     logging('=' * 100)
     logging('==== loading pretrained model from {} ===='.format(args.pretrained_weight))
