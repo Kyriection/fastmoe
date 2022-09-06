@@ -653,7 +653,7 @@ eval_start_time = time.time()
 
 
 # Load the best saved model.
-with open(args.work_dir, 'rb') as f:
+with open(args.checkpoint_weight, 'rb') as f:
     model = torch.load(f)
 para_model = model.to(device)
 
