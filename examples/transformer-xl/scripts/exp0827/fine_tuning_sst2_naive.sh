@@ -7,11 +7,11 @@ python -u train_sst2.py \
     --d_model 256 \
     --n_head 8 \
     --d_head 64 \
-    --d_inner $3 \
+    --d_inner 512 \
     --dropout 0.1 \
     --dropatt 0.0 \
     --optim adam \
-    --lr $2 \
+    --lr 1e-4 \
     --warmup_step 0 \
     --max_step 5000 \
     --eval-interval 500 \
@@ -20,8 +20,12 @@ python -u train_sst2.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 16 \
-    --work_dir debug \
+    --work_dir $2 \
     --pretrained_weight $1 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
-    --freeze_gate 
+    --dynamic_moe \
+    --dynamic_moe_mode linear_increase \
+    --dynamic_overall_steps 5000 \
+    --moe-top-k-min $3 \
+    --moe-top-k-max 16 
