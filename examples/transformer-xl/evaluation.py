@@ -112,6 +112,7 @@ parser.add_argument('--eval-interval', type=int, default=4000,
                     help='evaluation interval')
 parser.add_argument('--work_dir', default='LM-TFM', type=str,
                     help='experiment directory.')
+parser.add_argument('--checkpoint_weight', default=None, type=str)
 parser.add_argument('--restart', action='store_true',
                     help='restart training from the saved checkpoint')
 parser.add_argument('--restart_dir', type=str, default='',
