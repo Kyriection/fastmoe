@@ -4,6 +4,7 @@ import time
 import math
 import os, sys
 import itertools
+import copy 
 
 import numpy as np
 
@@ -495,10 +496,15 @@ def train():
     else:
         mems = tuple()
     train_iter = tr_iter.get_varlen_iter() if args.varlen else tr_iter
+
+    checkpoint_weight = copy.deepcopy(model.state_dict())
+
     for batch, (data, target, seq_len) in enumerate(train_iter):
 
         if args.gate_name == 'CustomDTSGate':
             set_temperature(model, train_step, args.max_step, args.max_temp, args.min_temp)
+
+        pdb.set_trace()
 
         if args.dynamic_moe:
             current_gate = adjust_moe_gate_number(model, train_step, args, current_gate)
