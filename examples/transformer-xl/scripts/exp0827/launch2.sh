@@ -167,3 +167,7 @@ elif [[ $1 == 'exp14' ]]; then
     SAVE_DIR=MoE${NUM_LAYER}-${NUM_EXPERT}_Naive_ALL_${Dynamic_mode}_${MIN_K}_${MAX_K}
     nohup bash scripts/exp0827/moe_freeze_router.sh \
         ${GATE_NAME} ${Dynamic_mode} ${MIN_K} ${MAX_K} ${SAVE_DIR} ${NUM_LAYER} ${NUM_EXPERT} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+else
+    echo 'unknown argment 1'
+fi
