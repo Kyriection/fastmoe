@@ -19,4 +19,6 @@ python -u train.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 22 \
-    --work_dir $3
+    --work_dir $3 \
+    --multi_gpu \
+    --gpu0_bsz 4
