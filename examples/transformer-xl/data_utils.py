@@ -243,7 +243,7 @@ class SST2Iterator_v2(object):
             mask_idx_pre.append(torch.ones(self.encoded[idx].shape[0]))
         
         subencoded = pad_sequence_reverse(subencoded)
-        mask_idx = 1 - pad_sequence_reverse(mask_idx)
+        mask_idx = 1 - pad_sequence_reverse(mask_idx_pre)
         length = mask_idx.shape[0]
 
         expand_mask_idx = mask_idx.unsqueeze(1).repeat(1, length, 1) # length, length, batch-size
