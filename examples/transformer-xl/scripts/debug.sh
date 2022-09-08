@@ -118,7 +118,7 @@
 echo 'Run training...'
 python -u train_sst2.py \
     --cuda \
-    --data ../glue_data/SST-2 \
+    --data ../glue_data/SST-2_v2 \
     --dataset sst2_v2 \
     --n_layer 12 \
     --d_model 256 \
