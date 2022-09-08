@@ -471,9 +471,9 @@ class Corpus(object):
                 os.path.join(path, 'dev.tsv'), add_cls_token=True)
         elif self.dataset == 'sst2_v2':
             self.train = self.vocab.encode_sst2_file_v2(
-                os.path.join(path, 'train.tsv'), add_cls_token=True)
+                os.path.join(path, 'train.tsv'), add_cls_token_last=True)
             self.valid = self.vocab.encode_sst2_file_v2(
-                os.path.join(path, 'dev.tsv'), add_cls_token=True)
+                os.path.join(path, 'dev.tsv'), add_cls_token_last=True)
 
 
     def get_iterator(self, split, *args, **kwargs):
