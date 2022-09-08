@@ -10,7 +10,23 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 
 
+def pad_sequence_reverse(data):
+    # data should be a list of 1D tensors
 
+    assert data[0].dim() == 1
+    device = data[0].device
+    length_list = []
+    for item in data:
+        length_list.append(item.shape[0])
+    max_length = max(length_list)
+
+    # padding 
+    padded_data_list = []
+    for item in data:
+        padded_item = torch.cat([torch.zeros(max_length - item.shape[0]).to(device), item]).reshape(-1, 1)
+        padded_data_list.append(padded_item)
+    padded_data_list = torch.cat(padded_data_list, dim=1)
+    return padded_data_list
 
 
 class LMOrderedIterator(object):
@@ -218,17 +234,16 @@ class SST2Iterator_v2(object):
     def get_batch(self, index_list):
 
         subencoded = []
-        mask_idx = []
+        mask_idx_pre = []
         sublabels = []
 
         for idx in index_list:
             subencoded.append(self.encoded[idx])
             sublabels.append(self.labels[idx])
-            mask_idx.append(torch.ones(self.encoded[idx].shape[0]))
-            print(self.encoded[idx].shape)
+            mask_idx_pre.append(torch.ones(self.encoded[idx].shape[0]))
         
-        subencoded = pad_sequence(subencoded)
-        mask_idx = 1 - pad_sequence(mask_idx)
+        subencoded = pad_sequence_reverse(subencoded)
+        mask_idx = 1 - pad_sequence_reverse(mask_idx)
         length = mask_idx.shape[0]
 
         expand_mask_idx = mask_idx.unsqueeze(1).repeat(1, length, 1) # length, length, batch-size
