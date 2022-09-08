@@ -478,8 +478,6 @@ class Corpus(object):
 
     def get_iterator(self, split, *args, **kwargs):
 
-        print(self.dataset)
-        pdb.set_trace()
         if split == 'train':
             if self.dataset in ['ptb', 'wt2', 'wt103', 'enwik8', 'text8']:
                 data_iter = LMOrderedIterator(self.train, *args, **kwargs)
