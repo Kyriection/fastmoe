@@ -477,6 +477,9 @@ class Corpus(object):
 
 
     def get_iterator(self, split, *args, **kwargs):
+
+        print(self.dataset)
+        pdb.set_trace()
         if split == 'train':
             if self.dataset in ['ptb', 'wt2', 'wt103', 'enwik8', 'text8']:
                 data_iter = LMOrderedIterator(self.train, *args, **kwargs)
@@ -516,8 +519,6 @@ class Corpus(object):
 
 def get_lm_corpus(datadir, dataset):
 
-    print(dataset)
-    pdb.set_trace()
     fn = os.path.join(datadir, 'cache.pt')
     if os.path.exists(fn):
         print('Loading cached dataset...')
