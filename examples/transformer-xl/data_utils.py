@@ -197,6 +197,60 @@ class SST2Iterator(object):
         return self.get_fixlen_iter()
 
 
+class SST2Iterator_v2(object):
+    def __init__(self, data, bsz):
+        """
+            data: [encoded, labels]
+        """
+
+        self.bsz = bsz
+
+        self.encoded = data[0]
+        self.labels = data[1] # Tensor
+
+        self.n_step = self.labels.size(0) // bsz
+        self.n_samples = self.labels.size(0)
+        self.sequence_array = np.arange(self.n_samples)
+
+    def get_batch(self, index_list):
+
+        subencoded = []
+        mask_idx = []
+        sublabels = []
+
+        for idx in index_list:
+            subencoded.append(self.encoded[idx])
+            sublabels.append(self.labels[idx])
+            mask_idx.append(torch.ones(self.encoded[idx].shape[0]))
+        
+        subencoded = pad_sequence(subencoded)
+        mask_idx = 1 - pad_sequence(mask_idx)
+        length = mask_idx.shape[0]
+
+        expand_mask_idx = mask_idx.unsqueeze(1).repeat(1, length, 1) # length, length, batch-size
+        expand_mask_idx = ((expand_mask_idx + mask_idx)>0).byte()
+
+        # mask_idx = pad_sequence(mask_idx)
+        sublabels = torch.LongTensor(sublabels)
+
+        return subencoded, expand_mask_idx, sublabels
+
+    def get_varlen_iter(self, start=0):
+        sample_array = np.random.permutation(self.n_samples)
+        for i in range(self.n_step):
+            sub_index = sample_array[i*self.bsz:i*self.bsz+self.bsz]
+            yield self.get_batch(sub_index)
+
+    def get_fixlen_iter(self, start=0, std=5, min_len=5, max_deviation=3):
+        for i in range(self.n_step):
+            sub_index = self.sequence_array[i*self.bsz:i*self.bsz+self.bsz]
+            yield self.get_batch(sub_index)
+
+    def __iter__(self):
+        return self.get_fixlen_iter()
+
+
+
 class CSQADataset(Dataset):
 
     def __init__(self, data):
@@ -359,7 +413,7 @@ class Corpus(object):
             self.vocab.count_csqa(os.path.join(path, 'dev_rand_split.jsonl'), add_cls_token=True)
             self.vocab.count_csqa(os.path.join(path, 'test_rand_split_no_answers.jsonl'), add_cls_token=True)
 
-        elif self.dataset == 'sst2':
+        elif self.dataset in ['sst2', 'sst2_v2']:
             self.vocab.count_sst2(os.path.join(path, 'train.tsv'), add_cls_token=True)
             self.vocab.count_sst2(os.path.join(path, 'dev.tsv'), add_cls_token=True)
             self.vocab.count_sst2(os.path.join(path, 'test.tsv'), add_cls_token=True)
@@ -396,6 +450,12 @@ class Corpus(object):
                 os.path.join(path, 'train.tsv'), add_cls_token=True)
             self.valid = self.vocab.encode_sst2_file(
                 os.path.join(path, 'dev.tsv'), add_cls_token=True)
+        elif self.dataset == 'sst2_v2':
+            self.train = self.vocab.encode_sst2_file_v2(
+                os.path.join(path, 'train.tsv'), add_cls_token=True)
+            self.valid = self.vocab.encode_sst2_file_v2(
+                os.path.join(path, 'dev.tsv'), add_cls_token=True)
+
 
     def get_iterator(self, split, *args, **kwargs):
         if split == 'train':

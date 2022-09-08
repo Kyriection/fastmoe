@@ -20,7 +20,7 @@ class Vocab(object):
         self.delimiter = delimiter
         self.vocab_file = vocab_file
 
-    def tokenize(self, line, add_eos=False, add_double_eos=False, add_cls_token=False, add_s=False):
+    def tokenize(self, line, add_eos=False, add_double_eos=False, add_cls_token=False, add_s=False, add_cls_token_last=False):
         line = line.strip()
         # convert to lower case
         if self.lower_case:
@@ -34,6 +34,8 @@ class Vocab(object):
 
         if add_cls_token:
             return ['<CLS>'] + symbols + ['<S>']
+        elif add_cls_token_last:
+            return ['<S>'] + symbols + ['<CLS>']
         elif add_double_eos: # lm1b
             return ['<S>'] + symbols + ['<S>']
         elif add_eos:
@@ -213,6 +215,27 @@ class Vocab(object):
                 sentence, label = line[0], int(line[1])
                 assert label in [0,1]
                 sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token=add_cls_token)
+                encoded.append(self.convert_to_tensor(sentence_toks))
+                labels.append(label)
+
+        labels = torch.LongTensor(labels)
+        return [encoded, labels]
+
+    def encode_sst2_file_v2(self, path, verbose=False, add_eos=False,
+            add_double_eos=False, add_cls_token_last=False):
+        if verbose: print('encoding file {} ...'.format(path))
+        assert os.path.exists(path)
+        encoded = []
+        labels = []
+        with open(path, 'r', encoding='utf-8') as f:
+            tsv_file = csv.reader(f, delimiter="\t")
+            for line in tsv_file: 
+                if not line[1] in ['0', '1']: 
+                    print('* Ignore ', line)
+                    continue
+                sentence, label = line[0], int(line[1])
+                assert label in [0,1]
+                sentence_toks = self.tokenize(sentence, add_eos=add_eos, add_double_eos=add_double_eos, add_cls_token_last=add_cls_token_last)
                 encoded.append(self.convert_to_tensor(sentence_toks))
                 labels.append(label)
 
