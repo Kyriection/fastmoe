@@ -487,6 +487,8 @@ class Corpus(object):
                 data_iter = CSQAIterator(self.train, *args, **kwargs)
             elif self.dataset == 'sst2':
                 data_iter = SST2Iterator(self.train, *args, **kwargs)
+            elif self.dataset == 'sst2_v2':
+                data_iter = SST2Iterator_v2(self.train, *args, **kwargs)
 
                 # dataset = CSQADataset(self.train)
                 # data_iter = DataLoader(dataset, *args, shuffle=True, 
@@ -502,6 +504,9 @@ class Corpus(object):
                 data_iter = CSQAIterator(self.valid, *args, **kwargs)
             elif self.dataset == 'sst2':
                 data_iter = SST2Iterator(self.valid, *args, **kwargs)
+            elif self.dataset == 'sst2_v2':
+                data_iter = SST2Iterator_v2(self.valid, *args, **kwargs)
+
 
                 # dataset = CSQADataset(self.valid)
                 # data_iter = DataLoader(dataset, *args, shuffle=False, 
