@@ -10,6 +10,9 @@ import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence
 
 
+
+
+
 class LMOrderedIterator(object):
     def __init__(self, data, bsz, bptt, device='cpu', ext_len=None):
         """
@@ -222,6 +225,7 @@ class SST2Iterator_v2(object):
             subencoded.append(self.encoded[idx])
             sublabels.append(self.labels[idx])
             mask_idx.append(torch.ones(self.encoded[idx].shape[0]))
+            print(self.encoded[idx].shape)
         
         subencoded = pad_sequence(subencoded)
         mask_idx = 1 - pad_sequence(mask_idx)
