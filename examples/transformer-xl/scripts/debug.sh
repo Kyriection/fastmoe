@@ -119,7 +119,7 @@ echo 'Run training...'
 python -u train_sst2.py \
     --cuda \
     --data ../glue_data/SST-2 \
-    --dataset sst2 \
+    --dataset sst2_v2 \
     --n_layer 12 \
     --d_model 256 \
     --n_head 8 \
@@ -128,7 +128,7 @@ python -u train_sst2.py \
     --dropout 0.1 \
     --dropatt 0.0 \
     --optim adam \
-    --lr $2 \
+    --lr 1e-4 \
     --warmup_step 0 \
     --max_step 50 \
     --eval-interval 20 \
