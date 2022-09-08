@@ -515,6 +515,8 @@ class Corpus(object):
 
 
 def get_lm_corpus(datadir, dataset):
+
+    print(dataset)
     fn = os.path.join(datadir, 'cache.pt')
     if os.path.exists(fn):
         print('Loading cached dataset...')
