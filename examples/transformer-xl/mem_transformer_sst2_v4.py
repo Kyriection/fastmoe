@@ -947,6 +947,7 @@ class MemTransformerLM(nn.Module):
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
         
+        pdb.set_trace()
         if not mems: mems = self.init_mems(data)
         pdb.set_trace()
 
