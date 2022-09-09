@@ -540,6 +540,8 @@ def train():
         mask = mask.cuda()
         label = label.cuda()
 
+        pdb.set_trace()
+
         predict, mems = para_model(data, mask, mems)
 
         loss = criterion(predict, label)
