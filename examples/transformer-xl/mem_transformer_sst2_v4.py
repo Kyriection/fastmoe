@@ -841,7 +841,7 @@ class MemTransformerLM(nn.Module):
             #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
 
             current_dec_attn_mask = torch.triu(
-                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+                word_emb.new_ones(qlen, qlen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
             current_dec_attn_mask = (current_dec_attn_mask + attn_mask).gt(0).byte()
 
 
