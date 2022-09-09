@@ -841,7 +841,11 @@ class MemTransformerLM(nn.Module):
             #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
 
             if attn_mems == None:
-                dec_attn_mask = attn_mask.byte()
+
+                dec_attn_mask = torch.triu(
+                    word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+                dec_attn_mask = (dec_attn_mask + attn_mask).gt(0).byte()
+
             else:
                 mem_token_lens = attn_mems.shape[0]
                 if mem_token_lens < qlen:
@@ -946,13 +950,9 @@ class MemTransformerLM(nn.Module):
         # So, have to initialize size(0) mems inside the model forward.
         # Moreover, have to return new_mems to allow nn.DataParallel to piece
         # them together.
-        
-        pdb.set_trace()
+
         if not mems: mems = self.init_mems(data)
-        pdb.set_trace()
-
         hidden, new_mems = self._forward(data, attn_mask, mems_all=mems)
-
         # hidden (token, batch-size, dimension)
         pre_logits = self.project_head(hidden[-1,:,:])
 
