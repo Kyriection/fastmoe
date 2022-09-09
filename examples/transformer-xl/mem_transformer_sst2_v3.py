@@ -834,6 +834,11 @@ class MemTransformerLM(nn.Module):
                     + torch.tril(all_ones, -mask_shift_len)).byte()[:, :, None] # -1
             assert False
         else:
+            dec_attn_mask = torch.triu(
+                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+            dec_attn_mask = (dec_attn_mask + attn_mask).byte()
+            pdb.set_trace()
+
             dec_attn_mask = attn_mask.byte()
 
         hids = []
@@ -926,7 +931,7 @@ class MemTransformerLM(nn.Module):
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
         # hidden (token, batch-size, dimension)
-        pre_logits = self.project_head(hidden[0,:,:])
+        pre_logits = self.project_head(hidden[-1,:,:])
 
         return pre_logits, new_mems
 
