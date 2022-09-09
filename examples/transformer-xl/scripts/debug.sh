@@ -130,9 +130,9 @@ python -u train_sst2.py \
     --optim adam \
     --lr 1e-4 \
     --warmup_step 0 \
-    --max_step 50 \
-    --eval-interval 20 \
-    --log-interval 20 \
+    --max_step 5000 \
+    --eval-interval 500 \
+    --log-interval 50 \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
