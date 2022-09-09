@@ -521,7 +521,7 @@ def train():
     model.train()
     
     criterion = nn.CrossEntropyLoss()
-    mems = tuple()
+    mems = None
 
     train_iter = tr_iter.get_varlen_iter()
     for batch, (data, mask, label) in enumerate(train_iter):
@@ -539,8 +539,6 @@ def train():
         data = data.cuda()
         mask = mask.cuda()
         label = label.cuda()
-
-        pdb.set_trace()
 
         predict, mems = para_model(data, mask, mems)
 
