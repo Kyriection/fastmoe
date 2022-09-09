@@ -23,7 +23,7 @@ def pad_sequence_reverse(data):
     # padding 
     padded_data_list = []
     for item in data:
-        padded_item = torch.cat([torch.zeros(max_length - item.shape[0]).to(device), item]).reshape(-1, 1)
+        padded_item = torch.cat([torch.zeros(max_length - item.shape[0], dtype=item.dtype).to(device), item]).reshape(-1, 1)
         padded_data_list.append(padded_item)
     padded_data_list = torch.cat(padded_data_list, dim=1)
     return padded_data_list
@@ -534,7 +534,7 @@ def get_lm_corpus(datadir, dataset):
             kwargs['special'] = []
             kwargs['lower_case'] = False
             kwargs['vocab_file'] = os.path.join(datadir, '1b_word_vocab.txt')
-        elif dataset in ['csqa', 'sst2']:
+        elif dataset in ['csqa', 'sst2', 'sst2_v2']:
             kwargs['special'] = ['<eos>']
         elif dataset in ['enwik8', 'text8']:
             pass
