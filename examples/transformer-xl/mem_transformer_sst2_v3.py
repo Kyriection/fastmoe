@@ -923,7 +923,7 @@ class MemTransformerLM(nn.Module):
 
         # if not mems: mems = self.init_mems(data)
         # mems = self.init_mems(data)
-        mems = None
+        mems = tuple()
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
         # hidden (token, batch-size, dimension)
