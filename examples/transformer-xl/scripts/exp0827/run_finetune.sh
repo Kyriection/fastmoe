@@ -19,7 +19,7 @@
 
 
 
-CUDA_VISIBLE_DEVICES=$2 nohup bash scripts/exp0827/finetuning_dense.sh Pretrained_model/Dense/Layer4/dim_$1.pt $1 > log_v3_result_dense_$1_sst2.out 2>&1 &
+CUDA_VISIBLE_DEVICES=$2 nohup bash scripts/exp0827/finetuning_dense.sh Pretrained_model/Dense/Layer4/dim_$1_enwik8.pt $1 > log_v3_result_dense_$1_sst2.out 2>&1 &
 
 
 
