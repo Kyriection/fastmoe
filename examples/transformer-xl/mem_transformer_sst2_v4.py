@@ -843,7 +843,7 @@ class MemTransformerLM(nn.Module):
             dec_attn_mask = (dec_attn_mask + attn_mask).gt(0).byte()
 
             if not attn_mems == None:
-                attn_mems = attn_mems.eq(0).float().mean(dim=0).gt(0).byte().repeat(qlen, 1, 1)
+                attn_mems = attn_mems.eq(0).float().mean(dim=0).eq(0).byte().repeat(qlen, 1, 1)
                 dec_attn_mask = torch.cat([attn_mems, dec_attn_mask], dim=1).byte()
 
             pdb.set_trace()
