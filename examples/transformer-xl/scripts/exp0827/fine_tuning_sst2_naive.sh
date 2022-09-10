@@ -1,8 +1,8 @@
 echo 'Run training...'
 python -u train_sst2.py \
     --cuda \
-    --data ../glue_data/SST-2 \
-    --dataset sst2 \
+    --data ../glue_data/SST-2_v2 \
+    --dataset sst2_v2 \
     --n_layer 4 \
     --d_model 256 \
     --n_head 8 \
@@ -17,7 +17,7 @@ python -u train_sst2.py \
     --eval-interval 500 \
     --log-interval 100 \
     --tgt_len 512 \
-    --mem_len 512 \
+    --mem_len 128 \
     --eval_tgt_len 128 \
     --batch_size 16 \
     --work_dir $2 \

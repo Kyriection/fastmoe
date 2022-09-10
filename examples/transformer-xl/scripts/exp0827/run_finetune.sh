@@ -19,7 +19,7 @@
 
 
 
-CUDA_VISIBLE_DEVICES=$2 nohup bash scripts/exp0827/finetuning_dense.sh Pretrained_model/Dense/Layer4/dim_$1_enwik8.pt $1 > log_v3_result_dense_$1_sst2.out 2>&1 &
+# CUDA_VISIBLE_DEVICES=$2 nohup bash scripts/exp0827/finetuning_dense.sh Pretrained_model/Dense/Layer4/dim_$1_enwik8.pt $1 > log_v3_result_dense_$1_sst2.out 2>&1 &
 
 
 
@@ -57,6 +57,7 @@ CUDA_VISIBLE_DEVICES=$2 nohup bash scripts/exp0827/finetuning_dense.sh Pretraine
 # CUDA_VISIBLE_DEVICES=3 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_14 14 128 > log_v3_MEM128_14_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
 
 
+CUDA_VISIBLE_DEVICES=2 nohup bash scripts/exp0827/fine_tuning_sst2_naive.sh $1 naive_moe_dense_finetuning_v3_MEM128 16 > log_v3_MEM128_naive_moe_dense_finetuning_sst2.out 2>&1 &
 
 
 
