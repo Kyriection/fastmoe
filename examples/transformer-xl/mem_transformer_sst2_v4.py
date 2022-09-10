@@ -846,15 +846,6 @@ class MemTransformerLM(nn.Module):
                 attn_mems = attn_mems.eq(0).float().mean(dim=0).eq(0).byte().repeat(qlen, 1, 1)
                 dec_attn_mask = torch.cat([attn_mems, dec_attn_mask], dim=1).byte()
 
-            pdb.set_trace()
-
-            # # dec_attn_mask = torch.triu(
-            # #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
-            # pdb.set_trace()
-            # # dec_attn_mask = ((dec_attn_mask + attn_mask) > 0).byte()
-            # dec_attn_mask = attn_mask.byte()
-            # pdb.set_trace()
-
         hids = []
         if self.attn_type == 0: # default
             pos_seq = torch.arange(klen-1, -1, -1.0, device=word_emb.device,

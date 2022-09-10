@@ -17,7 +17,7 @@ python -u train_sst2.py \
     --eval-interval 500 \
     --log-interval 100 \
     --tgt_len 512 \
-    --mem_len 512 \
+    --mem_len $4 \
     --eval_tgt_len 128 \
     --batch_size 16 \
     --work_dir $2 \
