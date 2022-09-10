@@ -50,9 +50,11 @@
 # CUDA_VISIBLE_DEVICES=3 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh random RandWeight_moe_gradual_finetuning_randominit 8 128 > log_MEM128_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2_randominit.out 2>&1 &
 
 
-CUDA_VISIBLE_DEVICES=1 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_10 10 128 > log_MEM128_10_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
-CUDA_VISIBLE_DEVICES=2 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_12 12 128 > log_MEM128_12_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
-CUDA_VISIBLE_DEVICES=3 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_14 14 128 > log_MEM128_14_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
+
+CUDA_VISIBLE_DEVICES=0 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_6 6 128 > log_v3_MEM128_6_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_10 10 128 > log_v3_MEM128_10_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
+CUDA_VISIBLE_DEVICES=2 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_12 12 128 > log_v3_MEM128_12_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
+CUDA_VISIBLE_DEVICES=3 nohup bash scripts/exp0827/fine_tuning_sst2_freeze.sh $1 RandWeight_moe_gradual_finetuning_14 14 128 > log_v3_MEM128_14_LASTCLS_RandWeight_moe_gradual_finetuning_8_sst2.out 2>&1 &
 
 
 
