@@ -837,29 +837,16 @@ class MemTransformerLM(nn.Module):
                     + torch.tril(all_ones, -mask_shift_len)).byte()[:, :, None] # -1
             assert False
         else:
-            # dec_attn_mask = torch.triu(
-            #     word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None]
 
-            current_dec_attn_mask = torch.triu(
-                word_emb.new_ones(qlen, qlen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
-            current_dec_attn_mask = (current_dec_attn_mask + attn_mask).gt(0).byte()
+            dec_attn_mask = torch.triu(
+                word_emb.new_ones(qlen, klen), diagonal=1+mlen).byte()[:,:,None].repeat(1,1,bsz)
+            dec_attn_mask = (dec_attn_mask + attn_mask).gt(0).byte()
 
-
-            if attn_mems == None:
-                dec_attn_mask = current_dec_attn_mask
-
-            else:
+            if not attn_mems == None:
                 mem_token_lens = attn_mems.shape[0]
-                if mem_token_lens < qlen:
-                    padding_size = qlen-mem_token_lens
-                    attn_mems = attn_mems.permute(2,0,1)
-                    attn_mems = F.pad(attn_mems, [0, 0, 0, padding_size], value=1)
-                    attn_mems = attn_mems.permute(1,2,0)
-                else:
-                    attn_mems = attn_mems[:qlen, :, :]
-                # pdb.set_trace()
-                dec_attn_mask = torch.cat([attn_mems, current_dec_attn_mask], dim=1).byte()
-            
+                attn_mems = attn_mems.eq(0).sum(1).gt(0).repeat(qlen, 1)
+                dec_attn_mask = torch.cat([attn_mems, dec_attn_mask], dim=1).byte()
+
             pdb.set_trace()
 
 
