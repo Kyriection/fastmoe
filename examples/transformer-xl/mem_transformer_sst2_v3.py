@@ -923,11 +923,13 @@ class MemTransformerLM(nn.Module):
 
         # if not mems: mems = self.init_mems(data)
         # mems = self.init_mems(data)
-        mems = tuple()
+        mems = None
 
         hidden, new_mems = self._forward(data, attn_mask, mems=mems)
         # hidden (token, batch-size, dimension)
         pre_logits = self.project_head(hidden[-1,:,:])
+
+        new_mems = tuple()
 
         return pre_logits, new_mems
 
