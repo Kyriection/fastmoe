@@ -27,10 +27,11 @@ def collect_top_k(model):
     return top_k
 
 def set_router_mode(model, args, flag=True):
-    for name, m in model.named_modules():
-        if isinstance(m, BaseGate):
-            m.dense_moe_flag = flag 
-            print('Layer name: {}, Average MoE = {}'.format(name, m.dense_moe_flag))
+    # for name, m in model.named_modules():
+    #     if isinstance(m, BaseGate):
+    #         m.dense_moe_flag = flag 
+    #         print('Layer name: {}, Average MoE = {}'.format(name, m.dense_moe_flag))
+    print('** Using Score-Based Average for Dense Inference')
 
     current_gate = 0
     for name, m in model.named_modules():
