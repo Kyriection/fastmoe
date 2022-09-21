@@ -14,11 +14,11 @@ python -u train.py \
     --optim adam \
     --lr 0.00025 \
     --warmup_step 0 \
-    --max_step 100000 \
+    --max_step 200000 \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 88 \
+    --batch_size 44 \
     --moe --moe-num-expert $7 --moe-top-k 2 \
     --gate_name $1 \
     --dynamic_moe \
