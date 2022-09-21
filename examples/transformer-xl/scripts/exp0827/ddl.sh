@@ -1,14 +1,14 @@
-echo 'Run SMOE TOP-12'
-DATE=0919
-GATE_NAME=CustomNaiveGate
-Dynamic_mode=linear_increase
-NUM_LAYER=4
-NUM_EXPERT=16
-MIN_K=12
-MAX_K=12
-SAVE_DIR=MoE${NUM_LAYER}-${NUM_EXPERT}_Naive_ALL_${Dynamic_mode}_${MIN_K}_${MAX_K}
-nohup bash scripts/exp0827/moe.sh \
-    ${GATE_NAME} ${Dynamic_mode} ${MIN_K} ${MAX_K} ${SAVE_DIR} ${NUM_LAYER} ${NUM_EXPERT} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+# echo 'Run SMOE TOP-12'
+# DATE=0919
+# GATE_NAME=CustomNaiveGate
+# Dynamic_mode=linear_increase
+# NUM_LAYER=4
+# NUM_EXPERT=16
+# MIN_K=12
+# MAX_K=12
+# SAVE_DIR=MoE${NUM_LAYER}-${NUM_EXPERT}_Naive_ALL_${Dynamic_mode}_${MIN_K}_${MAX_K}
+# nohup bash scripts/exp0827/moe.sh \
+#     ${GATE_NAME} ${Dynamic_mode} ${MIN_K} ${MAX_K} ${SAVE_DIR} ${NUM_LAYER} ${NUM_EXPERT} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 
 # echo 'Run RMT 8-12'
@@ -25,5 +25,16 @@ nohup bash scripts/exp0827/moe.sh \
 
 
 
+echo 'Run RMT TOP-12'
+DATE=0921
+GATE_NAME=CustomNaiveGate
+Dynamic_mode=linear_increase
+NUM_LAYER=4
+NUM_EXPERT=16
+MIN_K=12
+MAX_K=12
+SAVE_DIR=MoE${NUM_LAYER}-${NUM_EXPERT}_RandomWeight_ALL_${Dynamic_mode}_${MIN_K}_${MAX_K}
+nohup bash scripts/exp0827/moe_freeze_router.sh \
+    ${GATE_NAME} ${Dynamic_mode} ${MIN_K} ${MAX_K} ${SAVE_DIR} ${NUM_LAYER} ${NUM_EXPERT} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
 
