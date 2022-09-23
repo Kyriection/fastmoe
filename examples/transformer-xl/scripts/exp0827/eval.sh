@@ -48,4 +48,4 @@ CUDA_VISIBLE_DEVICES=$2 nohup python -u evaluation.py \
     --batch_size 22 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
-    --checkpoint_weight $1 > log_eval_dense_dim$3.out 2>&1 &
+    --checkpoint_weight $1 > log_eval_$3.out 2>&1 &

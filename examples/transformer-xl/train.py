@@ -679,17 +679,17 @@ log_start_time = time.time()
 eval_start_time = time.time()
 all_top_k = []
 
-# # At any point you can hit Ctrl + C to break out of training early.
-# try:
-#     for epoch in itertools.count(start=1):
-#         train()
-#         if train_step == args.max_step:
-#             logging('-' * 100)
-#             logging('End of training')
-#             break
-# except KeyboardInterrupt:
-#     logging('-' * 100)
-#     logging('Exiting from training early')
+# At any point you can hit Ctrl + C to break out of training early.
+try:
+    for epoch in itertools.count(start=1):
+        train()
+        if train_step == args.max_step:
+            logging('-' * 100)
+            logging('End of training')
+            break
+except KeyboardInterrupt:
+    logging('-' * 100)
+    logging('Exiting from training early')
 
 
 # Load the best saved model.
@@ -698,8 +698,7 @@ with open(os.path.join(args.work_dir, 'model_dense.pt'), 'rb') as f:
 para_model = model.to(device)
 
 # Run on test data.
-# for gate_number in [1,2,4,8,16,32,64]:
-for gate_number in [1,2,4,6,8,10,12,14,16]:
+for gate_number in [1,2,4,8,16,32,64]:
     if gate_number <= args.moe_num_expert:
         set_top_k(model, gate_number)
         test_loss = evaluate(model, te_iter)
@@ -718,8 +717,7 @@ with open(os.path.join(args.work_dir, 'model.pt'), 'rb') as f:
 para_model = model.to(device)
 
 # Run on test data.
-# for gate_number in [1,2,4,8,16,32,64]:
-for gate_number in [1,2,4,6,8,10,12,14,16]:
+for gate_number in [1,2,4,8,16,32,64]:
     if gate_number <= args.moe_num_expert:
         set_top_k(model, gate_number)
         test_loss = evaluate(model, te_iter)
@@ -733,25 +731,25 @@ for gate_number in [1,2,4,6,8,10,12,14,16]:
         logging('=' * 100)
 
 
-# if args.swad:
-#     with open(os.path.join(args.work_dir, 'model_swa.pt'), 'rb') as f:
-#         model = torch.load(f)
-#     para_model = model.to(device)
+if args.swad:
+    with open(os.path.join(args.work_dir, 'model_swa.pt'), 'rb') as f:
+        model = torch.load(f)
+    para_model = model.to(device)
 
-#     # Run on test data.
-#     for gate_number in [1,2,4,8,16,32,64]:
-#         if gate_number <= args.moe_num_expert:
-#             set_top_k(model, gate_number)
-#             test_loss = evaluate(model, te_iter)
-#             logging('=' * 100)
-#             if args.dataset in ['enwik8', 'text8']:
-#                 logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
-#                     gate_number, test_loss, test_loss / math.log(2)))
-#             else:
-#                 logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
-#                     gate_number, test_loss, math.exp(test_loss)))
-#             logging('=' * 100)
+    # Run on test data.
+    for gate_number in [1,2,4,8,16,32,64]:
+        if gate_number <= args.moe_num_expert:
+            set_top_k(model, gate_number)
+            test_loss = evaluate(model, te_iter)
+            logging('=' * 100)
+            if args.dataset in ['enwik8', 'text8']:
+                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test bpc {:9.5f}'.format(
+                    gate_number, test_loss, test_loss / math.log(2)))
+            else:
+                logging('SWAD | End of training | Gate-Number {:.0f} | test loss {:5.2f} | test ppl {:9.3f}'.format(
+                    gate_number, test_loss, math.exp(test_loss)))
+            logging('=' * 100)
 
 
-# all_top_k = np.array(all_top_k)
-# print('* Mean Top-K During Training = {}-[{}]'.format(np.mean(all_top_k), all_top_k.shape[0]))
+all_top_k = np.array(all_top_k)
+print('* Mean Top-K During Training = {}-[{}]'.format(np.mean(all_top_k), all_top_k.shape[0]))

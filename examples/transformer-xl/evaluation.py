@@ -658,7 +658,7 @@ with open(args.checkpoint_weight, 'rb') as f:
 para_model = model.to(device)
 
 # Run on test data.
-for gate_number in [16]:
+for gate_number in [1,2,4,6,8,10,12,14,16]:
     if gate_number <= args.moe_num_expert:
         set_top_k(model, gate_number)
         test_loss = evaluate(te_iter)
