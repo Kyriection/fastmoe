@@ -79,7 +79,7 @@
 
 
 echo 'Run SMOE TOP-10'
-DATE=0919
+DATE=0919_Test
 GATE_NAME=CustomNaiveGate
 Dynamic_mode=linear_increase
 NUM_LAYER=4
