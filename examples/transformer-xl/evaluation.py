@@ -203,8 +203,8 @@ assert args.batch_size % args.batch_chunk == 0
 #             break
 
 # # args.work_dir = os.path.join(args.work_dir, time.strftime('%Y%m%d-%H%M%S'))
-# logging = create_exp_dir(args.work_dir,
-#     scripts_to_save=['train.py', 'mem_transformer.py'], debug=args.debug)
+logging = create_exp_dir(args.work_dir,
+    scripts_to_save=['train.py', 'mem_transformer.py'], debug=args.debug)
 
 # Set the random seed manually for reproducibility.
 np.random.seed(args.seed)
