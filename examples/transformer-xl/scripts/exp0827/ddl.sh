@@ -172,3 +172,7 @@ elif [[ $1 == 'exp8' ]]; then
     SAVE_DIR=SMoE_Dropout_Every2_Top-12_${DATE}
     nohup bash scripts/exp0827/moe_freeze_router_layerwise_single.sh \
         ${MIN_K} ${MAX_K} ${MOE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+else
+    echo 'unknown argment 1'
+fi
