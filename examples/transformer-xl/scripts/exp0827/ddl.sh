@@ -135,9 +135,9 @@ elif [[ $1 == 'exp4' ]]; then
 
 elif [[ $1 == 'exp5' ]]; then
     echo 'Run Early-SMoE-Dropout-Top-12'
-    DATE=0924
-    MIN_K=12
-    MAX_K=12
+    DATE=0925
+    MIN_K=8
+    MAX_K=16
     MOE_INDEX=0,1
     SAVE_DIR=SMoE_Dropout_Early_Top-12_${DATE}
     nohup bash scripts/exp0827/moe_freeze_router_layerwise_single.sh \
@@ -145,9 +145,9 @@ elif [[ $1 == 'exp5' ]]; then
 
 elif [[ $1 == 'exp6' ]]; then
     echo 'Run Middle-SMoE-Dropout-Top-12'
-    DATE=0924
-    MIN_K=12
-    MAX_K=12
+    DATE=0925
+    MIN_K=8
+    MAX_K=16
     MOE_INDEX=1,2
     SAVE_DIR=SMoE_Dropout_Middle_Top-12_${DATE}
     nohup bash scripts/exp0827/moe_freeze_router_layerwise_single.sh \
@@ -155,9 +155,9 @@ elif [[ $1 == 'exp6' ]]; then
 
 elif [[ $1 == 'exp7' ]]; then
     echo 'Run Later-SMoE-Dropout-Top-12'
-    DATE=0924
-    MIN_K=12
-    MAX_K=12
+    DATE=0925
+    MIN_K=8
+    MAX_K=16
     MOE_INDEX=2,3
     SAVE_DIR=SMoE_Dropout_Later_Top-12_${DATE}
     nohup bash scripts/exp0827/moe_freeze_router_layerwise_single.sh \
@@ -165,9 +165,9 @@ elif [[ $1 == 'exp7' ]]; then
 
 elif [[ $1 == 'exp8' ]]; then
     echo 'Run Every2-SMoE-Dropout-Top-12'
-    DATE=0924
-    MIN_K=12
-    MAX_K=12
+    DATE=0925
+    MIN_K=8
+    MAX_K=16
     MOE_INDEX=1,3
     SAVE_DIR=SMoE_Dropout_Every2_Top-12_${DATE}
     nohup bash scripts/exp0827/moe_freeze_router_layerwise_single.sh \
