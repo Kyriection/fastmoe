@@ -4,7 +4,7 @@ python -u train.py \
     --cuda \
     --data ../data/enwik8/ \
     --dataset enwik8 \
-    --n_layer $6 \
+    --n_layer $1 \
     --d_model 256 \
     --n_head 8 \
     --d_head 64 \
@@ -21,12 +21,12 @@ python -u train.py \
     --batch_size 88 \
     --multi_gpu \
     --gpu0_bsz 11 \
-    --moe --moe-num-expert $7 --moe-top-k 2 \
-    --gate_name $1 \
+    --moe --moe-num-expert $2 --moe-top-k 2 \
+    --gate_name CustomNaiveGate \
     --freeze_gate \
     --dynamic_moe \
-    --dynamic_moe_mode $2 \
-    --dynamic_overall_steps 400000 \
+    --dynamic_moe_mode linear_increase \
+    --dynamic_overall_steps 100000 \
     --moe-top-k-min $3 \
     --moe-top-k-max $4 \
     --work_dir $5

@@ -173,6 +173,45 @@ elif [[ $1 == 'exp8' ]]; then
     nohup bash scripts/exp0827/moe_freeze_router_layerwise_single.sh \
         ${MIN_K} ${MAX_K} ${MOE_INDEX} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
 
+
+elif [[ $1 == 'rmt8_16' ]]; then
+    DATE=0925
+    LAYER=8
+    EXPERT=16
+    MIN_K=1
+    MAX_K=16
+    SAVE_DIR=RMT_LAYER${LAYER}_EXPERT${EXPERT}_${DATE}
+    nohup bash scripts/exp0827/moe_freeze_router.sh \
+        ${LAYER} ${EXPERT} ${MIN_K} ${MAX_K} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+elif [[ $1 == 'rmt4_32' ]]; then
+    DATE=0925
+    LAYER=4
+    EXPERT=32
+    MIN_K=1
+    MAX_K=32
+    SAVE_DIR=RMT_LAYER${LAYER}_EXPERT${EXPERT}_${DATE}
+    nohup bash scripts/exp0827/moe_freeze_router.sh \
+        ${LAYER} ${EXPERT} ${MIN_K} ${MAX_K} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+elif [[ $1 == 'rmt4_64' ]]; then
+    DATE=0925
+    LAYER=4
+    EXPERT=64
+    MIN_K=1
+    MAX_K=64
+    SAVE_DIR=RMT_LAYER${LAYER}_EXPERT${EXPERT}_${DATE}
+    nohup bash scripts/exp0827/moe_freeze_router.sh \
+        ${LAYER} ${EXPERT} ${MIN_K} ${MAX_K} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+elif [[ $1 == 'rmt4_16_top8' ]]; then
+    DATE=0925
+    LAYER=4
+    EXPERT=16
+    MIN_K=8
+    MAX_K=8
+    SAVE_DIR=RMT_LAYER${LAYER}_EXPERT${EXPERT}_${DATE}
+    nohup bash scripts/exp0827/moe_freeze_router.sh \
+        ${LAYER} ${EXPERT} ${MIN_K} ${MAX_K} ${SAVE_DIR} > log_${DATE}_${SAVE_DIR}.out 2>&1 &
+
+
 else
     echo 'unknown argment 1'
 fi
