@@ -57,7 +57,7 @@ def kl_loss_sym(logits1, logits2):
     
     loss = kl_loss(F.log_softmax(logits1, dim=1), F.softmax(logits2, dim=1)) + kl_loss(F.log_softmax(logits2, dim=1), F.softmax(logits1, dim=1))
 
-    return loss
+    return loss.mean(-1)
 
 def freeze_part_weight(model, args):
     if args.freeze_gate:
