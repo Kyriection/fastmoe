@@ -53,13 +53,7 @@ def set_router_mode(model, args, flag=True):
 
 def kl_loss_sym(logit1, logit2):
 
-    kl_loss = nn.KLDivLoss(reduction="batchmean")
-
-    # reshape
-    logits1 = logit1.transpose(1,0)
-    logits2 = logit2.transpose(1,0)
-    print(logit1.shape)
-    print(logit2.shape)
+    kl_loss = nn.KLDivLoss(reduction="none")
     
     loss = kl_loss(F.log_softmax(logits1, dim=1), F.softmax(logits2, dim=1)) + kl_loss(F.log_softmax(logits2, dim=1), F.softmax(logits1, dim=1))
 
