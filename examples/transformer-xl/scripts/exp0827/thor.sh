@@ -18,7 +18,9 @@ python -u train_thor.py \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 12 \
+    --batch_size 88 \
+    --multi_gpu \
+    --gpu0_bsz 11 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomRandomGate \
     --work_dir THOR_4layer_16experts \
