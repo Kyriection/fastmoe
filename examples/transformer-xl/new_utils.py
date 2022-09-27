@@ -4,9 +4,13 @@ import numpy as np
 import torch.nn as nn 
 from fmoe.gates.base_gate import BaseGate
 
+import pdb
+import torch.nn.functional as F
+
+
 __all__ = ['set_top_k', 'set_router_mode', 'freeze_part_weight', 'adjust_moe_gate_number',
             'show_dts_gate_number', 'set_temperature', 'set_threshold', 
-            'SWA_Average', 'collect_top_k']
+            'SWA_Average', 'collect_top_k', 'THOR_Model']
 
 
 def set_top_k(model, num=2):
@@ -47,7 +51,18 @@ def set_router_mode(model, args, flag=True):
                 print('Set {}, Top-K = {} {}'.format(name, m.top_k, m.gate.top_k))
     return current_gate
 
+def kl_loss_sym(logit1, logit2):
 
+    kl_loss = nn.KLDivLoss(reduction="batchmean")
+
+    # reshape
+    dim = logit1.shape[-1]
+    logits1 = logit1.reshape(-1, dim)
+    logits2 = logit2.reshape(-1, dim)
+    
+    loss = kl_loss(F.log_softmax(logits1, dim=1), F.softmax(logits2, dim=1)) + kl_loss(F.log_softmax(logits2, dim=1), F.softmax(logits1, dim=1))
+
+    return loss
 
 def freeze_part_weight(model, args):
     if args.freeze_gate:
@@ -165,4 +180,20 @@ class SWA_Average(nn.Module):
                 p_swa.detach().copy_(self.avg_fn(p_swa.detach(), p_model.detach(), self.n_average))
             self.n_average +=1 
 
+class THOR_Model(nn.Module):
+    def __init__(self, basic_model, kl_alpha):
+        super(THOR_Model, self).__init__()
+        self.module = basic_model
+        self.kl_alpha = kl_alpha
 
+    def forward(self, data, target, *mems):
+        if self.training:
+            outputs = self.module(data, target, *mems)
+            pdb.set_trace()
+            outputs2 = self.module(data, target, *mems)
+            loss_kl = kl_loss_sym(outputs[0], outputs2[0])
+            new_loss = (outputs[1] + outputs2[1])/2 + self.kl_alpha * loss_kl
+            outputs[0] = new_loss
+        else:
+            outputs = self.module(data, target, *mems)
+        return outputs
