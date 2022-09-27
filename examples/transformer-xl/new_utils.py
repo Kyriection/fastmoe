@@ -184,11 +184,10 @@ class THOR_Model(nn.Module):
     def forward(self, data, target, *mems):
         if self.training:
             outputs = self.module(data, target, *mems)
-            pdb.set_trace()
             outputs2 = self.module(data, target, *mems)
             loss_kl = kl_loss_sym(outputs[0], outputs2[0])
             new_loss = (outputs[1] + outputs2[1])/2 + self.kl_alpha * loss_kl
-            outputs[0] = new_loss
+            outputs[1] = new_loss
         else:
             outputs = self.module(data, target, *mems)
-        return outputs
+        return outputs[1:]
