@@ -51,7 +51,7 @@ def set_router_mode(model, args, flag=True):
                 print('Set {}, Top-K = {} {}'.format(name, m.top_k, m.gate.top_k))
     return current_gate
 
-def kl_loss_sym(logit1, logit2):
+def kl_loss_sym(logits1, logits2):
 
     kl_loss = nn.KLDivLoss(reduction="none")
     
