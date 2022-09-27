@@ -37,6 +37,7 @@ parser.add_argument('--d_head', type=int, default=50,
                     help='head dimension')
 parser.add_argument('--d_embed', type=int, default=-1,
                     help='embedding dimension')
+parser.add_argument('--kl_alpha', type=float, default=2)
 parser.add_argument('--d_model', type=int, default=500,
                     help='model dimension')
 parser.add_argument('--d_inner', type=int, default=1000,
