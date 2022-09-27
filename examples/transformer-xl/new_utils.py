@@ -56,9 +56,10 @@ def kl_loss_sym(logit1, logit2):
     kl_loss = nn.KLDivLoss(reduction="batchmean")
 
     # reshape
-    dim = logit1.shape[-1]
-    logits1 = logit1.reshape(-1, dim)
-    logits2 = logit2.reshape(-1, dim)
+    logits1 = logit1.transpose(1,0)
+    logits2 = logit2.transpose(1,0)
+    print(logit1.shape)
+    print(logit2.shape)
     
     loss = kl_loss(F.log_softmax(logits1, dim=1), F.softmax(logits2, dim=1)) + kl_loss(F.log_softmax(logits2, dim=1), F.softmax(logits1, dim=1))
 
