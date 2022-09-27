@@ -911,13 +911,13 @@ class MemTransformerLM(nn.Module):
                 self.out_layer.bias, target, pred_hid, self.sampler)
             loss = -F.log_softmax(logit, -1)[:, :, 0]
         else:
-            loss, logits = self.crit(pred_hid.view(-1, pred_hid.size(-1)), target.contiguous().view(-1))
+            loss, _ = self.crit(pred_hid.view(-1, pred_hid.size(-1)), target.contiguous().view(-1))
             loss = loss.view(tgt_len, -1)
 
         if new_mems is None:
-            return [logits, loss]
+            return [pred_hid, loss]
         else:
-            return [logits, loss] + new_mems
+            return [pred_hid, loss] + new_mems
 
 if __name__ == '__main__':
     import argparse
