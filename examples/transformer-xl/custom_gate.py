@@ -82,9 +82,9 @@ class CustomHashGate(BaseGate):
 
 
         if inp.shape[0] == self.hash_gate.shape[0]:
-            gate = self.hash_gate.reshape(1, inp.shape[1], 1)
+            gate = self.hash_gate.repeat(1, inp.shape[1], 1)
         elif inp.shape[0] == self.hash_gate_v2.shape[0]:
-            gate = self.hash_gate_v2.reshape(1, inp.shape[1], 1)
+            gate = self.hash_gate_v2.repeat(1, inp.shape[1], 1)
         else:
             assert False
 
