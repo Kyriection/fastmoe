@@ -13,7 +13,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 nohup python -u train_block.py \
     --optim adam \
     --lr 0.00025 \
     --warmup_step 0 \
-    --max_step 400000 \
+    --max_step 200000 \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
