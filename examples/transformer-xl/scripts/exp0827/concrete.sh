@@ -1,5 +1,5 @@
 #!/bin/bash
-python -u train.py \
+python -u train_concrete.py \
     --cuda \
     --data ../data/enwik8/ \
     --dataset enwik8 \
