@@ -61,10 +61,7 @@ class CustomHashGate(BaseGate):
 
     def forward(self, inp, return_all_scores=False):
 
-        gate = self.gate(inp)
-
-        print(gate.shape)
-
+        print(inp.shape)
         # gate (token, bs, num_experts)
         if not hasattr(self, 'hash_gate'):
             # generate hash gate
