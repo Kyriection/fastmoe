@@ -31,6 +31,49 @@ class PositionalEmbedding(nn.Module):
         else:
             return pos_emb[:,None,:]
 
+
+
+
+
+class BlockDropout(nn.Module):
+    def __init__(self, drop_prob=0.1, block_size=5):
+        super(BlockDropout, self).__init__()
+
+        self.drop_prob = drop_prob
+        self.block_size = block_size
+
+    def forward(self, x):
+        if self.training:
+            mask = self._compute_mask(x)
+            out = x * mask
+        else:
+            out = x
+        return out
+
+    def _compute_mask(self, x):
+        mask = torch.rand_like(x).lt(self.drop_prob).float()
+        mask = F.max_pool1d(mask, self.block_size, 1, self.block_size // 2)
+        return 1 - mask
+
+
+
+def set_block_size(model, block_size):
+    for name, m in model.named_modules():
+        if isinstance(m, BlockDropout):
+            m.block_size = block_size
+
+def set_drop_prob(model, drop_prob):
+    for name, m in model.named_modules():
+        if isinstance(m, BlockDropout):
+            m.drop_prob = drop_prob
+
+def calculate_drop_prob(steps, overall_steps, start_prob, end_prob):
+    gap_prob = end_prob - start_prob
+    drop_prob = gap_prob * steps / overall_steps + start_prob
+    return drop_prob
+
+
+
 class PositionwiseFF(nn.Module):
     def __init__(self, d_model, d_inner, dropout, pre_lnorm=False):
         super(PositionwiseFF, self).__init__()
@@ -41,9 +84,9 @@ class PositionwiseFF(nn.Module):
 
         self.CoreNet = nn.Sequential(
             nn.Linear(d_model, d_inner), nn.ReLU(inplace=True),
-            nn.Dropout(dropout),
+            BlockDropout(dropout),
             nn.Linear(d_inner, d_model),
-            nn.Dropout(dropout),
+            BlockDropout(dropout),
         )
 
         self.layer_norm = nn.LayerNorm(d_model)
