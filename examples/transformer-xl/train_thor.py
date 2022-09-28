@@ -351,6 +351,7 @@ if args.fp16:
     model = model.half()
 
 if args.multi_gpu:
+    print('multi_gpu')
     model = model.to(device)
     if args.gpu0_bsz >= 0:
         para_model = BalancedDataParallel(args.gpu0_bsz // args.batch_chunk,
