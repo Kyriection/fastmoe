@@ -180,6 +180,9 @@ class THOR_Model(nn.Module):
         super(THOR_Model, self).__init__()
         self.module = basic_model
         self.kl_alpha = kl_alpha
+    
+    def reset_length(self, **kargs):
+        self.module.reset_length(**kargs)
 
     def forward(self, data, target, *mems):
         if self.training:

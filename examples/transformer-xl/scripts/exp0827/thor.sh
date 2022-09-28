@@ -24,4 +24,6 @@ python -u train_thor.py \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomRandomGate \
     --work_dir THOR_4layer_16experts \
-    --kl_alpha 2
+    --kl_alpha 2 \
+    --restart \
+    --restart_dir $1
