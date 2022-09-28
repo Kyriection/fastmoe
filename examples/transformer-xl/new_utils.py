@@ -181,8 +181,8 @@ class THOR_Model(nn.Module):
         self.module = basic_model
         self.kl_alpha = kl_alpha
     
-    def reset_length(self, **kargs):
-        self.module.reset_length(**kargs)
+    def reset_length(self, tgt_len, ext_len, mem_len):
+        self.module.reset_length(tgt_len, ext_len, mem_len)
 
     def forward(self, data, target, *mems):
         if self.training:
@@ -194,3 +194,4 @@ class THOR_Model(nn.Module):
         else:
             outputs = self.module(data, target, *mems)
         return outputs[1:]
+
