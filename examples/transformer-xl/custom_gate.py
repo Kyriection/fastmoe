@@ -60,8 +60,6 @@ class CustomHashGate(BaseGate):
 
     def forward(self, inp, return_all_scores=False):
 
-        print(inp.shape)
-
         if not hasattr(self, 'hash_gate'):
             # generate hash gate
             print('Generate Hash Mapping')
@@ -100,8 +98,6 @@ class CustomHashGate(BaseGate):
             gate = self.hash_gate_v4
         else:
             assert False
-
-        print(gate.shape)
 
         gate_top_k_val, gate_top_k_idx = torch.topk(
             gate, k=self.top_k, dim=-1, largest=True, sorted=False
