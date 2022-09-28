@@ -41,6 +41,7 @@ class BlockDropout(nn.Module):
 
         self.drop_prob = drop_prob
         self.block_size = block_size
+        print('Using Block Dropout')
 
     def forward(self, x):
         if self.training:
