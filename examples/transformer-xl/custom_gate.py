@@ -58,7 +58,6 @@ class CustomHashGate(BaseGate):
         self.gate = nn.Linear(d_model, self.tot_expert)
         self.top_k = top_k
         self.random_hash_seed = np.random.randint(100)
-        self.hash_gate = None
 
     def forward(self, inp, return_all_scores=False):
 
@@ -67,7 +66,7 @@ class CustomHashGate(BaseGate):
         print(gate.shape)
 
         # gate (token, bs, num_experts)
-        if self.hash_gate == None or self.hash_gate.shape[0] != inp.shape[0]:
+        if not hasattr(self, hash_gate) or self.hash_gate.shape[0] != inp.shape[0]:
             # generate hash gate
             print('Generate Hash Mapping')
             token_num = inp.shape[0]
