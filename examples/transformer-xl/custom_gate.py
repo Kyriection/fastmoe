@@ -67,21 +67,35 @@ class CustomHashGate(BaseGate):
             # generate hash gate
             print('Generate Hash Mapping')
             token_num = inp.shape[0]
-            self.register_buffer('hash_gate', torch.rand(token_num, 1, self.tot_expert).to(inp.device))
+            self.register_buffer('hash_gate', torch.rand(token_num, self.tot_expert).to(inp.device))
             print(self.hash_gate.shape)
         elif self.hash_gate.shape[0] != inp.shape[0]:
             print('Generate New Hash Mapping')
             token_num = inp.shape[0]
-            self.register_buffer('hash_gate_v2', torch.rand(token_num, 1, self.tot_expert).to(inp.device))
-            print(self.hash_gate.shape)
+            self.register_buffer('hash_gate_v2', torch.rand(token_num, self.tot_expert).to(inp.device))
+            print(self.hash_gate_v2.shape)
+        elif self.hash_gate_v2.shape[0] != inp.shape[0]:
+            print('Generate New Hash Mapping v3')
+            token_num = inp.shape[0]
+            self.register_buffer('hash_gate_v3', torch.rand(token_num, self.tot_expert).to(inp.device))
+            print(self.hash_gate_v3.shape)
+        elif self.hash_gate_v3.shape[0] != inp.shape[0]:
+            print('Generate New Hash Mapping v4')
+            token_num = inp.shape[0]
+            self.register_buffer('hash_gate_v4', torch.rand(token_num, self.tot_expert).to(inp.device))
+            print(self.hash_gate_v4.shape)
         else:
             assert False
 
 
         if inp.shape[0] == self.hash_gate.shape[0]:
-            gate = self.hash_gate.repeat(1, inp.shape[1], 1)
+            gate = self.hash_gate
         elif inp.shape[0] == self.hash_gate_v2.shape[0]:
-            gate = self.hash_gate_v2.repeat(1, inp.shape[1], 1)
+            gate = self.hash_gate_v2
+        elif inp.shape[0] == self.hash_gate_v3.shape[0]:
+            gate = self.hash_gate_v3
+        elif inp.shape[0] == self.hash_gate_v4.shape[0]:
+            gate = self.hash_gate_v4
         else:
             assert False
 
