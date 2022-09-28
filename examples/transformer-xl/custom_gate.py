@@ -57,36 +57,38 @@ class CustomHashGate(BaseGate):
         super().__init__(num_expert, world_size)
         self.gate = nn.Linear(d_model, self.tot_expert)
         self.top_k = top_k
-        self.random_hash_seed = np.random.randint(100)
 
     def forward(self, inp, return_all_scores=False):
 
         print(inp.shape)
-        # gate (token, bs, num_experts)
+
         if not hasattr(self, 'hash_gate'):
             # generate hash gate
             print('Generate Hash Mapping')
             token_num = inp.shape[0]
             self.register_buffer('hash_gate', torch.rand(token_num, self.tot_expert).to(inp.device))
             print(self.hash_gate.shape)
-        elif self.hash_gate.shape[0] != inp.shape[0]:
-            print('Generate New Hash Mapping')
-            token_num = inp.shape[0]
-            self.register_buffer('hash_gate_v2', torch.rand(token_num, self.tot_expert).to(inp.device))
-            print(self.hash_gate_v2.shape)
-        elif self.hash_gate_v2.shape[0] != inp.shape[0]:
-            print('Generate New Hash Mapping v3')
-            token_num = inp.shape[0]
-            self.register_buffer('hash_gate_v3', torch.rand(token_num, self.tot_expert).to(inp.device))
-            print(self.hash_gate_v3.shape)
-        elif self.hash_gate_v3.shape[0] != inp.shape[0]:
-            print('Generate New Hash Mapping v4')
-            token_num = inp.shape[0]
-            self.register_buffer('hash_gate_v4', torch.rand(token_num, self.tot_expert).to(inp.device))
-            print(self.hash_gate_v4.shape)
         else:
-            assert False
-
+            if self.hash_gate.shape[0] != inp.shape[0]:
+                if not hasattr(self, 'hash_gate_v2'):
+                    print('Generate New Hash Mapping v2')
+                    token_num = inp.shape[0]
+                    self.register_buffer('hash_gate_v2', torch.rand(token_num, self.tot_expert).to(inp.device))
+                    print(self.hash_gate_v2.shape)
+                else:
+                    if self.hash_gate_v2.shape[0] != inp.shape[0]:
+                        if not hasattr(self, 'hash_gate_v3'):
+                            print('Generate New Hash Mapping v3')
+                            token_num = inp.shape[0]
+                            self.register_buffer('hash_gate_v3', torch.rand(token_num, self.tot_expert).to(inp.device))
+                            print(self.hash_gate_v3.shape)
+                        else:
+                            if self.hash_gate_v3.shape[0] != inp.shape[0]:
+                                if not hasattr(self, 'hash_gate_v4'):
+                                    print('Generate New Hash Mapping v4')
+                                    token_num = inp.shape[0]
+                                    self.register_buffer('hash_gate_v4', torch.rand(token_num, self.tot_expert).to(inp.device))
+                                    print(self.hash_gate_v4.shape)
 
         if inp.shape[0] == self.hash_gate.shape[0]:
             gate = self.hash_gate
@@ -100,7 +102,6 @@ class CustomHashGate(BaseGate):
             assert False
 
         print(gate.shape)
-        pdb.set_trace()
 
         gate_top_k_val, gate_top_k_idx = torch.topk(
             gate, k=self.top_k, dim=-1, largest=True, sorted=False
