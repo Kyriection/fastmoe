@@ -19,6 +19,4 @@ python -u train.py \
     --batch_size 88 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomHashGate \
-    --work_dir HashGate \
-    --multi_gpu \
-    --gpu0_bsz 11
+    --work_dir HashGate 
