@@ -535,8 +535,7 @@ def train():
                     reg_loss += m.reg_loss
 
             loss = loss.float().mean().type_as(loss)
-            print(loss, reg_loss)
-            loss += reg_loss[0] * 0.01
+            loss += reg_loss[0] * 0.1
 
             if args.fp16:
                 optimizer.backward(loss)
