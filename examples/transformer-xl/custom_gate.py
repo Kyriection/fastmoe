@@ -66,7 +66,7 @@ class CustomHashGate(BaseGate):
         print(gate.shape)
 
         # gate (token, bs, num_experts)
-        if not hasattr(self, hash_gate):
+        if not hasattr(self, 'hash_gate'):
             # generate hash gate
             print('Generate Hash Mapping')
             token_num = inp.shape[0]
