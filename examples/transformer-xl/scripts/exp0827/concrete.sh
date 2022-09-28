@@ -19,5 +19,4 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 nohup python -u train_concrete.py \
     --eval_tgt_len 128 \
     --batch_size 44 \
     --work_dir big_dense_concrete \
-    --multi_gpu \
-    --gpu0_bsz 8 > log_0928_big_dense_concrete.out 2>&1 &
+    --multi_gpu > log_0928_big_dense_concrete.out 2>&1 &
