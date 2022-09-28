@@ -16,7 +16,7 @@ python -u train.py \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 88 \
+    --batch_size 22 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomHashGate \
     --work_dir HashGate \
