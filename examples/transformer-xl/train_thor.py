@@ -191,12 +191,6 @@ parser.add_argument('--dynamic_router_start', type=int, default=-1)
 
 args = parser.parse_args()
 
-print(args.multi_gpu)
-
-args.multi_gpu = True
-args.gpu0_bsz = 11
-
-
 args.tied = not args.not_tied
 assert args.moe_num_expert >= args.moe_top_k, "must have moe-num-expert >= moe-top_k"
 
