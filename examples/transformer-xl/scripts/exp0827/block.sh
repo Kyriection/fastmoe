@@ -1,5 +1,5 @@
 #!/bin/bash
-python -u train_block.py \
+CUDA_VISIBLE_DEVICES=0,1,2,3 nohup python -u train_block.py \
     --cuda \
     --data ../data/enwik8/ \
     --dataset enwik8 \
@@ -17,5 +17,7 @@ python -u train_block.py \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 22 \
-    --work_dir big_dense_block
+    --batch_size 44 \
+    --work_dir big_dense_block \
+    --multi_gpu \
+    --gpu0_bsz 8 > log_0928_big_dense_block.out 2>&1 &

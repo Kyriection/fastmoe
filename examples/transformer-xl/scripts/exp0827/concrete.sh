@@ -1,5 +1,5 @@
 #!/bin/bash
-python -u train_concrete.py \
+CUDA_VISIBLE_DEVICES=4,5,6,7 nohup python -u train_concrete.py \
     --cuda \
     --data ../data/enwik8/ \
     --dataset enwik8 \
@@ -13,9 +13,11 @@ python -u train_concrete.py \
     --optim adam \
     --lr 0.00025 \
     --warmup_step 0 \
-    --max_step 400000 \
+    --max_step 200000 \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
-    --batch_size 22 \
-    --work_dir big_dense_concrete 
+    --batch_size 44 \
+    --work_dir big_dense_concrete \
+    --multi_gpu \
+    --gpu0_bsz 8 > log_0928_big_dense_concrete.out 2>&1 &
