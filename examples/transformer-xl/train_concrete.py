@@ -525,17 +525,18 @@ def train():
                     loss.backward()
                 train_loss += loss.float().item()
         else:
+
+            ret = para_model(data, target, *mems)
+            loss, mems = ret[0], ret[1:]
+
             reg_loss = 0
             for m in para_model.modules():
                 if isinstance(m, ConcreteDropout):
                     reg_loss += m.reg_loss
 
-            ret = para_model(data, target, *mems)
-            loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
             print(loss, reg_loss)
             loss += reg_loss[0] * 0.01
-
 
             if args.fp16:
                 optimizer.backward(loss)
