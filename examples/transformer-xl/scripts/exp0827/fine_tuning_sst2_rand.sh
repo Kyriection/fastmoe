@@ -23,7 +23,7 @@ python -u train_sst2.py \
     --work_dir $2 \
     --pretrained_weight $1 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
-    --gate_name CustomRandomGate \
+    --gate_name CustomRandomGate_Dense \
     --dynamic_moe \
     --dynamic_moe_mode linear_increase \
     --dynamic_overall_steps 5000 \
