@@ -40,7 +40,8 @@ python -u train.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 22 \
-    --work_dir big_dense 
+    --work_dir big_dense \
+    --log-interval 50 
 
 
 # python -u train_thor.py \
