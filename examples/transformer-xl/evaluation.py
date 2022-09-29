@@ -658,6 +658,7 @@ with open(args.checkpoint_weight, 'rb') as f:
     model = torch.load(f)
 para_model = model.to(device)
 
+import pdb
 pdb.set_trace()
 
 # Run on test data.
