@@ -199,14 +199,14 @@ class CustomRandomGate_Dense(BaseGate):
         super().__init__(num_expert, world_size)
         self.gate = nn.Linear(d_model, self.tot_expert)
         self.top_k = top_k
-        self.dense_moe_flag = True
+        self.dense_moe_flag = False
 
     def forward(self, inp, return_all_scores=False):
 
         gate = self.gate(inp)
 
         # random gate uniform distribution
-        gate = torch.rand_like(gate)
+        gate = torch.ones_like(gate)
 
         if self.dense_moe_flag:
             gate = torch.ones_like(gate)
