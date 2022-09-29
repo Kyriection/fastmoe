@@ -47,7 +47,7 @@ CUDA_VISIBLE_DEVICES=$2 nohup python -u evaluation.py \
     --eval_tgt_len 128 \
     --batch_size 22 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
-    --gate_name CustomHashGate \
+    --gate_name CustomRandomGate \
     --checkpoint_weight $1 > log_eval_$3.out 2>&1 &
 
 
