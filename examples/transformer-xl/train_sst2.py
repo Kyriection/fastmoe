@@ -482,6 +482,7 @@ if not args.pretrained_weight == 'random':
     model.load_state_dict(filtered_checkpoint, strict=False)
 
 
+
 def evaluate(model, eval_iter):
     # Turn on evaluation mode which disables dropout.
     model.eval()
