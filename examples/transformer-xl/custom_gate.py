@@ -102,6 +102,8 @@ class CustomHashGate(BaseGate):
             gate = self.hash_gate_v3
         elif inp.shape[0] == self.hash_gate_v4.shape[0]:
             gate = self.hash_gate_v4
+        elif inp.shape[0] == self.hash_gate_v5.shape[0]:
+            gate = self.hash_gate_v5
         else:
             assert False
 
