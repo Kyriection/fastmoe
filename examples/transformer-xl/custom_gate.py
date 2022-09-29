@@ -88,6 +88,11 @@ class CustomHashGate(BaseGate):
                                     self.register_buffer('hash_gate_v4', torch.rand(token_num, self.tot_expert).to(inp.device))
                                     print(self.hash_gate_v4.shape)
 
+        print(inp.shape)
+        print(self.hash_gate.shape)
+        print(self.hash_gate_v2.shape)
+        print(self.hash_gate_v3.shape)
+        print(self.hash_gate_v4.shape)
         if inp.shape[0] == self.hash_gate.shape[0]:
             gate = self.hash_gate
         elif inp.shape[0] == self.hash_gate_v2.shape[0]:
