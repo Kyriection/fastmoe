@@ -20,7 +20,7 @@ python -u train.py \
     --eval_tgt_len 128 \
     --batch_size 88 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
-    --gate_name CustomNaiveGate \
+    --gate_name CustomNaiveGate_Balance \
     --freeze_gate \
     --dynamic_moe \
     --dynamic_moe_mode linear_increase \
