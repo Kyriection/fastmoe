@@ -17,7 +17,7 @@ from mem_transformer import MemTransformerLM
 from utils.exp_utils import create_exp_dir
 from utils.data_parallel import BalancedDataParallel
 from fmoe.gates.base_gate import BaseGate
-
+from custom_gate import CustomNaiveGate_Balance
 from new_utils import *
 
 import warnings 
@@ -41,6 +41,7 @@ parser.add_argument('--d_model', type=int, default=500,
                     help='model dimension')
 parser.add_argument('--d_inner', type=int, default=1000,
                     help='inner dimension in FF')
+parser.add_argument('--load_balance', type=float, default=0)
 parser.add_argument('--dropout', type=float, default=0.0,
                     help='global dropout rate')
 parser.add_argument('--dropatt', type=float, default=0.0,
@@ -527,6 +528,19 @@ def train():
             ret = para_model(data, target, *mems)
             loss, mems = ret[0], ret[1:]
             loss = loss.float().mean().type_as(loss)
+
+            if args.load_balance > 0:
+                balance_loss = 0
+                for name, m in model.named_modules():
+                    if isinstance(m, CustomNaiveGate_Balance):
+                        balance_loss += m.loss
+                print(balance_loss, loss)
+                loss += args.load_balance * balance_loss
+
+            pdb.set_trace()
+
+
+
             if args.fp16:
                 optimizer.backward(loss)
             else:

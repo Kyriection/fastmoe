@@ -64,7 +64,7 @@ class CustomNaiveGate_Balance(BaseGate):
     def set_load_balance(self, gate, gate_top_k_idx):
         # gate_top_k_idx (tokens_number, top-k)
         # gate_top_k_val (tokens_number, top-k)
-        pdb.set_trace()
+
         score = F.softmax(gate, dim=-1)
         valid_idx = gate_top_k_idx[gate_top_k_idx > -1]
         fraction_expert = torch.scatter_add(
@@ -75,16 +75,12 @@ class CustomNaiveGate_Balance(BaseGate):
             ) / valid_idx.numel()
         prob_expert = score.sum(dim=0) / valid_idx.numel()
 
-        pdb.set_trace()
-
         loss = (fraction_expert * prob_expert).sum() * self.tot_expert
         self.loss = loss
 
     def forward(self, inp, return_all_scores=False):
 
         gate = self.gate(inp)
-        pdb.set_trace()
-        print(gate.shape)
 
         if self.dense_moe_flag:
             gate = torch.ones_like(gate) # average the importance of all experts
