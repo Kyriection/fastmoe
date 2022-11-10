@@ -61,10 +61,11 @@ class CustomNaiveGate_Balance(BaseGate):
         self.dense_moe_flag = False
         self.loss = None
 
-    def set_load_balance(self, gate_top_k_val, gate_top_k_idx):
+    def set_load_balance(self, gate, gate_top_k_idx):
         # gate_top_k_idx (tokens_number, top-k)
         # gate_top_k_val (tokens_number, top-k)
         pdb.set_trace()
+        score = F.softmax(gate, dim=-1)
         valid_idx = gate_top_k_idx[gate_top_k_idx > -1]
         fraction_expert = torch.scatter_add(
                 torch.zeros(self.tot_expert, device=valid_idx.device),
@@ -72,7 +73,7 @@ class CustomNaiveGate_Balance(BaseGate):
                 valid_idx,
                 torch.ones_like(valid_idx, dtype=torch.float),
             ) / valid_idx.numel()
-        prob_expert = gate_top_k_val.sum(dim=0) / valid_idx.numel()
+        prob_expert = score.sum(dim=0) / valid_idx.numel()
 
         pdb.set_trace()
 
@@ -100,7 +101,7 @@ class CustomNaiveGate_Balance(BaseGate):
 
         gate_score = F.softmax(gate_top_k_val, dim=-1)
 
-        self.set_load_balance(gate_top_k_val, gate_top_k_idx)
+        self.set_load_balance(gate, gate_top_k_idx)
 
         if return_all_scores:
             return gate_top_k_idx, gate_score, gate
