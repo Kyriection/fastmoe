@@ -59,6 +59,22 @@ class CustomNaiveGate_Balance(BaseGate):
         self.gate = nn.Linear(d_model, self.tot_expert)
         self.top_k = top_k
         self.dense_moe_flag = False
+        self.loss = None
+
+    def set_load_balance(self, gate_top_k_val, gate_top_k_idx):
+        # gate_top_k_idx (tokens_number, top-k)
+        # gate_top_k_val (tokens_number, top-k)
+        pdb.set_trace()
+        valid_idx = gate_top_k_idx[gate_top_k_idx > -1]
+        fraction_expert = torch.scatter_add(
+                torch.zeros(self.tot_expert, device=valid_idx.device),
+                0,
+                valid_idx,
+                torch.ones_like(valid_idx, dtype=torch.float),
+            ) / valid_idx.numel()
+        prob_expert = gate_top_k_val.sum(dim=0) / valid_idx.numel()
+        loss = (fraction_expert * prob_expert).sum() * self.tot_expert
+        self.loss = loss
 
     def forward(self, inp, return_all_scores=False):
 
@@ -81,7 +97,7 @@ class CustomNaiveGate_Balance(BaseGate):
 
         gate_score = F.softmax(gate_top_k_val, dim=-1)
 
-
+        set_load_balance(gate_top_k_val, gate_top_k_idx)
 
         if return_all_scores:
             return gate_top_k_idx, gate_score, gate
