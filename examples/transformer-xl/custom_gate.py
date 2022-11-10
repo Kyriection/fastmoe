@@ -73,6 +73,9 @@ class CustomNaiveGate_Balance(BaseGate):
                 torch.ones_like(valid_idx, dtype=torch.float),
             ) / valid_idx.numel()
         prob_expert = gate_top_k_val.sum(dim=0) / valid_idx.numel()
+
+        pdb.set_trace()
+
         loss = (fraction_expert * prob_expert).sum() * self.tot_expert
         self.loss = loss
 
