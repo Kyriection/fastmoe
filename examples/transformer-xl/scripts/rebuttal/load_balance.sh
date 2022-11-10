@@ -27,4 +27,5 @@ python -u train.py \
     --dynamic_overall_steps 200000 \
     --moe-top-k-min 8 \
     --moe-top-k-max 16 \
+    --load_balance 0.5 \
     --work_dir Default
