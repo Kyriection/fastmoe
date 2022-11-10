@@ -21,11 +21,10 @@ python -u train.py \
     --batch_size 44 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate_Balance \
-    --freeze_gate \
     --dynamic_moe \
     --dynamic_moe_mode linear_increase \
     --dynamic_overall_steps 200000 \
-    --moe-top-k-min 8 \
-    --moe-top-k-max 16 \
+    --moe-top-k-min 12 \
+    --moe-top-k-max 12 \
     --load_balance 0.5 \
-    --work_dir Default
+    --work_dir SMoE_load_balance

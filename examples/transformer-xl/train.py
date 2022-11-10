@@ -534,12 +534,7 @@ def train():
                 for name, m in model.named_modules():
                     if isinstance(m, CustomNaiveGate_Balance):
                         balance_loss += m.loss
-                print(balance_loss, loss)
                 loss += args.load_balance * balance_loss
-
-            pdb.set_trace()
-
-
 
             if args.fp16:
                 optimizer.backward(loss)
