@@ -20,7 +20,7 @@ CUDA_VISIBLE_DEVICES=$3 nohup python -u train_sst2.py \
     --mem_len 128 \
     --eval_tgt_len 128 \
     --batch_size 16 \
-    --work_dir none \
+    --work_dir smoe_gradually_seed$2 \
     --seed $2 \
     --pretrained_weight $1 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
