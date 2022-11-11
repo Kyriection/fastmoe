@@ -29,4 +29,4 @@ CUDA_VISIBLE_DEVICES=$3 nohup python -u train_sst2.py \
     --dynamic_moe_mode linear_increase \
     --dynamic_overall_steps 5000 \
     --moe-top-k-min 16 \
-    --moe-top-k-max 16 > log_sst2_seed$2_smoe_gradually.out &
+    --moe-top-k-max 16 > log_sst2_seed$2_smoe_gradually.out 2>&1 &
