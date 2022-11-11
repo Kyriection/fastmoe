@@ -1,5 +1,5 @@
 echo 'Run training...'
-python -u train_sst2.py \
+CUDA_VISIBLE_DEVICES=$3 nohup python -u train_sst2.py \
     --cuda \
     --data ../glue_data/SST-2_v2 \
     --dataset sst2_v2 \
@@ -21,6 +21,7 @@ python -u train_sst2.py \
     --eval_tgt_len 128 \
     --batch_size 16 \
     --work_dir none \
+    --seed $2 \
     --pretrained_weight $1 \
     --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
@@ -28,4 +29,4 @@ python -u train_sst2.py \
     --dynamic_moe_mode linear_increase \
     --dynamic_overall_steps 5000 \
     --moe-top-k-min 16 \
-    --moe-top-k-max 16 
+    --moe-top-k-max 16 > log_sst2_seed$2_smoe_gradually.out &
