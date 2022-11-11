@@ -151,6 +151,7 @@ parser.add_argument('--dynamic-loss-scale', action='store_true',
                     ' supersedes --static-loss-scale.')
 parser.add_argument('--moe', action='store_true',
                     help='replace position-wise ffn with moe position-wise ffn')
+parser.add_argument('--attn_moe', action='store_true')
 parser.add_argument('--moe-num-expert', type=int, default=64,
                     help='number of experts in MoE')
 
@@ -335,7 +336,7 @@ else:
         same_length=args.same_length, attn_type=args.attn_type,
         clamp_len=args.clamp_len, sample_softmax=args.sample_softmax,
         moe=args.moe, moe_num_expert=args.moe_num_expert, moe_top_k=args.moe_top_k, gate_name=args.gate_name, moe_index=moe_index,
-        dense_drop=args.dense_drop, expert_drop=args.expert_drop, num_expert=args.num_expert)
+        dense_drop=args.dense_drop, expert_drop=args.expert_drop, num_expert=args.num_expert, attn_moe=args.attn_moe)
     model.apply(weights_init)
     model.word_emb.apply(weights_init) # ensure embedding init is not overridden by out_layer in case of weight sharing
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
@@ -345,6 +346,7 @@ args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 set_threshold(model, args)
 freeze_part_weight(model, args)
 
+print(model)
 if args.fp16:
     model = model.half()
 

@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import torch.nn as nn 
 from fmoe.gates.base_gate import BaseGate
+from custom_gate import CustomNaiveGate_Attn
 
 import pdb
 import torch.nn.functional as F
@@ -16,7 +17,7 @@ __all__ = ['set_top_k', 'set_router_mode', 'freeze_part_weight', 'adjust_moe_gat
 def set_top_k(model, num=2):
     for name, m in model.named_modules():
         if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-            if isinstance(m.gate, BaseGate):
+            if isinstance(m.gate, BaseGate) and not isinstance(m.gate, CustomNaiveGate_Attn):
                 m.top_k = num
                 m.gate.top_k = num
                 print('Layer name: {}, Top-K = {}, {}'.format(name, m.top_k, m.gate.top_k))
@@ -25,7 +26,7 @@ def collect_top_k(model):
     top_k = None
     for name, m in model.named_modules():
         if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-            if isinstance(m.gate, BaseGate):
+            if isinstance(m.gate, BaseGate) and not isinstance(m.gate, CustomNaiveGate_Attn):
                 top_k = m.gate.top_k
                 break 
     return top_k
@@ -40,7 +41,7 @@ def set_router_mode(model, args, flag=True):
     current_gate = 0
     for name, m in model.named_modules():
         if hasattr(m, 'top_k') and hasattr(m, 'gate'):
-            if isinstance(m.gate, BaseGate):
+            if isinstance(m.gate, BaseGate) and not isinstance(m.gate, CustomNaiveGate_Attn):
                 if flag:
                     m.top_k = args.moe_num_expert
                     m.gate.top_k = args.moe_num_expert
