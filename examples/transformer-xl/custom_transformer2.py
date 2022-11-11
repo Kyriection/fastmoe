@@ -57,4 +57,4 @@ class FMoETransformerMLP(FMoE):
         original_shape = inp.shape
         inp = inp.reshape(-1, self.d_model)
         output = super().forward(inp)
-        return output.reshape(original_shape)
+        return output.reshape(original_shape[0], original_shape[1], -1)
