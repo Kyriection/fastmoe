@@ -14,7 +14,7 @@ python -u train.py \
     --optim adam \
     --lr 0.00025 \
     --warmup_step 0 \
-    --max_step 100000 \
+    --max_step 10000 \
     --tgt_len 512 \
     --mem_len 512 \
     --eval_tgt_len 128 \
@@ -25,7 +25,7 @@ python -u train.py \
     --freeze_gate \
     --dynamic_moe \
     --dynamic_moe_mode linear_increase \
-    --dynamic_overall_steps 100000 \
+    --dynamic_overall_steps 10000 \
     --moe-top-k-min 8 \
     --moe-top-k-max 16 \
     --work_dir Attention
