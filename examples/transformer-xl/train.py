@@ -342,6 +342,30 @@ else:
 args.n_all_param = sum([p.nelement() for p in model.parameters()])
 args.n_nonemb_param = sum([p.nelement() for p in model.layers.parameters()])
 
+a1 = 0
+a2 = 0
+a3 = 0
+
+for name, p in model.named_parameters():
+    if '.gate' in name:
+        a1 += p.nelement()
+        print(name)
+    else:
+        a2 += p.nelement()
+    
+    a3 += p.nelement()
+
+print(a1/a3, a2/a3)
+
+
+raise ValueError('Stop')
+
+
+
+
+
+
+
 # for Dense to Sparse Method
 set_threshold(model, args)
 freeze_part_weight(model, args)
