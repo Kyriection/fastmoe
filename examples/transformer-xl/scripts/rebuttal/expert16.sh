@@ -8,7 +8,7 @@ python -u train.py \
     --d_model 256 \
     --n_head 8 \
     --d_head 64 \
-    --d_inner 2048 \
+    --d_inner 512 \
     --dropout 0.1 \
     --dropatt 0.0 \
     --optim adam \
@@ -19,12 +19,12 @@ python -u train.py \
     --mem_len 512 \
     --eval_tgt_len 128 \
     --batch_size 22 \
-    --moe --moe-num-expert 4 --moe-top-k 2 \
+    --moe --moe-num-expert 16 --moe-top-k 2 \
     --gate_name CustomNaiveGate \
     --freeze_gate \
     --dynamic_moe \
     --dynamic_moe_mode linear_increase \
     --dynamic_overall_steps 400000 \
-    --moe-top-k-min 2 \
-    --moe-top-k-max 4 \
-    --work_dir EXPERTS4_40w
+    --moe-top-k-min 8 \
+    --moe-top-k-max 16 \
+    --work_dir EXPERTS16_40w
